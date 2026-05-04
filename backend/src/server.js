@@ -9,9 +9,10 @@ import connectDB from './config/db.config.js';
 import authRoutes from './routers/auth.routes.js'
 import userRoutes from './routers/users.routes.js';
 import categoryRoutes from './routers/category.routes.js';
+import productRoutes from './routers/product.routes.js';
+import uploadRoutes from './routers/upload.routes.js';
 
 import { errorHandler } from './middleware/error.middleware.js';
-import { upload } from './middleware/upload.middleware.js';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -25,10 +26,8 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes)
 app.use('/api/user', userRoutes);
 app.use('/api/category', categoryRoutes);
-
-// upload 
-// app.use('/api/upload',upload)
-app.use(errorHandler)
+app.use('/api/products', productRoutes);
+app.use('/api/upload', uploadRoutes);
 
 app.get('/', (req, res) => {
     res.send({
