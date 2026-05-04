@@ -28,29 +28,29 @@ router.post(
 );  // Upload ảnh sản phẩm
 
 // Route công khai (không cần auth)
-router.get("/search", asyncHandler(searchProducts));              // Tìm kiếm nâng cao
-router.get("/top", asyncHandler(getTopProducts));                 // Lấy sản phẩm bán chạy
+router.get("/search-product", asyncHandler(searchProducts));              // Tìm kiếm nâng cao
+router.get("/top-products", asyncHandler(getTopProducts));                 // Lấy sản phẩm bán chạy
 router.get("/slug/:slug", asyncHandler(getProductBySlug));        // Lấy sản phẩm theo slug
 
 // Routes cần Admin - CRUD
-router.post("/", protect, adminOnly, asyncHandler(createProduct));          // Tạo sản phẩm
-router.get("/", asyncHandler(getAllProducts));                    // Lấy tất cả sản phẩm
+router.post("/create-product", protect, adminOnly, asyncHandler(createProduct));          // Tạo sản phẩm
+router.get("/get-all-product", asyncHandler(getAllProducts));                    // Lấy tất cả sản phẩm
 
 // Routes động (phải cuối cùng)
-router.get("/:id", asyncHandler(getProductById));                 // Lấy sản phẩm theo ID
-router.put("/:id", protect, adminOnly, asyncHandler(updateProduct));        // Cập nhật sản phẩm
-router.delete("/:id", protect, adminOnly, asyncHandler(deleteProduct));     // Xóa sản phẩm
+router.get("/get-product-only/:id", asyncHandler(getProductById));                 // Lấy sản phẩm theo ID
+router.put("/update-product/:id", protect, adminOnly, asyncHandler(updateProduct));        // Cập nhật sản phẩm
+router.delete("/delete-product/:id", protect, adminOnly, asyncHandler(deleteProduct));     // Xóa sản phẩm
 
 // Routes cập nhật ảnh
 router.put(
-    "/:id/images",
+    "/update-product-images/:id",
     protect,
     adminOnly,
     asyncHandler(updateProductImages)
-);  // Cập nhật ảnh sản phẩm (gửi URL)
-
+);
+// Cập nhật ảnh sản phẩm (gửi URL)
 router.post(
-    "/:id/images/add",
+    "/add-product-images/:id",
     protect,
     adminOnly,
     upload.array("images", 5),
