@@ -28,7 +28,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/category', categoryRoutes);
 app.use('/api/product', productRoutes);
 app.use('/api/upload', uploadRoutes);
-
+app.use(errorHandler);
 app.get('/', (req, res) => {
     res.send({
         message: " Server healthy !"
