@@ -5,7 +5,7 @@ import {
     formatSuccessResponse,
     sanitizeText
 } from "../utils/format.js";
-
+/* ==================== CATEGORY CONTROLLER ==================== */
 export const createCategory = async (req, res) => {
     const { name, description } = req.body;
 
@@ -29,6 +29,7 @@ export const createCategory = async (req, res) => {
     ));
 };
 
+/* ==================== GET ALL CATEGORY ==================== */
 export const getAllCategory = async (req, res) => {
     const category = await categoryModel.find();
 
@@ -42,6 +43,7 @@ export const getAllCategory = async (req, res) => {
     ));
 };
 
+/* ==================== GET CATEGORY BY ID ==================== */
 export const getCategoryById = async (req, res) => {
     const { id } = req.params;
     const category = await categoryModel.findById(id);
@@ -55,7 +57,7 @@ export const getCategoryById = async (req, res) => {
         category
     ));
 };
-
+/* ==================== UPDATE CATEGORY ==================== */
 export const updateCategory = async (req, res) => {
     const { id } = req.params;
     const { name, description } = req.body;
@@ -85,6 +87,7 @@ export const updateCategory = async (req, res) => {
     ));
 };
 
+/* ==================== DELETE CATEGORY ==================== */
 export const deleteCategory = async (req, res) => {
     const { id } = req.params;
 

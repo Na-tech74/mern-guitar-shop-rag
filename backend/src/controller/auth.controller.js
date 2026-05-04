@@ -41,7 +41,7 @@ export const register = async (req, res) => {
     const refreshToken = generateRefreshToken(createUser._id);
 
     const isProduction = process.env.NODE_ENV === "production";
-    
+
     // set cookie
     res.cookie('refreshToken', refreshToken, {
         httpOnly: true,      //  chống XSS
@@ -60,9 +60,17 @@ export const register = async (req, res) => {
         _id: createUser._id,
         name: name,
         email: email,
+
+        /*Không trả về mật khẩu đã hash, 
+         nhưng nếu cần thì có thể bao gồm nó ở đây.*/
         /*password: password.hashed,*/
+
         accessToken: accessToken,
+
+        /*Nếu muốn trả về refreshToken trong response body 
+        (thường không cần thiết vì đã set cookie), có thể thêm dòng dưới đây:*/
         // refreshToken: refreshToken,
+
         createAt: createUser.createdAt
     });
 };

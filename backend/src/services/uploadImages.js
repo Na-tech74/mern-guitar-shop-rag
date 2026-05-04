@@ -15,7 +15,9 @@ export const uploadImages = async (files, folder = "default") => {
 
         // xoá file local an toàn
         fs.unlink(file.path, (err) => {
-          if (err) console.error("Delete file error:", err);
+          if (err) {
+            console.error("Delete file error:", err);
+          }
         });
 
         return {
@@ -24,7 +26,7 @@ export const uploadImages = async (files, folder = "default") => {
         };
       } catch (err) {
         // nếu upload fail vẫn xoá file
-        fs.unlink(file.path, () => {});
+        fs.unlink(file.path, () => { });
         throw err;
       }
     })
