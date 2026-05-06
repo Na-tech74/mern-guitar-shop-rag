@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { forgotPasswordAPI, resetPasswordAPI } from "../../api/authAPI";
+import { useNavigate } from "react-router-dom";
 
 export default function ForgotPassword() {
-    const [step, setStep] = useState(1); // 1: nhập email | 2: nhập OTP
+    const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const [form, setForm] = useState({
         email: "",
@@ -18,45 +20,59 @@ export default function ForgotPassword() {
         });
     };
 
-    // BƯỚC 1: gửi OTP
+    // STEP 1: gửi OTP
     const handleSendOTP = async (e) => {
         e.preventDefault();
+
+        if (!form.email) {
+            return alert("Nhập email");
+        }
+
         setLoading(true);
 
         try {
-            await forgotPasswordAPI({ email: form.email });
+            await forgotPasswordAPI({
+                email: form.email.trim().toLowerCase()
+            });
+
             alert("OTP đã được gửi về email");
             setStep(2);
         } catch (err) {
+            console.log(err.response?.data);
             alert(err.response?.data?.message || "Lỗi");
         } finally {
             setLoading(false);
         }
     };
 
-    // BƯỚC 2: reset password
+    // STEP 2: reset password
     const handleReset = async (e) => {
         e.preventDefault();
+
+        if (!form.otp || !form.newPassword) {
+            return alert("Nhập đầy đủ OTP và mật khẩu");
+        }
+
+        if (form.newPassword.length < 8) {
+            return alert("Mật khẩu ít nhất 8 ký tự");
+        }
+
         setLoading(true);
 
         try {
             await resetPasswordAPI({
-                email: form.email,
-                otp: form.otp,
-                newPassword: form.newPassword
+                email: form.email.trim().toLowerCase(),
+                otp: Number(form.otp),
+                password: form.newPassword
             });
 
             alert("Đổi mật khẩu thành công");
 
-            // reset về bước đầu
-            setStep(1);
-            setForm({
-                email: "",
-                otp: "",
-                newPassword: ""
-            });
+            // redirect về login
+            navigate("/login");
 
         } catch (err) {
+            console.log(err.response?.data);
             alert(err.response?.data?.message || "Lỗi");
         } finally {
             setLoading(false);
@@ -75,16 +91,19 @@ export default function ForgotPassword() {
                 {step === 1 && (
                     <form onSubmit={handleSendOTP} className="space-y-3">
                         <input
+                            type="email"
                             name="email"
                             value={form.email}
                             onChange={handleChange}
                             placeholder="Nhập email"
                             className="w-full border p-2"
+                            disabled={loading}
                         />
 
                         <button
                             disabled={loading}
-                            className="w-full bg-black text-white p-2"
+                            className="w-full mt-2 py-3 bg-[#2c1a06] text-[#f0d49a] text-xs 
+                            uppercase tracking-widest rounded-lg hover:opacity-85 transition"
                         >
                             {loading ? "Đang gửi..." : "Gửi OTP"}
                         </button>
@@ -101,20 +120,24 @@ export default function ForgotPassword() {
                             onChange={handleChange}
                             placeholder="Nhập OTP"
                             className="w-full border p-2"
+                            disabled={loading}
                         />
 
                         <input
+                            type="password"
                             name="newPassword"
                             value={form.newPassword}
                             onChange={handleChange}
-                            type="password"
                             placeholder="Mật khẩu mới"
                             className="w-full border p-2"
+                            disabled={loading}
                         />
 
                         <button
                             disabled={loading}
-                            className="w-full bg-black text-white p-2"
+                            className="w-full mt-2 py-3 bg-[#2c1a06] 
+                            text-[#f0d49a] text-xs uppercase tracking-widest
+                             rounded-lg hover:opacity-85 transition"
                         >
                             {loading ? "Đang xử lý..." : "Đổi mật khẩu"}
                         </button>

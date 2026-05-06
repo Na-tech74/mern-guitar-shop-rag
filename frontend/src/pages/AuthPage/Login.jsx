@@ -87,7 +87,7 @@ export default function Login() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full mt-2 py-3 bg-black text-white"
+                        className="w-full mt-2 py-3 bg-[#2c1a06] text-[#f0d49a] text-xs uppercase tracking-widest rounded-lg hover:opacity-85 transition"
                     >
                         {loading ? "Đang đăng nhập..." : "Đăng nhập"}
                     </button>

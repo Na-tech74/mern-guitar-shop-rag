@@ -185,9 +185,13 @@ export const forgotPassword = async (req, res) => {
 /* ĐẶT LẠI MẬT KHẨU */
 export const resetPassword = async (req, res) => {
 
-    const { email, otp, newPassword } = req.body;
+    const { email, otp, password } = req.body;
 
-    if (newPassword.length < 8) {
+    if (!email || !otp || !password) {
+        throw appError("Thiếu dữ liệu!", 400);
+    };
+
+    if (password.length < 8) {
         throw appError(" Mật khẩu phải có ít nhất 8 ký tự!", 400);
     };
 
@@ -207,7 +211,7 @@ export const resetPassword = async (req, res) => {
     };
 
     // Hash mật khẩu mới
-    const hashed = await bcrypt.hash(newPassword, 10);
+    const hashed = await bcrypt.hash(password, 10);
     user.password = hashed;
 
     //  Xóa OTP sau khi dùng (tránh dùng lại)
