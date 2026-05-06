@@ -54,7 +54,12 @@ export const createProduct = async (req, res) => {
 
 /* LẤY TẤT CẢ SẢN PHẨM */
 export const getAllProducts = async (req, res) => {
-    const { page = 1, limit = 10, search, category, sortBy = 'createdAt', sortOrder = -1 } = req.query;
+    const { page = 1,
+        limit = 10,
+        search, category,
+        sortBy = 'createdAt',
+        sortOrder = -1
+    } = req.query;
 
     // Tạo filter object
     const filter = {};

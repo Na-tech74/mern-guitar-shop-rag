@@ -21,7 +21,7 @@ export const protect = async (req, res, next) => {
       // Bước 4: Giải mã và xác thực token
       // Nếu token hết hạn hoặc sai chữ ký -> throw error
       const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-      
+
       // Bước 5: Tìm user trong database bằng id lấy từ token
       // .select("-password"): Không lấy field password (bảo mật)
       req.user = await User.findById(decoded.id).select("-password");
@@ -31,11 +31,11 @@ export const protect = async (req, res, next) => {
 
     } catch (error) {
       // Token không hợp lệ (hết hạn, sai chữ ký, ...)
-      throw new appError("Not authorized, token failed", 401);
+      throw appError("Not authorized, token failed", 401);
     }
   } else {
     // Không có token hoặc sai định dạng
-    throw new appError("Not authorized, no token", 401);
+    throw appError("Not authorized, no token", 401);
   }
 };
 
@@ -43,12 +43,12 @@ export const adminOnly = (req, res, next) => {
   //debug
   // console.log("USER:", req.user);
   // console.log("ROLE:", JSON.stringify(req.user?.role));
-  
+
   // Kiểm tra đã có user (sau khi qua protect) và role là "admin"
   if (req.user && req.user.role === "admin") {
     next();  // Là admin -> cho phép đi tiếp
   } else {
     // Không phải admin
-    throw new appError("Admin only", 403);
+    throw appError("Admin only", 403);
   }
 };

@@ -12,20 +12,18 @@ export const register = async (req, res) => {
     // kiểm tra nhập thông tin
 
     if (!name || !email || !password) {
-        throw appError("Missing fields!", 400); // 400: thiếu dữ liệu
+        throw appError("Vui lòng nhập đầy đủ thông tin!", 400); // 400: thiếu dữ liệu
     }
 
     // kiểm tra password phải hơn 8 ký tự
-
     if (password.length < 8) {
-        throw appError("The password must be 8 characters long!", 400); // 400: thiếu dữ liệu
+        throw appError(" Mật khẩu phải có ít nhất 8 ký tự!", 400); // 400: thiếu dữ liệu
     }
 
     // kiểm tra người dùng tồn tại 
-
     const userExist = await usersModel.findOne({ email });
     if (userExist) {
-        throw appError("User already exists!", 400); // 400: thiếu dữ liệu (user đã tồn tại)
+        throw appError("Người dùng đã tồn tại!", 400); // 400: thiếu dữ liệu (user đã tồn tại)
     }
 
     // hash pass
@@ -40,6 +38,7 @@ export const register = async (req, res) => {
     const accessToken = generateAccessToken(createUser._id);
     const refreshToken = generateRefreshToken(createUser._id);
 
+    // isProduction để set cookie secure và sameSite phù hợp với môi trường (production hay development) nhằm tăng cường bảo mật và tránh
     const isProduction = process.env.NODE_ENV === "production";
 
     // set cookie
@@ -81,23 +80,21 @@ export const login = async (req, res) => {
 
     const { email, password } = req.body;
 
-
     if (!email || !password) {
-        throw appError("Missing fields!", 400); // 400: thiếu dữ liệu
+        throw appError("Vui lòng nhập đầy đủ thông tin!", 400); // 400: thiếu dữ liệu
     }
 
     // kiểm tra email đã đăng nhập chưa !
 
     const user = await usersModel.findOne({ email });
     if (!user) {
-        throw appError("Invalid credentials!", 401); // 401: chưa auth
+        throw appError("Email không tồn tại!", 401); // 401: chưa auth
     }
 
-    // kiểm tra mật khẩu 
-
+    // kiểm tra mật khẩu đúng hay không (so sánh với mật khẩu đã hash trong database)
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-        throw appError("Invalid credentials!", 401); // 401: chưa auth
+        throw appError("Mật khẩu không đúng!", 401); // 401: chưa auth
     }
 
     //tạo token
@@ -106,10 +103,8 @@ export const login = async (req, res) => {
     user.refreshToken = refreshToken;
     await user.save();
 
-    // isProduction để set cookie secure và sameSite phù hợp với môi trường (production hay development) nhằm tăng cường bảo mật và tránh
-    //  lỗi khi phát triển trên localhost.
     const isProduction = process.env.NODE_ENV === "production";
-    // set cookie và trả về token
+
     res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: isProduction,
@@ -136,7 +131,7 @@ export const logout = async (req, res) => {
     });
 
     if (!user) {
-        throw appError("User not found !", 404);
+        throw appError(" Không tìm thấy người dùng !", 404);
     }
 
     const isProduction = process.env.NODE_ENV === "production";
@@ -148,21 +143,18 @@ export const logout = async (req, res) => {
         maxAge: 0
     });
     return res.json({
-        message: "Logout successful!"
+        message: " Đăng xuất thành công!"
     });
 };
 
 /* QUÊN MẬT KHẨU   */
 export const forgotPassword = async (req, res) => {
-    //debug
-    // console.log("EMAIL:", req.body);
-    // console.log(typeof randomBytes);
 
     const { email } = req.body;
 
     const user = await usersModel.findOne({ email });
     if (!user) {
-        throw appError(" Email not found !", 404);
+        throw appError(" Email không tồn tại !", 404);
     };
 
     //Tạo otp 6 số 
@@ -184,22 +176,18 @@ export const forgotPassword = async (req, res) => {
             `
     });
 
-    /*console.log("USER EMAIL:", user.email);
-    console.log("EMAIL SENT:", info.response);*/
-
     return res.json({
-        message: " OTP sent to email !"
+        message: `OTP đã được gửi đến email ${user.email} !`
     });
 };
 
 /* ĐẶT LẠI MẬT KHẨU */
 export const resetPassword = async (req, res) => {
 
-
     const { email, otp, newPassword } = req.body;
 
     if (newPassword.length < 8) {
-        throw appError("The new password must be at least 8 characters!", 400);
+        throw appError(" Mật khẩu phải có ít nhất 8 ký tự!", 400);
     };
 
     const user = await usersModel.findOne({ email });

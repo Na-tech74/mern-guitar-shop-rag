@@ -4,15 +4,12 @@ import usersModel from '../models/users.model.js';
 
 /**LẤY DANH SÁCH TẤT CẢ NGƯỜI DÙNG */
 export const getAllUser = async (req, res) => {
-    //debug 
-    // console.log("USER:", req.user);
-    // console.log("ROLE:", JSON.stringify(req.user.role));
 
-    // kiểm tra quyền 
+    // chỉ admin mới có quyền xem danh sách người dùng 
     if (req.user.role !== 'admin') {
         throw appError("Admin only!", 403); // 403: không có quyền
     };
-    
+
     const findAllUser = await usersModel
         .find()
         .select("-password -refreshToken"); //không trả password
@@ -25,13 +22,13 @@ export const getUserById = async (req, res) => {
 
     const { id } = req.params;
 
-
     if (req.user.role !== 'admin') {
         throw appError("Admin only!", 403); // 403: không có quyền
     }
 
     const findUserById = await usersModel
         .findById(id)
+        // không trả về password và refreshToken để bảo mật thông tin người dùng
         .select("-password -refreshToken");
     if (!findUserById) {
         throw appError("User not found!", 404); // 404: không tìm thấy
@@ -49,12 +46,13 @@ export const update = async (req, res) => {
 
     if (req.user._id.toString() !== id && req.user.role !== 'admin') {
         throw appError("Forbidden", 403);
-    }
+    };
+
     // tìm người dùng theo id
     const user = await usersModel.findById(id);
     if (!user) {
         throw appError("User not found!", 404); // 404: không tìm thấy
-    }
+    };
 
     // cập nhật lại các trường thông tin
     user.name = name || user.name;
@@ -65,6 +63,7 @@ export const update = async (req, res) => {
         const hashed = await bcrypt.hash(password, 10);
         user.password = hashed
     };
+
     await user.save();
 
     return res.json({
@@ -76,32 +75,29 @@ export const update = async (req, res) => {
 
 /*XÓA NGƯỜI DÙNG BẰNG ID*/
 export const deleteUser = async (req, res) => {
-    // console.log("HEADER:", req.headers.authorization);
-    // console.log("TOKEN:", token);
 
     const { id } = req.params;
 
-
     if (req.user.role !== 'admin') {
         throw appError("Admin only!", 403); // 403: không có quyền
-    }
+    };
 
     // chống tự xóa admin
 
     if (req.user._id.toString() === id) {
         throw appError("Cannot delete yourself", 403); // 403: không có quyền
-    }
+    };
 
     //tìm người dùng theo id
     const findUser = await usersModel.findById(id);
     if (!findUser) {
         throw appError("User not found!", 404); // 404: không tìm thấy
-    }
+    };
 
     // xóa người dùng 
     await usersModel.findByIdAndDelete(id);
 
     return res.json({
-        message: "User deleted successfilly!"
+        message: "User deleted successfully!"
     });
 };
