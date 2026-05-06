@@ -44,13 +44,6 @@ export default function Register() {
     return (
         <div className="min-h-screen bg-white flex items-center justify-center px-4">
             <div className="w-full max-w-sm bg-white border border-[#e8dcc8] rounded-2xl p-8 relative overflow-hidden">
-
-                {/* Viền phím đàn trên */}
-                <div
-                    className="absolute top-0 left-0 right-0 h-1"
-                    style={{ background: "repeating-linear-gradient(90deg, transparent 0px, transparent 38px, #c8922a 38px, #c8922a 40px)" }}
-                />
-
                 {/* Header */}
                 <div className="text-center mb-8">
                     <span className="text-3xl">🎸</span>

@@ -33,12 +33,11 @@ export default function Login() {
             //role để phân quyền (admin/user)
 
             if (res.data.role === "admin") {
-                await new Promise((resolve) => setTimeout(resolve, 50));
-                navigate("/admin", { replace: true });
+                navigate("/admin");
             } else {
                 navigate("/");
             }
-            console.log(res.data);
+            // console.log(res.data);
             alert("Đăng nhập thành công");
 
             // reset
@@ -46,10 +45,6 @@ export default function Login() {
                 email: "",
                 password: ""
             });
-
-            // ✅ redirect
-            navigate("/");
-
         } catch (err) {
             alert(err.response?.data?.message || "Lỗi server");
         } finally {

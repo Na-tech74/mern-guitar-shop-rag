@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export default function Header() {
   const [isSticky, setIsSticky] = useState(false);
@@ -36,12 +37,19 @@ export default function Header() {
       <header className={`w-full z-50 bg-black ${isSticky ? 'fixed top-0 shadow-lg animate-slideDown' : 'relative'}`}>
 
         {/* Top Bar - Ẩn trên mobile */}
-        <div className="hidden md:block bg-black text-white text-xs py-2 border-b border-white/10">
+        <div className="hidden md:block bg-white text-black text-xs py-2 border-b border-white/10">
           <div className="max-w-7xl mx-auto px-4 flex justify-between">
-            <span>🎸 Shop Guitar Cầu Giấy Hà Nội - Uy Tín Hàng Đầu</span>
+            <span>
+              <FontAwesomeIcon icon="fa-solid fa-location-dot" />
+              Shop Nam Acoustics Shop - Địa chỉ: 537/1 Đường Vườn Lài , Quận 12 , TP.HCM
+            </span>
             <div className="flex gap-5">
-              <a href="tel:0825489999" className="hover:text-yellow-500">📞 0825.48.9999</a>
-              <a href="mailto:Manyluxmusic@gmail.com" className="hover:text-yellow-500">✉️ Manyluxmusic@gmail.com</a>
+              <a href="tel:0378623181" className="hover:text-yellow-500">
+                <FontAwesomeIcon icon="fa-solid fa-phone" />
+                037.862.3181</a>
+              <a href="mailto:namn98561@gmail.com" className="hover:text-yellow-500">
+                <FontAwesomeIcon icon="fa-solid fa-envelope" />
+                namn98561@gmail.com</a>
             </div>
           </div>
         </div>
@@ -59,7 +67,7 @@ export default function Header() {
             <div className="hidden md:flex items-center gap-8 flex-1 justify-center">
               <form className="flex bg-white rounded-full overflow-hidden w-[450px]" onSubmit={(e) => e.preventDefault()}>
                 <select className="px-4 py-2 bg-gray-100 text-sm border-none outline-none">
-                  <option>All</option>
+                  <option>Tất cả </option>
                   <option>Đàn Guitar</option>
                   <option>Phụ Kiện</option>
                 </select>
@@ -69,15 +77,21 @@ export default function Header() {
                   className="flex-1 px-4 py-2 outline-none text-sm"
                 />
                 <button type="submit" className="bg-amber-700 hover:bg-amber-600 px-5 text-white">
-                  🔍
+                  <FontAwesomeIcon icon="fa-solid fa-search" />
                 </button>
               </form>
 
               <div className="flex gap-6">
-                <Link to="/wishlist" className="text-white hover:text-yellow-500 text-sm">❤️ Yêu thích</Link>
-                <Link to="/register" className="text-white hover:text-yellow-500 text-sm">👤 Tài khoản</Link>
+                <Link to="/wishlist" className="text-white hover:text-yellow-500 text-sm">
+                  <FontAwesomeIcon icon="fa-solid fa-heart" />
+                  Yêu thích
+                </Link>
+                <Link to="/register" className="text-white hover:text-yellow-500 text-sm">
+                  <FontAwesomeIcon icon="fa-solid fa-user" />
+                  Tài khoản
+                </Link>
                 <Link to="/cart" className="text-white hover:text-yellow-500 text-sm relative">
-                  🛒 Giỏ hàng
+                  <FontAwesomeIcon icon="fa-solid fa-cart-shopping" />
                   <span className="absolute -top-2 -right-4 bg-yellow-500 text-black text-[10px] px-1.5 py-0.5 rounded-full">0</span>
                 </Link>
               </div>
@@ -86,10 +100,10 @@ export default function Header() {
             {/* Mobile: Menu Toggle + Icons */}
             <div className="flex md:hidden items-center gap-4">
               <button onClick={() => setIsMobileMenuOpen(true)} className="text-white text-2xl">
-                ☰
+                <FontAwesomeIcon icon="fa-solid fa-bars" />
               </button>
               <Link to="/cart" className="text-white text-xl relative">
-                🛒
+                <FontAwesomeIcon icon="fa-solid fa-cart-shopping" />
                 <span className="absolute -top-2 -right-3 bg-yellow-500 text-black text-[10px] px-1.5 py-0.5 rounded-full">0</span>
               </Link>
             </div>
@@ -107,7 +121,8 @@ export default function Header() {
               onMouseLeave={() => setIsVerticalMenuOpen(false)}
             >
               <div className="bg-amber-700 text-white px-5 py-2.5 rounded-md cursor-pointer flex items-center gap-2 font-bold text-sm">
-                ☰ <span>Danh Mục</span> ▼
+                <FontAwesomeIcon icon="fa-solid fa-bars" />
+                <span>Danh Mục</span> ▼
               </div>
               {isVerticalMenuOpen && (
                 <ul className="absolute top-full left-0 w-60 bg-white shadow-lg z-50">
@@ -137,9 +152,18 @@ export default function Header() {
 
             {/* Contact Info */}
             <div className="flex gap-4 text-white text-xs">
-              <a href="mailto:Manyluxmusic@gmail.com" className="hover:text-yellow-500">✉️ Contact</a>
-              <span>🕐 08:00 - 22:00</span>
-              <a href="tel:0825489999" className="hover:text-yellow-500">📞 0825.48.9999</a>
+              <a href="mailto:Manyluxmusic@gmail.com" className="hover:text-yellow-500">
+                <FontAwesomeIcon icon="fa-solid fa-envelope" />
+                Lien hệ:
+              </a>
+              <span>
+                <FontAwesomeIcon icon="fa-solid fa-clock" />
+                08:00 - 22:00
+              </span>
+              <a href="tel:0378623181" className="hover:text-yellow-500">
+                <FontAwesomeIcon icon="fa-solid fa-phone" />
+                037.862.3181
+              </a>
             </div>
           </div>
         </div>
@@ -180,8 +204,14 @@ export default function Header() {
             </ul>
 
             <div className="p-4 border-t mt-4">
-              <a href="tel:0825489999" className="block py-2 text-gray-700">📞 0825.48.9999</a>
-              <a href="mailto:Manyluxmusic@gmail.com" className="block py-2 text-gray-700">✉️ Manyluxmusic@gmail.com</a>
+              <a href="tel:0378623181" className="block py-2 text-gray-700">
+                <FontAwesomeIcon icon="fa-solid fa-phone" />
+                0378623181
+              </a>
+              <a href="mailto:Manyluxmusic@gmail.com" className="block py-2 text-gray-700">
+                <FontAwesomeIcon icon="fa-solid fa-envelope" />
+                namn98561@gmail.com
+              </a>
             </div>
           </div>
         </>
