@@ -118,6 +118,7 @@ export const login = async (req, res) => {
         email: user.email,
         accessToken: accessToken,
         refreshToken: refreshToken,
+        role: user.role
     });
 };
 

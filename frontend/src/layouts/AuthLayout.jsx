@@ -1,13 +1,13 @@
-import Header from '../components/common/Header';
 import { Outlet } from "react-router-dom";
+import AdminPage from "../pages/AdminPage/AdminPage";
 
-export default function MainLayout() {
+export default function AuthLayout() {
     return (
         <>
-            <Header />
+            <AdminPage />
             <main className="container mx-auto mt-4">
                 <Outlet />
             </main>
         </>
-    );
-}
+    )
+};

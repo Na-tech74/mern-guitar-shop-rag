@@ -25,9 +25,20 @@ export default function Login() {
         try {
             const res = await loginAPI(form);
 
-            // ✅ lưu token
-            localStorage.setItem("token", res.data.token);
+            //  lưu token
+            localStorage.setItem("token", res.data.accessToken);
+            localStorage.setItem("role", res.data.role);
+            console.log("ROLE:", res.data.role);
 
+            //role để phân quyền (admin/user)
+
+            if (res.data.role === "admin") {
+                await new Promise((resolve) => setTimeout(resolve, 50));
+                navigate("/admin", { replace: true });
+            } else {
+                navigate("/");
+            }
+            console.log(res.data);
             alert("Đăng nhập thành công");
 
             // reset
