@@ -17,7 +17,7 @@ export const sendEmail = async ({ email, subject, html }) => {
     // console.log("USER:", process.env.EMAIL_USER);
     // console.log("PASS:", process.env.EMAIL_PASS);
     if (!email) {
-        throw new Error("No email provided");
+        throw new Error(" không có email người nhận !");
     };
     await transporter.sendMail({
         from: process.env.EMAIL_USER,

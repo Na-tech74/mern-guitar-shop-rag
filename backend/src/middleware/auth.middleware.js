@@ -31,11 +31,11 @@ export const protect = async (req, res, next) => {
 
     } catch (error) {
       // Token không hợp lệ (hết hạn, sai chữ ký, ...)
-      throw appError("Not authorized, token failed", 401);
+      throw appError("Không thể xác thực token !", 401);
     }
   } else {
     // Không có token hoặc sai định dạng
-    throw appError("Not authorized, no token", 401);
+    throw appError("Không được ủy quyền, không có token !", 401);
   }
 };
 
@@ -49,6 +49,6 @@ export const adminOnly = (req, res, next) => {
     next();  // Là admin -> cho phép đi tiếp
   } else {
     // Không phải admin
-    throw appError("Admin only", 403);
+    throw appError("Chỉ admin mới có quyền !", 403);
   }
 };

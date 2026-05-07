@@ -7,7 +7,7 @@ export const getAllUser = async (req, res) => {
 
     // chỉ admin mới có quyền xem danh sách người dùng 
     if (req.user.role !== 'admin') {
-        throw appError("Admin only!", 403); // 403: không có quyền
+        throw appError("Chỉ admin mới có quyền", 403); // 403: không có quyền
     };
 
     const findAllUser = await usersModel
@@ -23,7 +23,7 @@ export const getUserById = async (req, res) => {
     const { id } = req.params;
 
     if (req.user.role !== 'admin') {
-        throw appError("Admin only!", 403); // 403: không có quyền
+        throw appError("chỉ admin mới có quyền", 403); // 403: không có quyền
     }
 
     const findUserById = await usersModel
@@ -31,7 +31,7 @@ export const getUserById = async (req, res) => {
         // không trả về password và refreshToken để bảo mật thông tin người dùng
         .select("-password -refreshToken");
     if (!findUserById) {
-        throw appError("User not found!", 404); // 404: không tìm thấy
+        throw appError("Không tìm thấy người dùng !", 404); // 404: không tìm thấy
     }
     return res.json(findUserById);
 
@@ -51,7 +51,7 @@ export const update = async (req, res) => {
     // tìm người dùng theo id
     const user = await usersModel.findById(id);
     if (!user) {
-        throw appError("User not found!", 404); // 404: không tìm thấy
+        throw appError("Không tìm thấy người dùng !", 404); // 404: không tìm thấy
     };
 
     // cập nhật lại các trường thông tin
@@ -79,25 +79,25 @@ export const deleteUser = async (req, res) => {
     const { id } = req.params;
 
     if (req.user.role !== 'admin') {
-        throw appError("Admin only!", 403); // 403: không có quyền
+        throw appError("Chỉ admin mới có quyền !", 403); // 403: không có quyền
     };
 
     // chống tự xóa admin
 
     if (req.user._id.toString() === id) {
-        throw appError("Cannot delete yourself", 403); // 403: không có quyền
+        throw appError("Không thể tự xóa tài khoản của bạn !", 403); // 403: không có quyền
     };
 
     //tìm người dùng theo id
     const findUser = await usersModel.findById(id);
     if (!findUser) {
-        throw appError("User not found!", 404); // 404: không tìm thấy
+        throw appError("Không tìm thấy người dùng !", 404); // 404: không tìm thấy
     };
 
     // xóa người dùng 
     await usersModel.findByIdAndDelete(id);
 
     return res.json({
-        message: "User deleted successfully!"
+        message: "Người dùng đã được xóa thành công!"
     });
 };

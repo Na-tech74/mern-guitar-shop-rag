@@ -10,11 +10,11 @@ export const createCategory = async (req, res) => {
     const { name, description } = req.body;
 
     if (req.user.role !== 'admin') {
-        throw appError("Admin only", 403);
+        throw appError("Chỉ admin mới có quyền !", 403);
     }
 
     if (!name || !description) {
-        throw appError("Missing fields!", 400);
+        throw appError("Thiếu trường bắt buộc !", 400);
     }
 
     const createCategory = await categoryModel.create({
@@ -24,7 +24,7 @@ export const createCategory = async (req, res) => {
     });
 
     return res.status(201).json(formatSuccessResponse(
-        'Category created successfully!',
+        'Danh mục đã được tạo thành công !',
         createCategory
     ));
 };
@@ -34,11 +34,11 @@ export const getAllCategory = async (req, res) => {
     const category = await categoryModel.find();
 
     if (!category || category.length === 0) {
-        throw appError("Category not found!", 404);
+        throw appError("Danh mục không tồn tại !", 404);
     }
 
     return res.json(formatSuccessResponse(
-        'Categories retrieved successfully!',
+        'Danh mục đã được lấy thành công !',
         category
     ));
 };
@@ -49,11 +49,11 @@ export const getCategoryById = async (req, res) => {
     const category = await categoryModel.findById(id);
 
     if (!category) {
-        throw appError("Category not found!", 404);
+        throw appError("Danh mục không tồn tại !", 404);
     }
 
     return res.json(formatSuccessResponse(
-        'Category retrieved successfully!',
+        'Danh mục đã được lấy thành công !',
         category
     ));
 };
@@ -63,12 +63,12 @@ export const updateCategory = async (req, res) => {
     const { name, description } = req.body;
 
     if (req.user.role !== 'admin') {
-        throw appError("Admin only", 403);
+        throw appError("Chỉ admin mới có quyền !", 403);
     }
 
     const category = await categoryModel.findById(id);
     if (!category) {
-        throw appError("Category not found!", 404);
+        throw appError("Danh mục không tồn tại !", 404);
     }
 
     if (name) {
@@ -82,7 +82,7 @@ export const updateCategory = async (req, res) => {
     await category.save();
 
     return res.json(formatSuccessResponse(
-        'Category updated successfully!',
+        'Danh mục đã được cập nhật thành công !',
         category
     ));
 };
@@ -92,17 +92,17 @@ export const deleteCategory = async (req, res) => {
     const { id } = req.params;
 
     if (req.user.role !== 'admin') {
-        throw appError("Admin only", 403);
+        throw appError("Chỉ admin mới có quyền !", 403);
     }
 
     const category = await categoryModel.findById(id);
     if (!category) {
-        throw appError("Category not found!", 404);
+        throw appError("Danh mục không tồn tại !", 404);
     }
 
     await category.deleteOne();
 
     return res.json(formatSuccessResponse(
-        'Category deleted successfully!'
+        'Danh mục đã được xóa thành công !'
     ));
 };
