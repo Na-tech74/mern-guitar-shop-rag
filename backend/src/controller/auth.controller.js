@@ -10,9 +10,13 @@ export const register = async (req, res) => {
     const { name, email, password } = req.body;
 
     // kiểm tra nhập thông tin
-
     if (!name || !email || !password) {
         throw appError("Vui lòng nhập đầy đủ thông tin!", 400); // 400: thiếu dữ liệu
+    }
+
+    // kiểm tra email hợp lệ 
+    if (email && !email.includes("@gmail.com")) {
+        throw appError("Email không hợp lệ!", 400); // 400: thiếu dữ liệu
     }
 
     // kiểm tra password phải hơn 8 ký tự
@@ -79,13 +83,17 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
 
     const { email, password } = req.body;
-
+    // kiểm tra nhập thông tin
     if (!email || !password) {
         throw appError("Vui lòng nhập đầy đủ thông tin!", 400); // 400: thiếu dữ liệu
     }
 
-    // kiểm tra email đã đăng nhập chưa !
+    // kiểm tra email hợp lệ
+    if (email && !email.includes("@gmail.com")) {
+        throw appError("Email không hợp lệ!", 400); // 400: thiếu dữ liệu
+    }
 
+    // kiểm tra email đã đăng nhập chưa !
     const user = await usersModel.findOne({ email });
     if (!user) {
         throw appError("Email không tồn tại!", 401); // 401: chưa auth
@@ -126,6 +134,7 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
 
     const userId = req.user._id; // lấy từ JWT token
+
     const user = await usersModel.findById(userId, {
         // Chỉ cập nhật trường refreshToken, không cần lấy các trường khác
         refreshToken: ""
@@ -152,6 +161,10 @@ export const logout = async (req, res) => {
 export const forgotPassword = async (req, res) => {
 
     const { email } = req.body;
+
+    if (!email) {
+        throw appError("Vui lòng nhập email!", 400);
+    };
 
     const user = await usersModel.findOne({ email });
     if (!user) {
@@ -207,7 +220,7 @@ export const resetPassword = async (req, res) => {
         String(user.resetOtp).trim() !== String(otp).trim() ||
         user.resetOtpExpire < Date.now()
     ) {
-        throw appError("OTP invalid or expired !", 400);
+        throw appError("OTP không hợp lệ hoặc đã hết hạn!", 400);
     };
 
     // Hash mật khẩu mới
@@ -221,6 +234,6 @@ export const resetPassword = async (req, res) => {
     await user.save();
 
     return res.json({
-        message: "Password reset successful!"
+        message: "Đặt lại mật khẩu thành công!"
     });
 };
