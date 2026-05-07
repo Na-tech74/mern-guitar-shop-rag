@@ -2,30 +2,16 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faPhone,
-  faSearch,
-  faHeart,
-  faUser,
-  faCartShopping,
-  faBars,
-  faChevronDown,
-  faMedal,
-  faEnvelope,
-  faTimes,
-  faUserPlus,
-  faRightToBracket,
-  faRightFromBracket,
-  faHistory,
-  faDiamond,
+  faPhone, faSearch, faHeart, faUser, faCartShopping, faBars,
+  faChevronDown, faMedal, faEnvelope, faTimes, faUserPlus, faRightToBracket,
+  faRightFromBracket, faHistory, faDiamond,
 } from '@fortawesome/free-solid-svg-icons';
-import {
-  faFacebook,
-  faYoutube,
-  faTiktok,
-  faInstagram,
-} from '@fortawesome/free-brands-svg-icons';
+import { faFacebook, faYoutube, faTiktok, faInstagram } from '@fortawesome/free-brands-svg-icons';
+import { menuItems } from '../../data/dbContext';
+import "../../assets/css/header.css";
 
 export default function Header() {
+  
   const [isSticky, setIsSticky] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
@@ -72,80 +58,11 @@ export default function Header() {
     setIsAccountOpen(false);
   };
 
-  // Menu items với dropdown
-  const menuItems = [
-    {
-      name: 'TRANG CHỦ',
-      path: '/',
-      hasDropdown: false
-    },
-    {
-      name: 'GIỚI THIỆU',
-      path: '/gioi-thieu',
-      hasDropdown: false
-    },
-    {
-      name: 'KHÓA HỌC',
-      path: '/khoa-hoc',
-      hasDropdown: true,
-      dropdownItems: [
-        { name: 'Guitar cơ bản', path: '/khoa-hoc/guitar-co-ban' },
-        { name: 'Guitar nâng cao', path: '/khoa-hoc/guitar-nang-cao' },
-        { name: 'Piano cơ bản', path: '/khoa-hoc/piano-co-ban' },
-        { name: 'Piano nâng cao', path: '/khoa-hoc/piano-nang-cao' },
-        { name: 'Ukulele', path: '/khoa-hoc/ukulele' },
-        { name: 'Nhạc lý', path: '/khoa-hoc/nhac-ly' },
-      ]
-    },
-    {
-      name: 'ĐÀN PIANO',
-      path: '/dan-piano',
-      hasDropdown: true,
-      dropdownItems: [
-        { name: 'Piano cơ', path: '/dan-piano/co', badge: 'HOT' },
-        { name: 'Piano điện', path: '/dan-piano/dien', badge: 'NEW' },
-        { name: 'Piano cũ', path: '/dan-piano/cu', badge: 'SALE' },
-        { name: 'Phụ kiện Piano', path: '/phu-kien/piano' },
-      ]
-    },
-    {
-      name: 'ĐÀN GUITAR',
-      path: '/dan-guitar',
-      hasDropdown: true,
-      dropdownItems: [
-        { name: 'Guitar Acoustic', path: '/dan-guitar/acoustic', badge: 'BEST' },
-        { name: 'Guitar Classic', path: '/dan-guitar/classic' },
-        { name: 'Guitar Electric', path: '/dan-guitar/electric' },
-        { name: 'Guitar Bass', path: '/dan-guitar/bass' },
-        { name: 'Guitar Cũ', path: '/dan-guitar/cu', badge: 'SALE' },
-        { name: 'Phụ kiện Guitar', path: '/phu-kien/guitar' },
-      ]
-    },
-    {
-      name: 'PHỤ KIỆN',
-      path: '/phu-kien',
-      hasDropdown: true,
-      dropdownItems: [
-        { name: 'Dây đàn', path: '/phu-kien/day-dan' },
-        { name: 'Capo', path: '/phu-kien/capo' },
-        { name: 'Túi đàn', path: '/phu-kien/tui-dan' },
-        { name: 'Giá đàn', path: '/phu-kien/gia-dan' },
-        { name: 'Amply', path: '/phu-kien/amply' },
-        { name: 'Tai nghe', path: '/phu-kien/tai-nghe' },
-      ]
-    },
-    {
-      name: 'LIÊN HỆ',
-      path: '/lien-he',
-      hasDropdown: false
-    },
-  ];
-
   return (
     <>
       <header className={`w-full z-50 transition-all duration-300 ${isSticky
-          ? 'fixed top-0 shadow-2xl animate-slideDown bg-black/95 backdrop-blur-md'
-          : 'relative bg-black'
+        ? 'fixed top-0 shadow-2xl animate-slideDown bg-black/95 backdrop-blur-md'
+        : 'relative bg-black'
         }`}>
 
         {/* ========== TOP BAR ========== */}
@@ -423,10 +340,10 @@ export default function Header() {
                               <span>{subItem.name}</span>
                               {subItem.badge && (
                                 <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${subItem.badge === 'HOT' ? 'bg-red-500 text-white' :
-                                    subItem.badge === 'NEW' ? 'bg-green-500 text-white' :
-                                      subItem.badge === 'SALE' ? 'bg-orange-500 text-white' :
-                                        subItem.badge === 'BEST' ? 'bg-amber-500 text-white' :
-                                          'bg-gray-200'
+                                  subItem.badge === 'NEW' ? 'bg-green-500 text-white' :
+                                    subItem.badge === 'SALE' ? 'bg-orange-500 text-white' :
+                                      subItem.badge === 'BEST' ? 'bg-amber-500 text-white' :
+                                        'bg-gray-200'
                                   }`}>
                                   {subItem.badge}
                                 </span>
@@ -521,9 +438,9 @@ export default function Header() {
                     <p className="text-xs text-gray-500">namn98561@gmail.com</p>
                     <div className="flex gap-2 mt-1">
                       <span className="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded">
-                      <FontAwesomeIcon icon={faDiamond} className="text-amber-600 text-xs mr-1" />
-                       VIP
-                       </span>
+                        <FontAwesomeIcon icon={faDiamond} className="text-amber-600 text-xs mr-1" />
+                        VIP
+                      </span>
                       <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded">100 điểm</span>
                     </div>
                   </div>
@@ -577,10 +494,10 @@ export default function Header() {
                             <span>{subItem.name}</span>
                             {subItem.badge && (
                               <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${subItem.badge === 'HOT' ? 'bg-red-500 text-white' :
-                                  subItem.badge === 'NEW' ? 'bg-green-400 text-white' :
-                                    subItem.badge === 'SALE' ? 'bg-orange-400 text-white' :
-                                      subItem.badge === 'BEST' ? 'bg-amber-400 text-white' :
-                                        'bg-gray-200'
+                                subItem.badge === 'NEW' ? 'bg-green-400 text-white' :
+                                  subItem.badge === 'SALE' ? 'bg-orange-400 text-white' :
+                                    subItem.badge === 'BEST' ? 'bg-amber-400 text-white' :
+                                      'bg-gray-200'
                                 }`}>
                                 {subItem.badge}
                               </span>
@@ -601,7 +518,7 @@ export default function Header() {
               className="flex items-center gap-3 px-5 py-3 text-gray-700 hover:bg-amber-50 transition"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              <FontAwesomeIcon icon={faHeart}  />
+              <FontAwesomeIcon icon={faHeart} />
               <span>Yêu thích</span>
               <span className="ml-auto bg-gray-100 px-2 py-0.5 rounded text-xs">{wishlistCount}</span>
             </Link>
@@ -611,15 +528,15 @@ export default function Header() {
               className="flex items-center gap-3 px-5 py-3 text-gray-700 hover:bg-amber-50 transition"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              <FontAwesomeIcon icon={faHistory}/>
+              <FontAwesomeIcon icon={faHistory} />
               <span>Đơn hàng của tôi</span>
             </Link>
 
             {/* Hotline Mobile */}
             <div className="m-4 p-3 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-lg">
               <p className="text-xs text-gray-500 mb-1">
-              <FontAwesomeIcon icon={faPhone} className="text-amber-600 mr-1" />
-               HOTLINE HỖ TRỢ</p>
+                <FontAwesomeIcon icon={faPhone} className="text-amber-600 mr-1" />
+                HOTLINE HỖ TRỢ</p>
               <a href="tel:0378623181" className="text-amber-700 font-bold text-lg block">
                 037.862.3181
               </a>
@@ -628,63 +545,6 @@ export default function Header() {
           </div>
         </>
       )}
-
-      {/* ========== CSS ANIMATIONS ========== */}
-      <style>{`
-        @keyframes slideDown {
-          from {
-            transform: translateY(-100%);
-            opacity: 0;
-          }
-          to {
-            transform: translateY(0);
-            opacity: 1;
-          }
-        }
-        
-        @keyframes slideInRight {
-          from {
-            transform: translateX(-100%);
-          }
-          to {
-            transform: translateX(0);
-          }
-        }
-        
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-        
-        .animate-slideDown {
-          animation: slideDown 0.3s ease-out;
-        }
-        
-        .animate-slideInRight {
-          animation: slideInRight 0.3s ease-out;
-        }
-        
-        .animate-fadeIn {
-          animation: fadeIn 0.2s ease-out;
-        }
-        
-        .animate-bounce {
-          animation: bounce 0.5s ease-out;
-        }
-        
-        @keyframes bounce {
-          0%, 100% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-3px);
-          }
-        }
-      `}</style>
     </>
   );
 }
