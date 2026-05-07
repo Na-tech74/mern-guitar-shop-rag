@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import useRegister from "../../hooks/useRegister";
+import useRegister from "../../hooks/auth/useRegister.js";
 
 export default function Register() {
     const {

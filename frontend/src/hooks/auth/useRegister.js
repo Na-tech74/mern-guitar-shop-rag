@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { registerAPI } from "../api/authAPI";
+import { registerAPI } from "../../api/authAPI";
 
 export default function useRegister() {
     const [form, setForm] = useState({

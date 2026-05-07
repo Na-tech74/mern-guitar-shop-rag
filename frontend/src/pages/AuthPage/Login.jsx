@@ -1,57 +1,7 @@
-import { useState } from "react";
-import { loginAPI } from "../../api/authAPI";
-import { Link, useNavigate } from "react-router-dom";
-
+import { Link } from "react-router-dom";
+import useLogin from "../../hooks/auth/useLogin";
 export default function Login() {
-    const [form, setForm] = useState({
-        email: "",
-        password: ""
-    });
-
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
-
-    const handleChange = (e) => {
-        setForm({
-            ...form,
-            [e.target.name]: e.target.value
-        });
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-
-        try {
-            const res = await loginAPI(form);
-
-            //  lưu token
-            localStorage.setItem("token", res.data.accessToken);
-            localStorage.setItem("role", res.data.role);
-            console.log("ROLE:", res.data.role);
-
-            //role để phân quyền (admin/user)
-
-            if (res.data.role === "admin") {
-                navigate("/admin");
-            } else {
-                navigate("/");
-            }
-            // console.log(res.data);
-            alert("Đăng nhập thành công");
-
-            // reset
-            setForm({
-                email: "",
-                password: ""
-            });
-        } catch (err) {
-            alert(err.response?.data?.message || "Lỗi server");
-        } finally {
-            setLoading(false);
-        }
-    };
-
+    const { form, loading, handleChange, handleSubmit } = useLogin();
     return (
         <div className="min-h-screen bg-white flex items-center justify-center px-4">
             <div className="w-full max-w-sm bg-white border border-[#e8dcc8] rounded-2xl p-8 relative overflow-hidden">
