@@ -1,93 +1,96 @@
+// components/dashboard/AdminHeader.jsx
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faBell, faSearch, faUserCircle, faCog, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
-import useLogout from "../../hooks/auth/useLogout";
+import {
+    faBars,
+    faBell,
+    faMessage,
+    faSearch
+} from "@fortawesome/free-solid-svg-icons";
+
 export default function AdminHeader({ toggleSidebar }) {
 
-    const { userInfo, handleLogout } = useLogout();
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b bg-white">
-            <div className="flex items-center justify-between px-4 py-3 lg:px-6">
+        <header className="h-[70px] border-b border-gray-200 bg-white">
+
+            <div className="flex h-full items-center gap-4 px-6">
 
                 {/* LEFT */}
                 <div className="flex items-center gap-3">
-                    <button onClick={toggleSidebar} className="flex h-10 w-10 items-center justify-center rounded-xl border bg-gray-50 hover:bg-gray-100 lg:hidden">
-                        <FontAwesomeIcon icon={faBars} className="text-gray-700" />
+
+                    <button
+                        onClick={toggleSidebar}
+                        className="flex h-10 w-10 items-center justify-center rounded-xl hover:bg-gray-100 lg:hidden"
+                    >
+                        <FontAwesomeIcon icon={faBars} />
                     </button>
 
-                    <div>
-                        <h1 className="text-xl font-bold text-gray-800">Admin Dashboard</h1>
-                        <p className="hidden text-sm text-gray-500 md:block">Chào mừng bạn quay lại</p>
+                    <div className="hidden items-center gap-2 md:flex">
+
+                        <span className="text-sm text-gray-400">
+                            Home
+                        </span>
+
+                        <span className="text-gray-300">
+                            /
+                        </span>
+
+                        <span className="text-sm font-medium text-gray-700">
+                            Dashboard
+                        </span>
                     </div>
                 </div>
 
                 {/* SEARCH */}
-                <div className="hidden w-full max-w-md lg:block">
-                    <div className="relative">
-                        <FontAwesomeIcon icon={faSearch} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                <div className="relative ml-4 hidden max-w-sm flex-1 lg:block">
 
-                        <input
-                            type="text"
-                            placeholder="Tìm kiếm..."
-                            className="h-11 w-full rounded-2xl border border-gray-200 bg-gray-50 pl-11 pr-4 text-sm outline-none transition focus:border-blue-500 focus:bg-white"
-                        />
-                    </div>
+                    <FontAwesomeIcon
+                        icon={faSearch}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-400"
+                    />
+
+                    <input
+                        type="text"
+                        placeholder="Tìm kiếm..."
+                        className="
+                            h-10
+                            w-full
+                            rounded-xl
+                            border
+                            border-gray-200
+                            bg-gray-50
+                            pl-11
+                            pr-4
+                            text-sm
+                            outline-none
+                            focus:border-indigo-500
+                            focus:bg-white
+                        "
+                    />
                 </div>
 
                 {/* RIGHT */}
-                <div className="flex items-center gap-3">
+                <div className="ml-auto flex items-center gap-2">
 
-                    {/* Notification */}
-                    <button className="relative flex h-11 w-11 items-center justify-center rounded-2xl border border-gray-200 bg-gray-50 hover:bg-gray-100">
-                        <FontAwesomeIcon icon={faBell} className="text-gray-700" />
+                    <button className="relative flex h-10 w-10 items-center justify-center rounded-xl hover:bg-gray-100">
+                        <FontAwesomeIcon icon={faBell} />
 
-                        <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500" />
+                        <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-orange-500" />
                     </button>
 
-                    {/* PROFILE */}
-                    <div className="group relative">
-                        <button className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-gray-50 px-3 py-2 hover:bg-gray-100">
+                    <button className="flex h-10 w-10 items-center justify-center rounded-xl hover:bg-gray-100">
+                        <FontAwesomeIcon icon={faMessage} />
+                    </button>
 
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500 text-white">
-                                <FontAwesomeIcon icon={faUserCircle} />
-                            </div>
+                    <div className="mx-2 h-5 w-[1px] bg-gray-200" />
 
-                            <div className="hidden text-left md:block">
-                                <h4 className="text-sm font-semibold text-gray-800">
-                                    {userInfo?.name || "admin"}
-                                </h4>
-
-                                <p className="text-xs text-gray-500">
-                                    {userInfo?.email || "admin@gmail.com"}
-                                </p>
-                            </div>
-
-                        </button>
-
-                        {/* Dropdown */}
-                        <div className="invisible absolute right-0 top-14 w-52 translate-y-2 rounded-2xl border border-gray-100 bg-white p-2 opacity-0 shadow-lg transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
-
-                            <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm hover:bg-gray-100">
-                                <FontAwesomeIcon icon={faUserCircle} />
-                                Profile
-                            </button>
-
-                            <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm hover:bg-gray-100">
-                                <FontAwesomeIcon icon={faCog} />
-                                Settings
-                            </button>
-
-                            <div className="my-2 border-t" />
-
-                            <button className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm text-red-500 hover:bg-red-50"
-                                onClick={handleLogout}>
-                                <FontAwesomeIcon icon={faSignOutAlt} />
-                                Đang xuất
-                            </button>
-                        </div>
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-green-100 text-xs font-semibold text-green-700">
+                        {userInfo?.name?.charAt(0).toUpperCase()}
                     </div>
                 </div>
             </div>
         </header>
     );
-}
+} 
