@@ -19,13 +19,12 @@ export default function useRegister() {
 
     const resetForm = () => {
         setForm({
-            name: "",
             email: "",
             password: ""
         });
     };
 
-    const handleSubmit = async (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
 
@@ -45,6 +44,6 @@ export default function useRegister() {
         form,
         loading,
         handleChange,
-        handleSubmit
+        handleLogin
     };
 }
