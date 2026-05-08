@@ -17,7 +17,6 @@ export default function useLogin() {
             [e.target.name]: e.target.value
         });
     };
-    // const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -25,24 +24,31 @@ export default function useLogin() {
 
         try {
             const res = await loginAPI(form);
-
+            console.log("API response:", res.data);
+            //  lưu token
             localStorage.setItem("token", res.data.accessToken);
+            // lưu toàn bộ thông tin người dùng vào localStorage dưới dạng JSON string
             localStorage.setItem("userInfo", JSON.stringify({
                 name: res.data.name,
                 email: res.data.email,
                 role: res.data.role
-            }));
+            })); 
 
-            alert("Đăng nhập thành công");
-            
+            //role để phân quyền (admin/user)
+
             if (res.data.role === "admin") {
                 navigate("/admin");
             } else {
                 navigate("/");
             }
+            console.log(res.data);
+            alert("Đăng nhập thành công !");
 
-            setForm({ email: "", password: "" });
-
+            // reset
+            setForm({
+                email: "",
+                password: ""
+            });
         } catch (err) {
             alert(err.response?.data?.message || "Lỗi server");
         } finally {
@@ -53,7 +59,6 @@ export default function useLogin() {
         form,
         loading,
         handleChange,
-        handleLogin,
-        // userInfo
+        handleLogin
     });
 };
