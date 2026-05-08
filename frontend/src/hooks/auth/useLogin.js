@@ -17,38 +17,32 @@ export default function useLogin() {
             [e.target.name]: e.target.value
         });
     };
+    // const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
-    const handleSubmit = async (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
 
         try {
             const res = await loginAPI(form);
 
-            //  lưu token
             localStorage.setItem("token", res.data.accessToken);
-            localStorage.setItem("role", res.data.role);
+            localStorage.setItem("userInfo", JSON.stringify({
+                name: res.data.name,
+                email: res.data.email,
+                role: res.data.role
+            }));
 
-            // CookieStore.setItem("refreshToken", res.data.refreshToken, {
-            //     path: "/"
-            // }); 
-            console.log("ROLE:", res.data.role);
-
-            //role để phân quyền (admin/user)
-
+            alert("Đăng nhập thành công");
+            
             if (res.data.role === "admin") {
                 navigate("/admin");
             } else {
                 navigate("/");
             }
-            // console.log(res.data);
-            alert("Đăng nhập thành công");
 
-            // reset
-            setForm({
-                email: "",
-                password: ""
-            });
+            setForm({ email: "", password: "" });
+
         } catch (err) {
             alert(err.response?.data?.message || "Lỗi server");
         } finally {
@@ -59,6 +53,7 @@ export default function useLogin() {
         form,
         loading,
         handleChange,
-        handleSubmit
+        handleLogin,
+        // userInfo
     });
 };

@@ -1,10 +1,10 @@
 import { Outlet } from "react-router-dom";
-import AdminPage from "../pages/AdminPage/AdminPage";
+import AdminHeader from "../components/dashboard/Header";
 
 export default function AuthLayout() {
     return (
         <>
-            <AdminPage />
+            <AdminHeader/>
             <main className="container mx-auto mt-4">
                 <Outlet />
             </main>

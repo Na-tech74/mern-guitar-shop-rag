@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import useLogin from "../../hooks/auth/useLogin";
 export default function Login() {
-    const { form, loading, handleChange, handleSubmit } = useLogin();
+    const { form, loading, handleChange, handleLogin } = useLogin();
     return (
         <div className="min-h-screen bg-white flex items-center justify-center px-4">
             <div className="w-full max-w-sm bg-white border border-[#e8dcc8] rounded-2xl p-8 relative overflow-hidden">
@@ -14,7 +14,7 @@ export default function Login() {
                 </div>
 
                 {/* FORM */}
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleLogin} className="space-y-4">
 
                     <input
                         name="email"

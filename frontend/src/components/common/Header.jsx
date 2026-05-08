@@ -11,7 +11,7 @@ import { menuItems } from '../../data/dbContext';
 import "../../assets/css/header.css";
 
 export default function Header() {
-  
+
   const [isSticky, setIsSticky] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
@@ -19,7 +19,6 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
   const [cartCount] = useState(3);
   const [wishlistCount] = useState(2);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null); // State cho dropdown menu
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
@@ -52,10 +51,18 @@ export default function Header() {
     }
   };
 
+  // Lấy thông tin người dùng từ localStorage để hiển thị tên và email
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const isLoggedIn = !!userInfo; // Kiểm tra nếu có thông tin người dùng thì đã đăng nhập
+
   // Handle logout
   const handleLogout = () => {
-    setIsLoggedIn(false);
+    localStorage.removeItem("userInfo");
+    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
     setIsAccountOpen(false);
+    navigate("/");
+    window.location.reload(); // Tải lại trang để cập nhật giao diện
   };
 
   return (
@@ -169,10 +176,14 @@ export default function Header() {
                   <FontAwesomeIcon icon={faUser} className="text-xl" />
                   <div className="hidden xl:block text-left">
                     <p className="text-xs text-gray-500 group-hover:text-amber-500">
-                      {isLoggedIn ? 'Xin chào,' : 'Tài khoản'}
+                      {isLoggedIn
+                        ? `Xin chào ${userInfo?.name}`
+                        : `Tài khoản${userInfo?.email}`
+                      }
                     </p>
                     <p className="text-sm font-medium flex items-center gap-1">
-                      {isLoggedIn ? 'Khách hàng' : 'Đăng nhập'}
+                      {isLoggedIn ? userInfo?.name : 'Đăng nhập'}
+
                       <FontAwesomeIcon icon={faChevronDown} className="text-[10px] opacity-50" />
                     </p>
                   </div>
@@ -186,6 +197,7 @@ export default function Header() {
                           <p className="text-sm font-semibold text-gray-800">Chào mừng bạn!</p>
                           <p className="text-xs text-gray-500">Đăng nhập để nhận ưu đãi đặc biệt</p>
                         </div>
+
                         <Link
                           to="/login"
                           className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-amber-50 transition"
@@ -194,6 +206,7 @@ export default function Header() {
                           <FontAwesomeIcon icon={faRightToBracket} className="w-4 text-amber-600" />
                           <span>Đăng nhập</span>
                         </Link>
+
                         <Link
                           to="/register"
                           className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-amber-50 transition border-t"
@@ -207,8 +220,8 @@ export default function Header() {
                     ) : (
                       <>
                         <div className="p-4 bg-gradient-to-r from-amber-50 to-yellow-50 border-b">
-                          <p className="text-sm font-semibold text-gray-800">Xin chào, Nguyễn Văn Nam!</p>
-                          <p className="text-xs text-gray-500">namn98561@gmail.com</p>
+                          <p className="text-sm font-semibold text-gray-800">Xin chào, {userInfo?.name}</p>
+                          <p className="text-xs text-gray-500">{userInfo?.email}</p>
                         </div>
                         <Link
                           to="/account"
@@ -251,6 +264,7 @@ export default function Header() {
                 </div>
                 <span className="text-xs text-gray-500 group-hover:text-amber-500 hidden xl:inline">Giỏ hàng</span>
               </Link>
+
             </div>
 
             {/* Mobile Buttons */}
@@ -383,6 +397,7 @@ export default function Header() {
         {/* Sticky spacing */}
         {isSticky && <div className="hidden lg:block h-[132px]"></div>}
         {isSticky && <div className="lg:hidden h-[72px]"></div>}
+
       </header>
 
       {/* ========== MOBILE MENU WITH DROPDOWN ========== */}
@@ -431,11 +446,11 @@ export default function Header() {
               ) : (
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
-                    N
+                    {userInfo?.name?.charAt(0)}
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-800">Nguyễn Văn Nam</p>
-                    <p className="text-xs text-gray-500">namn98561@gmail.com</p>
+                    <p className="font-semibold text-gray-800">{userInfo?.name}</p>
+                    <p className="text-xs text-gray-500">{userInfo?.email}</p>
                     <div className="flex gap-2 mt-1">
                       <span className="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded">
                         <FontAwesomeIcon icon={faDiamond} className="text-amber-600 text-xs mr-1" />
