@@ -28,6 +28,10 @@ export default function useLogin() {
             //  lưu token
             localStorage.setItem("token", res.data.accessToken);
             localStorage.setItem("role", res.data.role);
+
+            // CookieStore.setItem("refreshToken", res.data.refreshToken, {
+            //     path: "/"
+            // }); 
             console.log("ROLE:", res.data.role);
 
             //role để phân quyền (admin/user)
