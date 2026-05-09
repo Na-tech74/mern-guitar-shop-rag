@@ -7,14 +7,16 @@ export default function AdminLayout() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     return (
-        <div className="flex min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50">
             <AdminSidebar
                 isSidebarOpen={isSidebarOpen}
                 setIsSidebarOpen={setIsSidebarOpen}
             />
-            <div className="flex-1 lg:ml-[260px]">
-                <AdminHeader toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
-                <main className="p-6 bg-gray-50 min-h-[calc(100vh-70px)]">
+            <div className="lg:ml-[260px]">
+                <div className="fixed top-0 right-0 left-0 lg:left-[260px] z-40">
+                    <AdminHeader toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+                </div>
+                <main className="p-6 pt-[86px] min-h-screen">
                     <Outlet />
                 </main>
             </div>

@@ -19,18 +19,19 @@ export default function useRegister() {
 
     const resetForm = () => {
         setForm({
+            name: "",
             email: "",
             password: ""
         });
     };
 
-    const handleLogin = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
 
         try {
             const res = await registerAPI(form);
-            alert("Đăng ký thành công");
+            alert("Đăng ký thành công!");
             console.log(res.data);
             resetForm();
         } catch (err) {
@@ -44,6 +45,6 @@ export default function useRegister() {
         form,
         loading,
         handleChange,
-        handleLogin
+        handleSubmit
     };
 }

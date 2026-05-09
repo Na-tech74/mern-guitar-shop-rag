@@ -10,6 +10,7 @@ export const useUsers = () => {
         try {
             setLoading(true);
             const res = await userAPI.getAll();
+            console.log("Users API response:", res);
             if (Array.isArray(res.data)) {
                 setUsers(res.data);
             } else if (res.data && Array.isArray(res.data.data)) {
@@ -18,6 +19,7 @@ export const useUsers = () => {
                 setUsers([]);
             }
         } catch (err) {
+            console.error("Error fetching users:", err);
             setError(err.message);
         } finally {
             setLoading(false);
@@ -40,53 +42,6 @@ export const useUsers = () => {
         return res;
     }, [refetch]);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            if (editingUser) {
-                await updateUser(editingUser._id, formData);
-            }
-            setShowModal(false);
-            resetForm();
-        } catch (error) {
-            console.error("Error saving user:", error);
-            alert("Có lỗi xảy ra!");
-        }
-    };
-
-    const handleDelete = async (id) => {
-        if (!window.confirm("Bạn có chắc muốn xóa người dùng này?")) return;
-        try {
-            await deleteUser(id);
-        } catch (error) {
-            console.error("Error deleting user:", error);
-            alert("Có lỗi xảy ra!");
-        }
-    };
-
-    const handleEdit = (user) => {
-        setEditingUser(user);
-        setFormData({
-            name: user.name,
-            email: user.email,
-            role: user.role || "user",
-        });
-        setShowModal(true);
-    };
-
-    const resetForm = () => {
-        setEditingUser(null);
-        setFormData({
-            name: "",
-            email: "",
-            role: "user",
-        });
-    };
-
-    const filteredUsers = users.filter(u =>
-        u.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        u.email?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
     return {
         users,
         loading,
@@ -94,10 +49,5 @@ export const useUsers = () => {
         refetch,
         updateUser,
         deleteUser,
-        handleSubmit,
-        handleDelete,
-        handleEdit,
-        resetForm,
-        filteredUsers,
     };
 };

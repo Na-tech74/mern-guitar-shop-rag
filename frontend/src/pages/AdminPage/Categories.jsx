@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faPen, faTrash, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { formatDate } from "../../helpers/format";
-import { useCategories } from "../../hooks/admin";
+import { useCategories } from "../../hooks/admin/useCategories";
 
 export default function Categories() {
     const { categories, loading, createCategory, updateCategory, deleteCategory

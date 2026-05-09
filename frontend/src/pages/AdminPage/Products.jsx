@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faPen, faTrash, faSearch, faImage } from "@fortawesome/free-solid-svg-icons";
 import { formatCurrency } from "../../helpers/format";
-import { useProducts } from "../../hooks/admin";
+import { useProducts } from "../../hooks/admin/useProducts";
 
 export default function Products() {
     const { products, categories, loading, createProduct, updateProduct, deleteProduct,

@@ -1,19 +1,28 @@
 // components/dashboard/AdminHeader.jsx
 
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faBars,
     faBell,
     faMessage,
-    faSearch
+    faSearch,
+    faRightFromBracket
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function AdminHeader({ toggleSidebar }) {
-
+    const navigate = useNavigate();
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
+    const handleLogout = () => {
+        localStorage.removeItem("userInfo");
+        localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
+        navigate("/");
+    };
+
     return (
-        <header className="h-[70px] border-b border-gray-200 bg-white">
+        <header className="h-[70px] border-b border-gray-200 bg-white fixed-top">
 
             <div className="flex h-full items-center gap-4 px-6">
 
@@ -86,8 +95,15 @@ export default function AdminHeader({ toggleSidebar }) {
 
                     <div className="mx-2 h-5 w-[1px] bg-gray-200" />
 
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-green-100 text-xs font-semibold text-green-700">
-                        {userInfo?.name?.charAt(0).toUpperCase()}
+                    <div className="flex items-center gap-2">
+
+                        <button
+                            onClick={handleLogout}
+                            className="flex h-9 w-9 items-center justify-center rounded-xl hover:bg-red-50 text-gray-500 hover:text-red-600 transition-colors"
+                            title="Đăng xuất"
+                        >
+                            <FontAwesomeIcon icon={faRightFromBracket} />
+                        </button>
                     </div>
                 </div>
             </div>

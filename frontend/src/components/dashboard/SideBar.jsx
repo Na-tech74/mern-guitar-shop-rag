@@ -116,22 +116,14 @@ export default function AdminSidebar({
             >
 
                 {/* LOGO */}
-                <div className="flex items-center justify-between border-b border-gray-200 px-5 py-5">
+                <div className="flex items-center justify-between border-b bg-black/95 px-3 py-3">
 
                     <div className="flex items-center gap-3">
-
-                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 text-white">
-                            <FontAwesomeIcon icon={faBolt} />
-                        </div>
-
                         <div>
-                            <h2 className="text-sm font-semibold text-gray-800">
+                            <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-amber-500 to-amber-300 bg-clip-text text-transparent">
                                 Nam Acoustic
-                            </h2>
-
-                            <p className="text-[11px] text-gray-400">
-                                Admin Panel
-                            </p>
+                            </h1>
+                            <p className="text-[9px] text-gray-400 sm:block">Premium Music Store</p>
                         </div>
                     </div>
 

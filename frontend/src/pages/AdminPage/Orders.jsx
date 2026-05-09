@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { useOrders } from "../../hooks/admin";
+import { useOrders } from "../../hooks/admin/useOrders";
 
 export default function Orders() {
     const { orders, loading, updateStatus } = useOrders();

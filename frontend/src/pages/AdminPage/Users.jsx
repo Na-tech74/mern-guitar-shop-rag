@@ -1,15 +1,27 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrash, faSearch, faUserShield } from "@fortawesome/free-solid-svg-icons";
-import { useUsers } from "../../hooks/admin";
-import { formatDate } from "../../helpers/format";
+import { useUsers } from "../../hooks/admin/useUsers";
+
 export default function Users() {
-    const { users, loading, updateUser, deleteUser,
-        handleDelete, handleEdit, handleSubmit, resetForm, filteredUsers, formatDate } = useUsers();
+    const { users, loading, updateUser, deleteUser } = useUsers();
     const [showModal, setShowModal] = useState(false);
     const [editingUser, setEditingUser] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [formData, setFormData] = useState({ name: "", email: "", role: "user" });
+
+    const filteredUsers = users.filter(u =>
+        u.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        u.email?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const formatDate = (dateString) => {
+        return new Date(dateString).toLocaleDateString("vi-VN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric"
+        });
+    };
 
     if (loading) {
         return (
