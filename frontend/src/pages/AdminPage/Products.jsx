@@ -1,0 +1,302 @@
+import { useState, useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus, faPen, faTrash, faSearch, faImage } from "@fortawesome/free-solid-svg-icons";
+import { productAPI, categoryAPI } from "../../api/adminAPI";
+
+const fetchProductsData = async (setProducts, setLoading) => {
+    try {
+        const res = await productAPI.getAll({ limit: 100 });
+        setProducts(res.data?.data || []);
+    } catch (error) {
+        console.error("Error fetching products:", error);
+    } finally {
+        setLoading(false);
+    }
+};
+
+const fetchCategoriesData = async (setCategories) => {
+    try {
+        const res = await categoryAPI.getAll();
+        setCategories(res.data?.data || []);
+    } catch (error) {
+        console.error("Error fetching categories:", error);
+    }
+};
+
+export default function Products() {
+    const [products, setProducts] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [showModal, setShowModal] = useState(false);
+    const [editingProduct, setEditingProduct] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [formData, setFormData] = useState({
+        name: "",
+        description: "",
+        price: "",
+        category: "",
+        stock: "",
+        images: [],
+    });
+
+    useEffect(() => {
+        fetchProductsData(setProducts, setLoading);
+        fetchCategoriesData(setCategories);
+    }, []);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            if (editingProduct) {
+                await productAPI.update(editingProduct._id, formData);
+            } else {
+                await productAPI.create(formData);
+            }
+            fetchProductsData(setProducts, setLoading);
+            setShowModal(false);
+            resetForm();
+        } catch (error) {
+            console.error("Error saving product:", error);
+            alert("Có lỗi xảy ra!");
+        }
+    };
+
+    const handleDelete = async (id) => {
+        if (!window.confirm("Bạn có chắc muốn xóa sản phẩm này?")) return;
+        try {
+            await productAPI.delete(id);
+            fetchProductsData(setProducts, setLoading);
+        } catch (error) {
+            console.error("Error deleting product:", error);
+            alert("Có lỗi xảy ra!");
+        }
+    };
+
+    const handleEdit = (product) => {
+        setEditingProduct(product);
+        setFormData({
+            name: product.name,
+            description: product.description,
+            price: product.price,
+            category: product.category?._id || product.category,
+            stock: product.stock,
+            images: product.images || [],
+        });
+        setShowModal(true);
+    };
+
+    const resetForm = () => {
+        setEditingProduct(null);
+        setFormData({
+            name: "",
+            description: "",
+            price: "",
+            category: "",
+            stock: "",
+            images: [],
+        });
+    };
+
+    const filteredProducts = products.filter(p =>
+        p.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const formatCurrency = (value) => {
+        return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(value);
+    };
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="space-y-6">
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-2xl font-bold text-gray-800">Quản lý sản phẩm</h1>
+                    <p className="text-gray-500">Quản lý danh sách sản phẩm</p>
+                </div>
+                <button
+                    onClick={() => { resetForm(); setShowModal(true); }}
+                    className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-amber-600 to-amber-500 px-4 py-2 text-sm font-medium text-white hover:from-amber-700 hover:to-amber-600"
+                >
+                    <FontAwesomeIcon icon={faPlus} />
+                    Thêm sản phẩm
+                </button>
+            </div>
+
+            <div className="rounded-xl bg-white p-4 shadow-sm">
+                <div className="mb-4 flex items-center gap-4">
+                    <div className="relative flex-1 max-w-md">
+                        <FontAwesomeIcon icon={faSearch} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <input
+                            type="text"
+                            placeholder="Tìm kiếm sản phẩm..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full rounded-lg border border-gray-200 py-2 pl-10 pr-4 text-sm outline-none focus:border-amber-500"
+                        />
+                    </div>
+                </div>
+
+                <div className="overflow-x-auto">
+                    <table className="w-full">
+                        <thead>
+                            <tr className="border-b border-gray-200">
+                                <th className="pb-3 text-left text-xs font-medium uppercase text-gray-500">Ảnh</th>
+                                <th className="pb-3 text-left text-xs font-medium uppercase text-gray-500">Tên sản phẩm</th>
+                                <th className="pb-3 text-left text-xs font-medium uppercase text-gray-500">Danh mục</th>
+                                <th className="pb-3 text-left text-xs font-medium uppercase text-gray-500">Giá</th>
+                                <th className="pb-3 text-left text-xs font-medium uppercase text-gray-500">Tồn kho</th>
+                                <th className="pb-3 text-left text-xs font-medium uppercase text-gray-500">Đã bán</th>
+                                <th className="pb-3 text-right text-xs font-medium uppercase text-gray-500">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredProducts.map((product) => (
+                                <tr key={product._id} className="border-b border-gray-100 last:border-0">
+                                    <td className="py-3">
+                                        <div className="h-10 w-10 rounded-lg bg-gray-100 overflow-hidden">
+                                            {product.images?.[0] ? (
+                                                <img src={product.images[0]} alt={product.name} className="h-full w-full object-cover" />
+                                            ) : (
+                                                <div className="flex h-full w-full items-center justify-center text-gray-400">
+                                                    <FontAwesomeIcon icon={faImage} />
+                                                </div>
+                                            )}
+                                        </div>
+                                    </td>
+                                    <td className="py-3">
+                                        <p className="font-medium text-gray-800">{product.name}</p>
+                                    </td>
+                                    <td className="py-3 text-sm text-gray-600">
+                                        {product.category?.name || "Chưa phân loại"}
+                                    </td>
+                                    <td className="py-3 font-medium text-gray-800">
+                                        {formatCurrency(product.price)}
+                                    </td>
+                                    <td className="py-3">
+                                        <span className={`text-sm ${product.stock > 0 ? "text-green-600" : "text-red-600"}`}>
+                                            {product.stock}
+                                        </span>
+                                    </td>
+                                    <td className="py-3 text-sm text-gray-600">{product.sold || 0}</td>
+                                    <td className="py-3 text-right">
+                                        <div className="flex items-center justify-end gap-2">
+                                            <button
+                                                onClick={() => handleEdit(product)}
+                                                className="rounded-lg p-2 text-blue-600 hover:bg-blue-50"
+                                            >
+                                                <FontAwesomeIcon icon={faPen} />
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(product._id)}
+                                                className="rounded-lg p-2 text-red-600 hover:bg-red-50"
+                                            >
+                                                <FontAwesomeIcon icon={faTrash} />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                            {filteredProducts.length === 0 && (
+                                <tr>
+                                    <td colSpan={7} className="py-8 text-center text-gray-500">
+                                        Không tìm thấy sản phẩm nào
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {showModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                    <div className="w-full max-w-lg rounded-xl bg-white p-6">
+                        <h2 className="mb-4 text-xl font-semibold text-gray-800">
+                            {editingProduct ? "Cập nhật sản phẩm" : "Thêm sản phẩm mới"}
+                        </h2>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <label className="mb-1 block text-sm font-medium text-gray-700">Tên sản phẩm</label>
+                                <input
+                                    type="text"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-amber-500"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="mb-1 block text-sm font-medium text-gray-700">Mô tả</label>
+                                <textarea
+                                    value={formData.description}
+                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                    className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-amber-500"
+                                    rows={3}
+                                    required
+                                />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="mb-1 block text-sm font-medium text-gray-700">Giá (VND)</label>
+                                    <input
+                                        type="number"
+                                        value={formData.price}
+                                        onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                                        className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-amber-500"
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="mb-1 block text-sm font-medium text-gray-700">Số lượng tồn kho</label>
+                                    <input
+                                        type="number"
+                                        value={formData.stock}
+                                        onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
+                                        className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-amber-500"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="mb-1 block text-sm font-medium text-gray-700">Danh mục</label>
+                                <select
+                                    value={formData.category}
+                                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                    className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-amber-500"
+                                    required
+                                >
+                                    <option value="">Chọn danh mục</option>
+                                    {categories.map((cat) => (
+                                        <option key={cat._id} value={cat._id}>{cat.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="flex justify-end gap-3 pt-4">
+                                <button
+                                    type="button"
+                                    onClick={() => { setShowModal(false); resetForm(); }}
+                                    className="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                                >
+                                    Hủy
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="rounded-lg bg-gradient-to-r from-amber-600 to-amber-500 px-4 py-2 text-sm font-medium text-white hover:from-amber-700 hover:to-amber-600"
+                                >
+                                    {editingProduct ? "Cập nhật" : "Thêm mới"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}

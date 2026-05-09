@@ -31,7 +31,8 @@ export default function useLogin() {
             localStorage.setItem("userInfo", JSON.stringify({
                 name: res.data.name,
                 email: res.data.email,
-                role: res.data.role
+                role: res.data.role,
+                accessToken: res.data.accessToken
             })); 
 
             //role để phân quyền (admin/user)

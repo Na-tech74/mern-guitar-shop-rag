@@ -28,48 +28,48 @@ export default function AdminSidebar({
 
     const menuItems = [
         {
-            title: "Overview",
+            title: "Tổng quan",
             items: [
                 {
-                    name: "Dashboard",
+                    name: "Bảng điều khiển",
                     path: "/admin",
                     icon: faChartPie,
-                    badge: "3"
+                    badge: ""
                 },
                 {
-                    name: "Analytics",
+                    name: "Phân tích",
                     path: "/admin/analytics",
                     icon: faChartColumn
                 },
                 {
-                    name: "Reports",
+                    name: "Báo cáo",
                     path: "/admin/reports",
                     icon: faFileLines,
-                    badge: "New"
+                    badge: "Mới"
                 }
             ]
         },
 
         {
-            title: "Manage",
+            title: "Quản lý",
             items: [
                 {
-                    name: "Users",
+                    name: "Người dùng",
                     path: "/admin/users",
                     icon: faUsers
                 },
                 {
-                    name: "Products",
+                    name: "Sản phẩm",
                     path: "/admin/products",
                     icon: faBox
                 },
                 {
-                    name: "Orders",
+                    name: "Đơn hàng",
                     path: "/admin/orders",
                     icon: faCartShopping
                 },
                 {
-                    name: "Categories",
+                    name: "Danh mục",
                     path: "/admin/categories",
                     icon: faTag
                 }
@@ -77,15 +77,15 @@ export default function AdminSidebar({
         },
 
         {
-            title: "System",
+            title: "Hệ thống",
             items: [
                 {
-                    name: "Settings",
+                    name: "Cài đặt",
                     path: "/admin/settings",
                     icon: faGear
                 },
                 {
-                    name: "Notifications",
+                    name: "Thông báo",
                     path: "/admin/notifications",
                     icon: faBell
                 }
@@ -120,17 +120,17 @@ export default function AdminSidebar({
 
                     <div className="flex items-center gap-3">
 
-                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 text-white">
                             <FontAwesomeIcon icon={faBolt} />
                         </div>
 
                         <div>
                             <h2 className="text-sm font-semibold text-gray-800">
-                                AdminPanel
+                                Nam Acoustic
                             </h2>
 
                             <p className="text-[11px] text-gray-400">
-                                v2.0
+                                Admin Panel
                             </p>
                         </div>
                     </div>
@@ -163,7 +163,7 @@ export default function AdminSidebar({
                                             `
                                             flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all
                                             ${isActive
-                                                ? "bg-indigo-50 text-indigo-700"
+                                                ? "bg-amber-50 text-amber-700"
                                                 : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                                             }
                                         `
@@ -183,7 +183,7 @@ export default function AdminSidebar({
                                                     ml-auto rounded-full px-2 py-0.5 text-[10px]
                                                     ${item.badge === "New"
                                                         ? "bg-gray-100 text-gray-600"
-                                                        : "bg-indigo-600 text-white"
+                                                        : "bg-amber-600 text-white"
                                                     }
                                                 `}
                                             >
@@ -212,7 +212,7 @@ export default function AdminSidebar({
                             </h4>
 
                             <p className="truncate text-xs text-gray-500">
-                                Super Admin
+                                Quản trị viên
                             </p>
                         </div>
 

@@ -30,7 +30,7 @@ export default function AdminHeader({ toggleSidebar }) {
                     <div className="hidden items-center gap-2 md:flex">
 
                         <span className="text-sm text-gray-400">
-                            Home
+                            Trang chủ
                         </span>
 
                         <span className="text-gray-300">
@@ -38,7 +38,7 @@ export default function AdminHeader({ toggleSidebar }) {
                         </span>
 
                         <span className="text-sm font-medium text-gray-700">
-                            Dashboard
+                            Bảng điều khiển
                         </span>
                     </div>
                 </div>
@@ -65,7 +65,7 @@ export default function AdminHeader({ toggleSidebar }) {
                             pr-4
                             text-sm
                             outline-none
-                            focus:border-indigo-500
+                            focus:border-amber-500
                             focus:bg-white
                         "
                     />

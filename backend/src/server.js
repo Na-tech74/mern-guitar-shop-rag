@@ -10,6 +10,7 @@ import authRoutes from './routers/auth.routes.js'
 import userRoutes from './routers/users.routes.js';
 import categoryRoutes from './routers/category.routes.js';
 import productRoutes from './routers/product.routes.js';
+import orderRoutes from './routers/order.routes.js';
 import uploadRoutes from './routers/upload.routes.js';
 
 import { errorHandler } from './middleware/error.middleware.js';
@@ -27,6 +28,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes);
 app.use('/api/categorise', categoryRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/orders', orderRoutes);
 app.use('/api/uploads', uploadRoutes);
 app.use(errorHandler);
 app.get('/', (req, res) => {
