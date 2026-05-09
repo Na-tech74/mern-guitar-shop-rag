@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faPen, faTrash, faSearch, faImage } from "@fortawesome/free-solid-svg-icons";
+import { formatCurrency } from "../../helpers/format";
 import { useProducts } from "../../hooks/admin";
 
 export default function Products() {
-    const { products, categories, loading, createProduct, updateProduct, deleteProduct } = useProducts();
+    const { products, categories, loading, createProduct, updateProduct, deleteProduct,
+        handleSubmit, handleEdit, handleDelete , resetForm, filteredProducts
+     } = useProducts();
     const [showModal, setShowModal] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
@@ -16,65 +19,6 @@ export default function Products() {
         stock: "",
         images: [],
     });
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            if (editingProduct) {
-                await updateProduct(editingProduct._id, formData);
-            } else {
-                await createProduct(formData);
-            }
-            setShowModal(false);
-            resetForm();
-        } catch (error) {
-            console.error("Error saving product:", error);
-            alert("Có lỗi xảy ra!");
-        }
-    };
-
-    const handleDelete = async (id) => {
-        if (!window.confirm("Bạn có chắc muốn xóa sản phẩm này?")) return;
-        try {
-            await deleteProduct(id);
-        } catch (error) {
-            console.error("Error deleting product:", error);
-            alert("Có lỗi xảy ra!");
-        }
-    };
-
-    const handleEdit = (product) => {
-        setEditingProduct(product);
-        setFormData({
-            name: product.name,
-            description: product.description,
-            price: product.price,
-            category: product.category?._id || product.category,
-            stock: product.stock,
-            images: product.images || [],
-        });
-        setShowModal(true);
-    };
-
-    const resetForm = () => {
-        setEditingProduct(null);
-        setFormData({
-            name: "",
-            description: "",
-            price: "",
-            category: "",
-            stock: "",
-            images: [],
-        });
-    };
-
-    const filteredProducts = products.filter(p =>
-        p.name?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    const formatCurrency = (value) => {
-        return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(value);
-    };
 
     if (loading) {
         return (

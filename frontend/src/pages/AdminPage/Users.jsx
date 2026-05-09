@@ -2,73 +2,14 @@ import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrash, faSearch, faUserShield } from "@fortawesome/free-solid-svg-icons";
 import { useUsers } from "../../hooks/admin";
-
+import { formatDate } from "../../helpers/format";
 export default function Users() {
-    const { users, loading, updateUser, deleteUser } = useUsers();
+    const { users, loading, updateUser, deleteUser,
+        handleDelete, handleEdit, handleSubmit, resetForm, filteredUsers, formatDate } = useUsers();
     const [showModal, setShowModal] = useState(false);
     const [editingUser, setEditingUser] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        role: "user",
-    });
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            if (editingUser) {
-                await updateUser(editingUser._id, formData);
-            }
-            setShowModal(false);
-            resetForm();
-        } catch (error) {
-            console.error("Error saving user:", error);
-            alert("Có lỗi xảy ra!");
-        }
-    };
-
-    const handleDelete = async (id) => {
-        if (!window.confirm("Bạn có chắc muốn xóa người dùng này?")) return;
-        try {
-            await deleteUser(id);
-        } catch (error) {
-            console.error("Error deleting user:", error);
-            alert("Có lỗi xảy ra!");
-        }
-    };
-
-    const handleEdit = (user) => {
-        setEditingUser(user);
-        setFormData({
-            name: user.name,
-            email: user.email,
-            role: user.role || "user",
-        });
-        setShowModal(true);
-    };
-
-    const resetForm = () => {
-        setEditingUser(null);
-        setFormData({
-            name: "",
-            email: "",
-            role: "user",
-        });
-    };
-
-    const filteredUsers = users.filter(u =>
-        u.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        u.email?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString("vi-VN", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric"
-        });
-    };
+    const [formData, setFormData] = useState({ name: "", email: "", role: "user" });
 
     if (loading) {
         return (

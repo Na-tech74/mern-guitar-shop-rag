@@ -45,6 +45,60 @@ export const useProducts = () => {
         return res;
     }, [refetch]);
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            if (editingProduct) {
+                await updateProduct(editingProduct._id, formData);
+            } else {
+                await createProduct(formData);
+            }
+            setShowModal(false);
+            resetForm();
+        } catch (error) {
+            console.error("Error saving product:", error);
+            alert("Có lỗi xảy ra!");
+        }
+    };
+
+    const handleDelete = async (id) => {
+        if (!window.confirm("Bạn có chắc muốn xóa sản phẩm này?")) return;
+        try {
+            await deleteProduct(id);
+        } catch (error) {
+            console.error("Error deleting product:", error);
+            alert("Có lỗi xảy ra!");
+        }
+    };
+
+    const handleEdit = (product) => {
+        setEditingProduct(product);
+        setFormData({
+            name: product.name,
+            description: product.description,
+            price: product.price,
+            category: product.category?._id || product.category,
+            stock: product.stock,
+            images: product.images || [],
+        });
+        setShowModal(true);
+    };
+
+    const resetForm = () => {
+        setEditingProduct(null);
+        setFormData({
+            name: "",
+            description: "",
+            price: "",
+            category: "",
+            stock: "",
+            images: [],
+        });
+    };
+
+    const filteredProducts = products.filter(p =>
+        p.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
     return {
         products,
         categories,
@@ -54,5 +108,10 @@ export const useProducts = () => {
         createProduct,
         updateProduct,
         deleteProduct,
+        handleDelete,
+        handleEdit,
+        handleSubmit,
+        resetForm,
+        filteredProducts
     };
 };

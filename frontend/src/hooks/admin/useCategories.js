@@ -40,6 +40,60 @@ export const useCategories = () => {
         return res;
     }, [refetch]);
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            if (editingCategory) {
+                await updateCategory(editingCategory._id, formData);
+            } else {
+                await createCategory(formData);
+            }
+            setShowModal(false);
+            resetForm();
+        } catch (error) {
+            console.error("Error saving category:", error);
+            alert("Có lỗi xảy ra!");
+        }
+    };
+
+    const handleDelete = async (id) => {
+        if (!window.confirm("Bạn có chắc muốn xóa danh mục này?")) return;
+        try {
+            await deleteCategory(id);
+        } catch (error) {
+            console.error("Error deleting category:", error);
+            alert("Có lỗi xảy ra!");
+        }
+    };
+
+    const handleEdit = (category) => {
+        setEditingCategory(category);
+        setFormData({
+            name: category.name,
+            description: category.description || "",
+        });
+        setShowModal(true);
+    };
+
+    const resetForm = () => {
+        setEditingCategory(null);
+        setFormData({
+            name: "",
+            description: "",
+        });
+    };
+
+    const filteredCategories = categories.filter(cat =>
+        cat.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const formatDate = (dateString) => {
+        return new Date(dateString).toLocaleDateString("vi-VN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric"
+        });
+    };
     return {
         categories,
         loading,
@@ -48,5 +102,10 @@ export const useCategories = () => {
         createCategory,
         updateCategory,
         deleteCategory,
+        handleSubmit,
+        handleDelete,
+        handleEdit,
+        resetForm,
+        filteredCategories,
     };
 };
