@@ -1,32 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faPen, faTrash, faSearch, faImage } from "@fortawesome/free-solid-svg-icons";
-import { productAPI, categoryAPI } from "../../api/adminAPI";
-
-const fetchProductsData = async (setProducts, setLoading) => {
-    try {
-        const res = await productAPI.getAll({ limit: 100 });
-        setProducts(res.data?.data || []);
-    } catch (error) {
-        console.error("Error fetching products:", error);
-    } finally {
-        setLoading(false);
-    }
-};
-
-const fetchCategoriesData = async (setCategories) => {
-    try {
-        const res = await categoryAPI.getAll();
-        setCategories(res.data?.data || []);
-    } catch (error) {
-        console.error("Error fetching categories:", error);
-    }
-};
+import { useProducts } from "../../hooks/admin";
 
 export default function Products() {
-    const [products, setProducts] = useState([]);
-    const [categories, setCategories] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { products, categories, loading, createProduct, updateProduct, deleteProduct } = useProducts();
     const [showModal, setShowModal] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
@@ -39,20 +17,14 @@ export default function Products() {
         images: [],
     });
 
-    useEffect(() => {
-        fetchProductsData(setProducts, setLoading);
-        fetchCategoriesData(setCategories);
-    }, []);
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             if (editingProduct) {
-                await productAPI.update(editingProduct._id, formData);
+                await updateProduct(editingProduct._id, formData);
             } else {
-                await productAPI.create(formData);
+                await createProduct(formData);
             }
-            fetchProductsData(setProducts, setLoading);
             setShowModal(false);
             resetForm();
         } catch (error) {
@@ -64,8 +36,7 @@ export default function Products() {
     const handleDelete = async (id) => {
         if (!window.confirm("Bạn có chắc muốn xóa sản phẩm này?")) return;
         try {
-            await productAPI.delete(id);
-            fetchProductsData(setProducts, setLoading);
+            await deleteProduct(id);
         } catch (error) {
             console.error("Error deleting product:", error);
             alert("Có lỗi xảy ra!");

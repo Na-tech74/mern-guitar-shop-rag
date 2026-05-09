@@ -1,28 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrash, faSearch, faUserShield } from "@fortawesome/free-solid-svg-icons";
-import { userAPI } from "../../api/adminAPI";
-
-const fetchUsersData = async (setUsers, setLoading) => {
-    try {
-        const res = await userAPI.getAll();
-        if (Array.isArray(res.data)) {
-            setUsers(res.data);
-        } else if (res.data && Array.isArray(res.data.data)) {
-            setUsers(res.data.data);
-        } else {
-            setUsers([]);
-        }
-    } catch (error) {
-        console.error("Error fetching users:", error);
-    } finally {
-        setLoading(false);
-    }
-};
+import { useUsers } from "../../hooks/admin";
 
 export default function Users() {
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { users, loading, updateUser, deleteUser } = useUsers();
     const [showModal, setShowModal] = useState(false);
     const [editingUser, setEditingUser] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
@@ -32,17 +14,12 @@ export default function Users() {
         role: "user",
     });
 
-    useEffect(() => {
-        fetchUsersData(setUsers, setLoading);
-    }, []);
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             if (editingUser) {
-                await userAPI.update(editingUser._id, formData);
+                await updateUser(editingUser._id, formData);
             }
-            fetchUsersData(setUsers, setLoading);
             setShowModal(false);
             resetForm();
         } catch (error) {
@@ -54,8 +31,7 @@ export default function Users() {
     const handleDelete = async (id) => {
         if (!window.confirm("Bạn có chắc muốn xóa người dùng này?")) return;
         try {
-            await userAPI.delete(id);
-            fetchUsersData(setUsers, setLoading);
+            await deleteUser(id);
         } catch (error) {
             console.error("Error deleting user:", error);
             alert("Có lỗi xảy ra!");

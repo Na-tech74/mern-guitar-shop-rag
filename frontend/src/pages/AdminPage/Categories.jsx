@@ -1,22 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faPen, faTrash, faSearch } from "@fortawesome/free-solid-svg-icons";
-import { categoryAPI } from "../../api/adminAPI";
-
-const fetchCategoriesData = async (setCategories, setLoading) => {
-    try {
-        const res = await categoryAPI.getAll();
-        setCategories(res.data?.data || []);
-    } catch (error) {
-        console.error("Error fetching categories:", error);
-    } finally {
-        setLoading(false);
-    }
-};
+import { useCategories } from "../../hooks/admin";
 
 export default function Categories() {
-    const [categories, setCategories] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { categories, loading, createCategory, updateCategory, deleteCategory } = useCategories();
     const [showModal, setShowModal] = useState(false);
     const [editingCategory, setEditingCategory] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
@@ -25,19 +13,14 @@ export default function Categories() {
         description: "",
     });
 
-    useEffect(() => {
-        fetchCategoriesData(setCategories, setLoading);
-    }, []);
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             if (editingCategory) {
-                await categoryAPI.update(editingCategory._id, formData);
+                await updateCategory(editingCategory._id, formData);
             } else {
-                await categoryAPI.create(formData);
+                await createCategory(formData);
             }
-            fetchCategoriesData(setCategories, setLoading);
             setShowModal(false);
             resetForm();
         } catch (error) {
@@ -49,8 +32,7 @@ export default function Categories() {
     const handleDelete = async (id) => {
         if (!window.confirm("Bạn có chắc muốn xóa danh mục này?")) return;
         try {
-            await categoryAPI.delete(id);
-            fetchCategoriesData(setCategories, setLoading);
+            await deleteCategory(id);
         } catch (error) {
             console.error("Error deleting category:", error);
             alert("Có lỗi xảy ra!");

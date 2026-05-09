@@ -1,70 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { orderAPI } from "../../api/adminAPI";
-
-const fetchOrdersData = async (setOrders, setLoading) => {
-    try {
-        const res = await orderAPI.getAll();
-        setOrders(res.data?.data || []);
-    } catch (error) {
-        console.error("Error fetching orders:", error);
-        setOrders([
-            {
-                _id: "1",
-                user: { name: "Nguyễn Văn A", email: "nguyenvana@email.com" },
-                items: [
-                    { product: "Guitar Acoustic", quantity: 1, price: 2500000 },
-                    { product: "Dây đàn", quantity: 2, price: 150000 }
-                ],
-                total: 2800000,
-                status: "pending",
-                createdAt: "2024-01-15T10:30:00Z"
-            },
-            {
-                _id: "2",
-                user: { name: "Trần Thị B", email: "tranthib@email.com" },
-                items: [
-                    { product: "Guitar Classic", quantity: 1, price: 1800000 }
-                ],
-                total: 1800000,
-                status: "completed",
-                createdAt: "2024-01-14T15:20:00Z"
-            },
-            {
-                _id: "3",
-                user: { name: "Lê Văn C", email: "levanc@email.com" },
-                items: [
-                    { product: "Guitar Electric", quantity: 1, price: 3200000 },
-                    { product: "Amplifier", quantity: 1, price: 1500000 }
-                ],
-                total: 4700000,
-                status: "processing",
-                createdAt: "2024-01-13T09:15:00Z"
-            },
-        ]);
-    } finally {
-        setLoading(false);
-    }
-};
+import { useOrders } from "../../hooks/admin";
 
 export default function Orders() {
-    const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { orders, loading, updateStatus } = useOrders();
     const [selectedOrder, setSelectedOrder] = useState(null);
-
-    useEffect(() => {
-        fetchOrdersData(setOrders, setLoading);
-    }, []);
-
-    const updateStatus = async (orderId, newStatus) => {
-        try {
-            setOrders(orders.map(o => o._id === orderId ? { ...o, status: newStatus } : o));
-            alert("Cập nhật trạng thái thành công!");
-        } catch (error) {
-            console.error("Error updating status:", error);
-        }
-    };
 
     const getStatusColor = (status) => {
         switch (status) {
