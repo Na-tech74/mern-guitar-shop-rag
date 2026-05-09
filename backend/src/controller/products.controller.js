@@ -8,24 +8,28 @@ import {
     sanitizeText
 } from "../utils/format.js";
 
-/* TẠO SẢN PHẨM MỚI */
+/**
+ * @desc Tạo sản phẩm mới
+ * @route POST /api/products
+ * @access Private (chỉ admin)
+ */
 export const createProduct = async (req, res) => {
     const { name, description, price, category, stock, images } = req.body;
 
     // Kiểm tra quyền admin
     if (req.user.role !== 'admin') {
-        throw appError("Chỉ admin mới có quyền !", 403);
+        throw appError("Chỉ admin mới có quyền!", 403);
     }
 
     // Kiểm tra nhập đầy đủ thông tin
     if (!name || !description || !price || !category || !stock) {
-        throw appError("Nhập đầy đủ thông tin sản phẩm !", 400);
+        throw appError("Nhập đầy đủ thông tin sản phẩm!", 400);
     }
 
-    // Kiểm tra tên sản phẩm không bị trùng
+    // Kiểm tra tên sản phẩm không bị trùng (theo slug)
     const productExist = await productModel.findOne({ slug: createSlug(name) });
     if (productExist) {
-        throw appError("Sản phẩm đã tồn tại !", 400);
+        throw appError("Sản phẩm đã tồn tại!", 400);
     }
 
     // Kiểm tra price và stock phải > 0
@@ -33,7 +37,7 @@ export const createProduct = async (req, res) => {
         throw appError("Giá và số lượng tồn kho phải lớn hơn 0", 400);
     }
 
-    // Tạo sản phẩm mới
+    // Tạo sản phẩm mới (sanitize text để tránh XSS)
     const newProduct = await productModel.create({
         name: sanitizeText(name),
         slug: createSlug(name),
@@ -47,12 +51,16 @@ export const createProduct = async (req, res) => {
     await newProduct.populate('category', 'name slug');
 
     return res.status(201).json(formatSuccessResponse(
-        'Sản phẩm đã được tạo thành công !',
+        'Sản phẩm đã được tạo thành công!',
         newProduct
     ));
 };
 
-/* LẤY TẤT CẢ SẢN PHẨM */
+/**
+ * @desc Lấy tất cả sản phẩm (có phân trang, tìm kiếm, lọc)
+ * @route GET /api/products
+ * @access Public
+ */
 export const getAllProducts = async (req, res) => {
     const { page = 1,
         limit = 10,
@@ -64,9 +72,9 @@ export const getAllProducts = async (req, res) => {
     // Tạo filter object
     const filter = {};
 
-    // Filter theo search (tìm kiếm theo tên)
+    // Filter theo search (tìm kiếm theo tên, case-insensitive)
     if (search) {
-        filter.name = { $regex: search, $options: 'i' }; // i: case-insensitive
+        filter.name = { $regex: search, $options: 'i' };
     }
 
     // Filter theo danh mục
@@ -74,13 +82,13 @@ export const getAllProducts = async (req, res) => {
         filter.category = category;
     }
 
-    // Tính toán pagination
+    // Tính toán pagination (skip/limit)
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
-    // Lấy dữ liệu sản phẩm
+    // Lấy dữ liệu sản phẩm với populate category
     const products = await productModel
         .find(filter)
-        .populate('category', 'name slug') // Lấy thông tin danh mục
+        .populate('category', 'name slug')
         .sort({ [sortBy]: parseInt(sortOrder) })
         .skip(skip)
         .limit(parseInt(limit));
@@ -104,7 +112,11 @@ export const getAllProducts = async (req, res) => {
     ));
 };
 
-/* LẤY SẢN PHẨM THEO ID */
+/**
+ * @desc Lấy sản phẩm theo ID
+ * @route GET /api/products/:id
+ * @access Public
+ */
 export const getProductById = async (req, res) => {
     const { id } = req.params;
 
@@ -122,7 +134,11 @@ export const getProductById = async (req, res) => {
     ));
 };
 
-/* LẤY SẢN PHẨM THEO SLUG (dành cho frontend) */
+/**
+ * @desc Lấy sản phẩm theo Slug (dành cho frontend)
+ * @route GET /api/products/slug/:slug
+ * @access Public
+ */
 export const getProductBySlug = async (req, res) => {
     const { slug } = req.params;
 
@@ -140,30 +156,34 @@ export const getProductBySlug = async (req, res) => {
     ));
 };
 
-/* CẬP NHẬT SẢN PHẨM */
+/**
+ * @desc Cập nhật sản phẩm
+ * @route PUT /api/products/:id
+ * @access Private (chỉ admin)
+ */
 export const updateProduct = async (req, res) => {
     const { id } = req.params;
     const { name, description, price, category, stock, images } = req.body;
 
     // Kiểm tra quyền admin
     if (req.user.role !== 'admin') {
-        throw appError("Chỉ admin mới có quyền !", 403);
+        throw appError("Chỉ admin mới có quyền!", 403);
     }
 
     // Tìm sản phẩm
     const product = await productModel.findById(id);
     if (!product) {
-        throw appError("Sản phẩm không tồn tại !", 404);
+        throw appError("Sản phẩm không tồn tại!", 404);
     }
 
-    // Nếu thay đổi tên, kiểm tra slug không bị trùng
+    // Nếu thay đổi tên, kiểm tra slug không bị trùng (trừ sản phẩm hiện tại)
     if (name && name !== product.name) {
         const existingProduct = await productModel.findOne({
             slug: createSlug(name),
             _id: { $ne: id }
         });
         if (existingProduct) {
-            throw appError("Tên sản phẩm đã tồn tại !", 400);
+            throw appError("Tên sản phẩm đã tồn tại!", 400);
         }
         product.name = name;
         product.slug = createSlug(name);
@@ -177,7 +197,7 @@ export const updateProduct = async (req, res) => {
         throw appError("Số lượng tồn kho phải lớn hơn 0", 400);
     }
 
-    // Cập nhật các trường thông tin
+    // Cập nhật các trường thông tin (sanitize description)
     if (description) product.description = sanitizeText(description);
     if (price) product.price = parseFloat(price);
     if (category) product.category = category;
@@ -190,40 +210,48 @@ export const updateProduct = async (req, res) => {
     await product.populate('category', 'name slug');
 
     return res.json(formatSuccessResponse(
-        'Sản phẩm đã được cập nhật thành công !',
+        'Sản phẩm đã được cập nhật thành công!',
         product
     ));
 };
 
-/* XÓA SẢN PHẨM */
+/**
+ * @desc Xóa sản phẩm
+ * @route DELETE /api/products/:id
+ * @access Private (chỉ admin)
+ */
 export const deleteProduct = async (req, res) => {
     const { id } = req.params;
 
     // Kiểm tra quyền admin
     if (req.user.role !== 'admin') {
-        throw appError("Chỉ admin mới có quyền !", 403);
+        throw appError("Chỉ admin mới có quyền!", 403);
     }
 
-    // Tìm và xóa sản phẩm
+    // Tìm sản phẩm
     const product = await productModel.findById(id);
     if (!product) {
-        throw appError("Sản phẩm không tồn tại !", 404);
+        throw appError("Sản phẩm không tồn tại!", 404);
     }
 
     await product.deleteOne();
 
     return res.json(formatSuccessResponse(
-        'Sản phẩm đã được xóa thành công !'
+        'Sản phẩm đã được xóa thành công!'
     ));
 };
 
-/* TÌM KIẾM SẢN PHẨM (với filter nâng cao) */
+/**
+ * @desc Tìm kiếm sản phẩm với filter nâng cao
+ * @route GET /api/products/search
+ * @access Public
+ */
 export const searchProducts = async (req, res) => {
     const { keyword, minPrice, maxPrice, category, inStock } = req.query;
 
     const filter = {};
 
-    // Tìm kiếm theo từ khóa
+    // Tìm kiếm theo từ khóa (tên hoặc mô tả)
     if (keyword) {
         filter.$or = [
             { name: { $regex: keyword, $options: 'i' } },
@@ -263,7 +291,11 @@ export const searchProducts = async (req, res) => {
     ));
 };
 
-/* LẤY SẢN PHẨM HOT/BÁN CHẠY NHẤT */
+/**
+ * @desc Lấy sản phẩm bán chạy nhất (hot)
+ * @route GET /api/products/top
+ * @access Public
+ */
 export const getTopProducts = async (req, res) => {
     const { limit = 10 } = req.query;
 
@@ -278,16 +310,20 @@ export const getTopProducts = async (req, res) => {
     }
 
     return res.json(formatSuccessResponse(
-        'Sản phẩm bán chạy nhất đã được lấy thành công !',
+        'Sản phẩm bán chạy nhất đã được lấy thành công!',
         products
     ));
 };
 
-/* UPLOAD HÌNH ẢNH SẢN PHẨM */
+/**
+ * @desc Upload hình ảnh sản phẩm lên Cloudinary
+ * @route POST /api/products/upload
+ * @access Private (chỉ admin)
+ */
 export const uploadProductImages = async (req, res) => {
     // Kiểm tra quyền admin
     if (req.user.role !== 'admin') {
-        throw appError("Chỉ admin mới có quyền !", 403);
+        throw appError("Chỉ admin mới có quyền!", 403);
     }
 
     // Kiểm tra có file được upload không
@@ -304,23 +340,27 @@ export const uploadProductImages = async (req, res) => {
     ));
 };
 
-/* CẬP NHẬT HÌNH ẢNH SẢN PHẨM */
+/**
+ * @desc Cập nhật hình ảnh sản phẩm (thay thế)
+ * @route PUT /api/products/:id/images
+ * @access Private (chỉ admin)
+ */
 export const updateProductImages = async (req, res) => {
     const { id } = req.params;
     const { images } = req.body;
 
     // Kiểm tra quyền admin
     if (req.user.role !== 'admin') {
-        throw appError("Chỉ admin mới có quyền !", 403);
+        throw appError("Chỉ admin mới có quyền!", 403);
     }
 
     // Tìm sản phẩm
     const product = await productModel.findById(id);
     if (!product) {
-        throw appError("Sản phẩm không tồn tại !", 404);
+        throw appError("Sản phẩm không tồn tại!", 404);
     }
 
-    // Cập nhật ảnh
+    // Cập nhật ảnh (phải có ít nhất 1 ảnh)
     if (!images || images.length === 0) {
         throw appError("Không có hình ảnh nào được cung cấp!", 400);
     }
@@ -337,13 +377,17 @@ export const updateProductImages = async (req, res) => {
     ));
 };
 
-/* THÊM HÌNH ẢNH VÀO SẢN PHẨM (thêm vào danh sách hiện tại) */
+/**
+ * @desc Thêm hình ảnh vào sản phẩm (thêm vào danh sách hiện tại)
+ * @route POST /api/products/:id/images
+ * @access Private (chỉ admin)
+ */
 export const addProductImages = async (req, res) => {
     const { id } = req.params;
 
     // Kiểm tra quyền admin
     if (req.user.role !== 'admin') {
-        throw appError("Chỉ admin mới có quyền !", 403);
+        throw appError("Chỉ admin mới có quyền!", 403);
     }
 
     // Kiểm tra có file được upload không

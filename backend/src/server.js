@@ -24,10 +24,10 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/api/auth', authRoutes)
-app.use('/api/user', userRoutes);
-app.use('/api/category', categoryRoutes);
-app.use('/api/product', productRoutes);
-app.use('/api/upload', uploadRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/categorise', categoryRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/uploads', uploadRoutes);
 app.use(errorHandler);
 app.get('/', (req, res) => {
     res.send({

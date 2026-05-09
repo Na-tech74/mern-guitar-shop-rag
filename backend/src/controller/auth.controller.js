@@ -1,235 +1,255 @@
 import usersModel from "../models/users.model.js";
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import { generateAccessToken, generateRefreshToken } from "../services/generateToken.js";
 import { sendEmail } from "../services/sendEmail.js";
 import { appError } from "../common/appError.js";
-
-/* ĐĂNG KÝ*/
+import { validateEmail , validatePassword}  from "../utils//vaildate.js"
+/**
+ * @desc Đăng ký người dùng mới
+ * @route POST /api/auth/register
+ * @access Public
+ */
 export const register = async (req, res) => {
-
     const { name, email, password } = req.body;
 
-    // kiểm tra nhập thông tin
+    // Kiểm tra các trường bắt buộc
     if (!name || !email || !password) {
-        throw appError("Vui lòng nhập đầy đủ thông tin!", 400); // 400: thiếu dữ liệu
+        throw appError("Vui lòng nhập đầy đủ thông tin!", 400);
     }
 
-    // kiểm tra email hợp lệ 
-    if (email && !email.includes("@gmail.com")) {
-        throw appError("Email không hợp lệ!", 400); // 400: thiếu dữ liệu
+    // Kiểm tra định dạng email
+    if (!validateEmail(email)) {
+        throw appError("Email không hợp lệ!", 400);
     }
 
-    // kiểm tra password phải hơn 8 ký tự
-    if (password.length < 8) {
-        throw appError(" Mật khẩu phải có ít nhất 8 ký tự!", 400); // 400: thiếu dữ liệu
+    // Kiểm tra độ dài password
+    if (!validatePassword(password)) {
+        throw appError("Mật khẩu phải có ít nhất 8 ký tự!", 400);
     }
 
-    // kiểm tra người dùng tồn tại 
+    // Kiểm tra người dùng đã tồn tại chưa
     const userExist = await usersModel.findOne({ email });
     if (userExist) {
-        throw appError("Người dùng đã tồn tại!", 400); // 400: thiếu dữ liệu (user đã tồn tại)
+        throw appError("Người dùng đã tồn tại!", 400);
     }
 
-    // hash pass
+    // Mã hóa password bằng bcrypt (10 rounds)
     const hashed = await bcrypt.hash(password, 10);
 
-    // tạo user 
+    // Tạo người dùng mới với role mặc định là 'user'
     const createUser = await usersModel.create({
-        name, email, password: hashed
+        name,
+        email,
+        password: hashed,
+        role: 'user'
     });
 
-    // tạo token 
+    // Tạo JWT tokens
     const accessToken = generateAccessToken(createUser._id);
     const refreshToken = generateRefreshToken(createUser._id);
 
-    // isProduction để set cookie secure và sameSite phù hợp với môi trường (production hay development) nhằm tăng cường bảo mật và tránh
+    // Thiết lập cookie dựa trên môi trường (production vs development)
     const isProduction = process.env.NODE_ENV === "production";
 
-    // set cookie
     res.cookie('refreshToken', refreshToken, {
-        httpOnly: true,      //  chống XSS
-        secure: isProduction, // true nếu dùng HTTPS
+        httpOnly: true,           // Chống tấn công XSS
+        secure: isProduction,      // Chỉ HTTPS trong production
         sameSite: isProduction ? "strict" : "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000 // 7 ngày
     });
 
-    // lưu refersh token váo database
+    // Lưu refresh token vào database
     createUser.refreshToken = refreshToken;
-
     await createUser.save();
 
-    // reponse
+    // Trả về thông tin người dùng và access token (không trả password)
     return res.json({
-        _id: createUser._id,
-        name: name,
-        email: email,
-
-        /*Không trả về mật khẩu đã hash, 
-         nhưng nếu cần thì có thể bao gồm nó ở đây.*/
-        /*password: password.hashed,*/
-
+        id: createUser._id,
+        name: createUser.name,
+        email: createUser.email,
+        role: createUser.role,
         accessToken: accessToken,
-
-        /*Nếu muốn trả về refreshToken trong response body 
-        (thường không cần thiết vì đã set cookie), có thể thêm dòng dưới đây:*/
-        // refreshToken: refreshToken,
-
-        createAt: createUser.createdAt
+        createdAt: createUser.createdAt
     });
 };
 
 
-/*ĐĂNG NHẬP */
+/**
+ * @desc Đăng nhập người dùng
+ * @route POST /api/auth/login
+ * @access Public
+ */
 export const login = async (req, res) => {
-
     const { email, password } = req.body;
-    // kiểm tra nhập thông tin
+
+    // Kiểm tra các trường bắt buộc
     if (!email || !password) {
-        throw appError("Vui lòng nhập đầy đủ thông tin!", 400); // 400: thiếu dữ liệu
+        throw appError("Vui lòng nhập đầy đủ thông tin!", 400);
     }
 
-    // kiểm tra email hợp lệ
-    if (email && !email.includes("@gmail.com")) {
-        throw appError("Email không hợp lệ!", 400); // 400: thiếu dữ liệu
+    // Kiểm tra định dạng email
+    if (!validateEmail(email)) {
+        throw appError("Email không hợp lệ!", 400);
     }
 
-    // kiểm tra email đã đăng nhập chưa !
+    // Tìm người dùng theo email
     const user = await usersModel.findOne({ email });
     if (!user) {
-        throw appError("Email không tồn tại!", 401); // 401: chưa auth
+        throw appError("Email không tồn tại!", 401);
     }
 
-    // kiểm tra mật khẩu đúng hay không (so sánh với mật khẩu đã hash trong database)
+    // So sánh password với password đã mã hóa trong database
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-        throw appError("Mật khẩu không đúng!", 401); // 401: chưa auth
+        throw appError("Mật khẩu không đúng!", 401);
     }
 
-    //tạo token
+    // Tạo JWT tokens
     const accessToken = generateAccessToken(user._id);
     const refreshToken = generateRefreshToken(user._id);
+
+    // Cập nhật refresh token trong database
     user.refreshToken = refreshToken;
     await user.save();
 
+    // Thiết lập cookie bảo mật dựa trên môi trường
     const isProduction = process.env.NODE_ENV === "production";
 
     res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: isProduction,
         sameSite: isProduction ? "strict" : "lax",
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 ngày
+        maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
-    // trả về email và token khi đăng nhập thành công 
+    // Trả về thông tin người dùng và access token
     return res.json({
         id: user._id,
+        name: user.name,
         email: user.email,
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-        role: user.role
+        role: user.role,
+        accessToken: accessToken
     });
 };
 
-/* ĐĂNG XUẤT */
+/**
+ * @desc Đăng xuất người dùng
+ * @route POST /api/auth/logout
+ * @access Private (yêu cầu xác thực)
+ */
 export const logout = async (req, res) => {
+    // Lấy user ID từ JWT token (được thiết lập bởi auth middleware)
+    const userId = req.user._id;
 
-    const userId = req.user._id; // lấy từ JWT token
+    // Xóa refresh token khỏi database
+    await usersModel.findByIdAndUpdate(userId, { refreshToken: "" });
 
-    const user = await usersModel.findById(userId, {
-        // Chỉ cập nhật trường refreshToken, không cần lấy các trường khác
-        refreshToken: ""
-    });
-
-    if (!user) {
-        throw appError(" Không tìm thấy người dùng !", 404);
-    }
-
+    // Xóa refresh token cookie
     const isProduction = process.env.NODE_ENV === "production";
-    //  xóa cookie
+
     res.clearCookie("refreshToken", {
         httpOnly: true,
         secure: isProduction,
-        sameSite: isProduction ? "strict" : "lax",
-        maxAge: 0
+        sameSite: isProduction ? "strict" : "lax"
     });
+
     return res.json({
-        message: " Đăng xuất thành công!"
+        message: "Đăng xuất thành công!"
     });
 };
 
-/* QUÊN MẬT KHẨU   */
+/**
+ * @desc Gửi OTP để đặt lại mật khẩu
+ * @route POST /api/auth/forgot-password
+ * @access Public
+ */
 export const forgotPassword = async (req, res) => {
-
     const { email } = req.body;
 
+    // Kiểm tra email bắt buộc
     if (!email) {
         throw appError("Vui lòng nhập email!", 400);
-    };
+    }
 
+    // Kiểm tra định dạng email
+    if (!validateEmail(email)) {
+        throw appError("Email không hợp lệ!", 400);
+    }
+
+    // Tìm người dùng theo email
     const user = await usersModel.findOne({ email });
     if (!user) {
-        throw appError(" Email không tồn tại !", 404);
-    };
+        throw appError("Email không tồn tại!", 404);
+    }
 
-    //Tạo otp 6 số 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    // Tạo OTP 6 số bằng crypto (bảo mật hơn Math.random)
+    const otp = crypto.randomInt(100000, 999999).toString();
 
+    // Lưu OTP và thời hạn (10 phút) vào database
     user.resetOtp = otp;
-    user.resetOtpExpire = Date.now() + 10 * 60 * 1000 //10p
+    user.resetOtpExpire = Date.now() + 10 * 60 * 1000;
 
     await user.save();
 
+    // Gửi OTP qua email
     await sendEmail({
         email: user.email,
-        subject: "Cấp lại mật khẩu  OTP",
+        subject: "Cấp lại mật khẩu OTP",
         html: `
-                <h3>Đặt lại mật khẩu</h3>
-                <p>Mã OTP của bạn là:</p>
-                <h1 style="color:red">${otp}</h1>
-                <p>Mã có hiệu lực trong 10 phút</p>
-            `
+            <h3>Đặt lại mật khẩu</h3>
+            <p>Mã OTP của bạn là:</p>
+            <h1 style="color:red">${otp}</h1>
+            <p>Mã có hiệu lực trong 10 phút</p>
+        `
     });
 
     return res.json({
-        message: `OTP đã được gửi đến email ${user.email} !`
+        message: `OTP đã được gửi đến email ${user.email}`
     });
 };
 
-/* ĐẶT LẠI MẬT KHẨU */
+/**
+ * @desc Đặt lại mật khẩu bằng OTP
+ * @route POST /api/auth/reset-password
+ * @access Public
+ */
 export const resetPassword = async (req, res) => {
-
     const { email, otp, password } = req.body;
 
+    // Kiểm tra các trường bắt buộc
     if (!email || !otp || !password) {
         throw appError("Thiếu dữ liệu!", 400);
-    };
+    }
 
-    if (password.length < 8) {
-        throw appError(" Mật khẩu phải có ít nhất 8 ký tự!", 400);
-    };
+    // Kiểm tra độ dài password
+    if (!validatePassword(password)) {
+        throw appError("Mật khẩu phải có ít nhất 8 ký tự!", 400);
+    }
 
+    // Tìm người dùng theo email
     const user = await usersModel.findOne({ email });
 
     if (!user) {
-        throw appError("User not found! ", 404);
-    };
+        throw appError("User not found!", 404);
+    }
 
-    // Kiểm tra OTP hợp lệ
+    // Xác thực OTP: kiểm tra sự tồn tại, giá trị và thời hạn
     if (
         !user.resetOtp ||
-        String(user.resetOtp).trim() !== String(otp).trim() ||
+        user.resetOtp !== otp ||
         user.resetOtpExpire < Date.now()
     ) {
         throw appError("OTP không hợp lệ hoặc đã hết hạn!", 400);
-    };
+    }
 
-    // Hash mật khẩu mới
+    // Mã hóa password mới
     const hashed = await bcrypt.hash(password, 10);
-    user.password = hashed;
 
-    //  Xóa OTP sau khi dùng (tránh dùng lại)
-    user.resetOtp = "";
-    user.resetOtpExpire = 0;
+    // Cập nhật password và xóa các trường OTP
+    user.password = hashed;
+    user.resetOtp = undefined;
+    user.resetOtpExpire = undefined;
 
     await user.save();
 
