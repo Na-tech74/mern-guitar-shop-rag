@@ -9,6 +9,13 @@ import {
 } from "../utils/format.js";
 
 /**
+ * Validate MongoDB ObjectId format
+ * @param {string} id - ID to validate
+ * @returns {boolean} - True if valid ObjectId
+ */
+const isValidObjectId = (id) => id.match(/^[0-9a-fA-F]{24}$/);
+
+/**
  * @desc Tạo sản phẩm mới
  * @route POST /api/products
  * @access Private (chỉ admin)
@@ -120,6 +127,11 @@ export const getAllProducts = async (req, res) => {
 export const getProductById = async (req, res) => {
     const { id } = req.params;
 
+    // Validate ObjectId format
+    if (!isValidObjectId(id)) {
+        throw appError("ID sản phẩm không hợp lệ!", 400);
+    }
+
     const product = await productModel
         .findById(id)
         .populate('category', 'name slug');
@@ -170,6 +182,11 @@ export const updateProduct = async (req, res) => {
         throw appError("Chỉ admin mới có quyền!", 403);
     }
 
+    // Validate ObjectId format
+    if (!isValidObjectId(id)) {
+        throw appError("ID sản phẩm không hợp lệ!", 400);
+    }
+
     // Tìm sản phẩm
     const product = await productModel.findById(id);
     if (!product) {
@@ -185,7 +202,7 @@ export const updateProduct = async (req, res) => {
         if (existingProduct) {
             throw appError("Tên sản phẩm đã tồn tại!", 400);
         }
-        product.name = name;
+        product.name = sanitizeText(name);
         product.slug = createSlug(name);
     }
 
@@ -226,6 +243,11 @@ export const deleteProduct = async (req, res) => {
     // Kiểm tra quyền admin
     if (req.user.role !== 'admin') {
         throw appError("Chỉ admin mới có quyền!", 403);
+    }
+
+    // Validate ObjectId format
+    if (!isValidObjectId(id)) {
+        throw appError("ID sản phẩm không hợp lệ!", 400);
     }
 
     // Tìm sản phẩm
@@ -354,6 +376,11 @@ export const updateProductImages = async (req, res) => {
         throw appError("Chỉ admin mới có quyền!", 403);
     }
 
+    // Validate ObjectId format
+    if (!isValidObjectId(id)) {
+        throw appError("ID sản phẩm không hợp lệ!", 400);
+    }
+
     // Tìm sản phẩm
     const product = await productModel.findById(id);
     if (!product) {
@@ -390,6 +417,11 @@ export const addProductImages = async (req, res) => {
         throw appError("Chỉ admin mới có quyền!", 403);
     }
 
+    // Validate ObjectId format
+    if (!isValidObjectId(id)) {
+        throw appError("ID sản phẩm không hợp lệ!", 400);
+    }
+
     // Kiểm tra có file được upload không
     if (!req.files || req.files.length === 0) {
         throw appError("Không có tệp nào được tải lên!", 400);
@@ -414,5 +446,128 @@ export const addProductImages = async (req, res) => {
     return res.json(formatSuccessResponse(
         'Hình ảnh đã được thêm vào sản phẩm thành công!',
         product
+    ));
+};
+
+/**
+ * @desc Lấy sản phẩm theo danh mục
+ * @route GET /api/products/category/:categoryId
+ * @access Public
+ */
+export const getProductsByCategory = async (req, res) => {
+    const { categoryId } = req.params;
+    const { page = 1, limit = 10 } = req.query;
+
+    // Validate ObjectId format
+    if (!isValidObjectId(categoryId)) {
+        throw appError("ID danh mục không hợp lệ!", 400);
+    }
+
+    // Tính toán pagination
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    // Lấy sản phẩm theo danh mục
+    const products = await productModel
+        .find({ category: categoryId })
+        .populate('category', 'name slug')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(parseInt(limit));
+
+    // Tính tổng số sản phẩm
+    const total = await productModel.countDocuments({ category: categoryId });
+
+    if (!products || products.length === 0) {
+        throw appError("Không tìm thấy sản phẩm nào!", 404);
+    }
+
+    return res.json(formatSuccessResponse(
+        'Sản phẩm đã được lấy thành công!',
+        products,
+        {
+            page: parseInt(page),
+            limit: parseInt(limit),
+            total,
+            pages: Math.ceil(total / parseInt(limit))
+        }
+    ));
+};
+
+/**
+ * @desc Cập nhật số lượng tồn kho (dùng cho xử lý đơn hàng)
+ * @route PUT /api/products/:id/stock
+ * @access Private (chỉ admin)
+ */
+export const updateStock = async (req, res) => {
+    const { id } = req.params;
+    const { quantity, action } = req.body; // action: 'increase' hoặc 'decrease'
+
+    // Kiểm tra quyền admin
+    if (req.user.role !== 'admin') {
+        throw appError("Chỉ admin mới có quyền!", 403);
+    }
+
+    // Validate ObjectId format
+    if (!isValidObjectId(id)) {
+        throw appError("ID sản phẩm không hợp lệ!", 400);
+    }
+
+    // Validate input
+    if (!quantity || quantity <= 0) {
+        throw appError("Số lượng phải lớn hơn 0!", 400);
+    }
+
+    if (!action || !['increase', 'decrease'].includes(action)) {
+        throw appError("Hành động không hợp lệ! (increase hoặc decrease)", 400);
+    }
+
+    // Tìm sản phẩm
+    const product = await productModel.findById(id);
+    if (!product) {
+        throw appError("Sản phẩm không tồn tại!", 404);
+    }
+
+    // Cập nhật số lượng tồn kho
+    if (action === 'increase') {
+        product.stock += parseInt(quantity);
+    } else {
+        if (product.stock < quantity) {
+            throw appError("Số lượng tồn kho không đủ!", 400);
+        }
+        product.stock -= parseInt(quantity);
+    }
+
+    await product.save();
+
+    return res.json(formatSuccessResponse(
+        'Cập nhật tồn kho thành công!',
+        {
+            productId: product._id,
+            stock: product.stock
+        }
+    ));
+};
+
+/**
+ * @desc Lấy sản phẩm mới nhất
+ * @route GET /api/products/latest
+ * @access Public
+ */
+export const getLatestProducts = async (req, res) => {
+    const { limit = 10 } = req.query;
+
+    const products = await productModel
+        .find({ stock: { $gt: 0 } })
+        .populate('category', 'name slug')
+        .sort({ createdAt: -1 })
+        .limit(parseInt(limit));
+
+    if (!products || products.length === 0) {
+        throw appError("Không tìm thấy sản phẩm nào!", 404);
+    }
+
+    return res.json(formatSuccessResponse(
+        'Sản phẩm mới nhất đã được lấy thành công!',
+        products
     ));
 };
