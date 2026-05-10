@@ -2,26 +2,14 @@ import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrash, faSearch, faUserShield } from "@fortawesome/free-solid-svg-icons";
 import { useUsers } from "../../hooks/admin/useUsers";
+import { formatDate } from "../../helpers/format";
 
 export default function Users() {
-    const { users, loading, updateUser, deleteUser } = useUsers();
+    
+    const { users, loading, updateUser, deleteUser, filteredUsers, searchTerm, setSearchTerm } = useUsers();
     const [showModal, setShowModal] = useState(false);
     const [editingUser, setEditingUser] = useState(null);
-    const [searchTerm, setSearchTerm] = useState("");
     const [formData, setFormData] = useState({ name: "", email: "", role: "user" });
-
-    const filteredUsers = users.filter(u =>
-        u.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        u.email?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString("vi-VN", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric"
-        });
-    };
 
     if (loading) {
         return (
@@ -95,13 +83,21 @@ export default function Users() {
                                     <td className="py-3 text-right">
                                         <div className="flex items-center justify-end gap-2">
                                             <button
-                                                onClick={() => handleEdit(user)}
+                                                onClick={() => {
+                                                    setEditingUser(user);
+                                                    setFormData({ name: user.name, email: user.email, role: user.role || "user" });
+                                                    setShowModal(true);
+                                                }}
                                                 className="rounded-lg p-2 text-blue-600 hover:bg-blue-50"
                                             >
                                                 <FontAwesomeIcon icon={faPen} />
                                             </button>
                                             <button
-                                                onClick={() => handleDelete(user._id)}
+                                                onClick={() => {
+                                                    if (window.confirm("Bạn có chắc muốn xóa người dùng này?")) {
+                                                        deleteUser(user._id);
+                                                    }
+                                                }}
                                                 className="rounded-lg p-2 text-red-600 hover:bg-red-50"
                                             >
                                                 <FontAwesomeIcon icon={faTrash} />
@@ -128,7 +124,11 @@ export default function Users() {
                         <h2 className="mb-4 text-xl font-semibold text-gray-800">
                             Cập nhật người dùng
                         </h2>
-                        <form onSubmit={handleSubmit} className="space-y-4">
+                        <form onSubmit={(e) => {
+                            e.preventDefault();
+                            updateUser(editingUser._id, formData);
+                            setShowModal(false);
+                        }} className="space-y-4">
                             <div>
                                 <label className="mb-1 block text-sm font-medium text-gray-700">Tên</label>
                                 <input
@@ -163,7 +163,7 @@ export default function Users() {
                             <div className="flex justify-end gap-3 pt-4">
                                 <button
                                     type="button"
-                                    onClick={() => { setShowModal(false); resetForm(); }}
+                                    onClick={() => { setShowModal(false); setEditingUser(null); }}
                                     className="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
                                 >
                                     Hủy

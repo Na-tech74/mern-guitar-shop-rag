@@ -24,19 +24,19 @@ const fetchDashboardData = async (setStats, setRecentOrders, setLoading) => {
             totalCategories: categoriesRes.data?.data?.length || 0,
             totalOrders: 0,
         });
-
-        setRecentOrders([
-            { id: "1", customer: "Nguyễn Văn A", total: 2500000, status: "pending", date: "2024-01-15" },
-            { id: "2", customer: "Trần Thị B", total: 1800000, status: "completed", date: "2024-01-14" },
-            { id: "3", customer: "Lê Văn C", total: 3200000, status: "processing", date: "2024-01-13" },
-            { id: "4", customer: "Phạm Thị D", total: 1500000, status: "completed", date: "2024-01-12" },
-            { id: "5", customer: "Hoàng Văn E", total: 4500000, status: "pending", date: "2024-01-11" },
-        ]);
     } catch (error) {
         console.error("Error fetching dashboard data:", error);
     } finally {
         setLoading(false);
     }
+
+    setRecentOrders([
+        { id: "1", customer: "Nguyễn Văn A", total: 2500000, status: "pending", date: "2024-01-15" },
+        { id: "2", customer: "Trần Thị B", total: 1800000, status: "completed", date: "2024-01-14" },
+        { id: "3", customer: "Lê Văn C", total: 3200000, status: "processing", date: "2024-01-13" },
+        { id: "4", customer: "Phạm Thị D", total: 1500000, status: "completed", date: "2024-01-12" },
+        { id: "5", customer: "Hoàng Văn E", total: 4500000, status: "pending", date: "2024-01-11" },
+    ]);
 };
 
 export default function Dashboard() {

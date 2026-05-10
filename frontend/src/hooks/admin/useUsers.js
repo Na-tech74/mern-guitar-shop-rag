@@ -1,53 +1,87 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { userAPI } from "../../api/adminAPI";
 
 export const useUsers = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
 
-    const refetch = useCallback(async () => {
+    const [showModal, setShowModal] = useState(false);
+    const [editingUser, setEditingUser] = useState(null);
+    const [formData, setFormData] = useState({ name: "", email: "", role: "user" });
+
+    const fetchUsers = async () => {
         try {
             setLoading(true);
-            const res = await userAPI.getAll();
-            console.log("Users API response:", res);
-            if (Array.isArray(res.data)) {
-                setUsers(res.data);
-            } else if (res.data && Array.isArray(res.data.data)) {
-                setUsers(res.data.data);
-            } else {
-                setUsers([]);
-            }
+            const response = await userAPI.getAll();
+            setUsers(response.data);
         } catch (err) {
             console.error("Error fetching users:", err);
-            setError(err.message);
+            setError(err);
         } finally {
             setLoading(false);
         }
-    }, []);
+    };
 
     useEffect(() => {
-        refetch();
-    }, [refetch]);
+        fetchUsers();
+    }, []);
 
-    const updateUser = useCallback(async (id, data) => {
-        const res = await userAPI.update(id, data);
-        refetch();
-        return res;
-    }, [refetch]);
+    const filteredUsers = useMemo(() => {
+        if (!searchTerm) return users || [];
+        return (users || []).filter(user =>
+            user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.email?.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    }, [users, searchTerm]);
 
-    const deleteUser = useCallback(async (id) => {
-        const res = await userAPI.delete(id);
-        refetch();
-        return res;
-    }, [refetch]);
+    const openModal = (user) => {
+        setEditingUser(user);
+        setFormData({ name: user.name, email: user.email, role: user.role || "user" });
+        setShowModal(true);
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+        setEditingUser(null);
+    };
+
+    const updateUser = async (id, data) => {
+        try {
+            await userAPI.update(id, data);
+            await fetchUsers();
+            closeModal();
+        } catch (err) {
+            console.error("Error updating user:", err);
+        }
+    };
+
+    const deleteUser = async (id) => {
+        try {
+            await userAPI.delete(id);
+            await fetchUsers();
+        } catch (err) {
+            console.error("Error deleting user:", err);
+        }
+    };
 
     return {
         users,
         loading,
         error,
-        refetch,
+        filteredUsers,
+        searchTerm,
+        setSearchTerm,
         updateUser,
         deleteUser,
+        showModal,
+        setShowModal,
+        editingUser,
+        setEditingUser,
+        formData,
+        setFormData,
+        openModal,
+        closeModal
     };
 };
