@@ -1,4 +1,4 @@
-import categoryModel from "../models/category.model.js";
+import categoryModel from "../models/categories.model.js";
 import { appError } from "../common/appError.js";
 import { createSlug } from "../utils/slug.js";
 import {
@@ -81,7 +81,7 @@ export const getCategoryById = async (req, res) => {
  */
 export const updateCategory = async (req, res) => {
     const { id } = req.params;
-    const { name, description } = req.body;
+    const { name, description } = req.body || {};
 
     // Kiểm tra quyền admin
     if (req.user.role !== 'admin') {

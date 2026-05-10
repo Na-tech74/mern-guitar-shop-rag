@@ -10,6 +10,10 @@ API.interceptors.request.use((config) => {
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
+    // Đảm bảo Content-Type luôn là JSON
+    if (!config.headers["Content-Type"] && !config.headers.get("Content-Type")) {
+        config.headers["Content-Type"] = "application/json";
+    }
     return config;
 });
 

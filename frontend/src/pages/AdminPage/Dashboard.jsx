@@ -12,14 +12,11 @@ import { productAPI, categoryAPI, userAPI } from "../../api/adminAPI";
 
 const fetchDashboardData = async (setStats, setRecentOrders, setLoading) => {
     try {
-        const productsRes = await productAPI.getAll();
-        console.log("Products:", productsRes.data);
-
-        const categoriesRes = await categoryAPI.getAll();
-        console.log("Categories:", categoriesRes.data);
-
-        const usersRes = await userAPI.getAll();
-        console.log("Users:", usersRes.data);
+        const [productsRes, categoriesRes, usersRes] = await Promise.all([
+            productAPI.getAll(),
+            categoryAPI.getAll(),
+            userAPI.getAll(),
+        ]);
 
         setStats({
             totalProducts: productsRes.data?.data?.length || 0,
@@ -29,7 +26,6 @@ const fetchDashboardData = async (setStats, setRecentOrders, setLoading) => {
         });
     } catch (error) {
         console.error("Error fetching dashboard data:", error);
-        console.error("Response:", error.response?.data);
     } finally {
         setLoading(false);
     }

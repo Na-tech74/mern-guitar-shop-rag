@@ -120,7 +120,7 @@ export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }) {
                             <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-amber-500 to-amber-300 bg-clip-text text-transparent">
                                 Nam Acoustic
                             </h1>
-                            <p className="text-sm text-black/40 sm:block">Admin Panel</p>
+                            <p className="text-sm text-black/40 sm:block">Admin Page <br />Design by Nam Nguyễn</p>
                         </div>
                     </div>
 

@@ -1,17 +1,15 @@
-import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faPen, faTrash, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { formatDate } from "../../helpers/format";
 import { useCategories } from "../../hooks/admin/useCategories";
 
 export default function Categories() {
-    const { categories, loading, createCategory, updateCategory, deleteCategory
-        , handleSubmit, handleDelete, handleEdit, resetForm, filteredCategories
+    const { 
+        loading, filteredCategories, searchTerm, setSearchTerm,
+        handleSubmit, handleDelete, handleEdit, resetForm, openModal,
+        showModal, setShowModal, editingCategory, setEditingCategory, 
+        formData, setFormData
     } = useCategories();
-    const [showModal, setShowModal] = useState(false);
-    const [editingCategory, setEditingCategory] = useState(null);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [formData, setFormData] = useState({ name: "", description: "" });
 
     if (loading) {
         return (
@@ -29,7 +27,7 @@ export default function Categories() {
                     <p className="text-gray-500">Quản lý danh sách danh mục sản phẩm</p>
                 </div>
                 <button
-                    onClick={() => { resetForm(); setShowModal(true); }}
+                    onClick={openModal}
                     className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-amber-600 to-amber-500 px-4 py-2 text-sm font-medium text-white hover:from-amber-700 hover:to-amber-600"
                 >
                     <FontAwesomeIcon icon={faPlus} />

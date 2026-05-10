@@ -12,11 +12,11 @@ export const productAPI = {
 };
 
 export const categoryAPI = {
-    getAll: () => API.get("/categorise/get-all-category"),
-    getById: (id) => API.get(`/categorise/get-category-only/${id}`),
-    create: (data) => API.post("/categorise/create-category", data),
-    update: (id, data) => API.put(`/categorise/update-category/${id}`, data),
-    delete: (id) => API.delete(`/categorise/delete-category/${id}`),
+    getAll: () => API.get("/categories/get-all-categories"),
+    getById: (id) => API.get(`/categories/get-categories-only/${id}`),
+    create: (data) => API.post("/categories/create-categories", data),
+    update: (id, data) => API.put(`/categories/update-categories/${id}`, data),
+    delete: (id) => API.delete(`/categories/delete-categories/${id}`),
 };
 
 export const userAPI = {

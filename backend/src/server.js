@@ -8,7 +8,7 @@ import connectDB from './config/db.config.js';
 
 import authRoutes from './routers/auth.routes.js'
 import userRoutes from './routers/users.routes.js';
-import categoryRoutes from './routers/category.routes.js';
+import categoriseRoutes from './routers/categories.routes.js';
 import productRoutes from './routers/product.routes.js';
 import orderRoutes from './routers/order.routes.js';
 import uploadRoutes from './routers/upload.routes.js';
@@ -29,7 +29,7 @@ app.use(cookieParser());
 
 app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes);
-app.use('/api/categorise', categoryRoutes);
+app.use('/api/categories', categoriseRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/uploads', uploadRoutes);
