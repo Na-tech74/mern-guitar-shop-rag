@@ -32,7 +32,6 @@ export default function useRegister() {
         try {
             const res = await registerAPI(form);
             alert("Đăng ký thành công!");
-            console.log(res.data);
             resetForm();
         } catch (err) {
             alert(err.response?.data?.message || "Lỗi server");

@@ -24,8 +24,6 @@ export default function useLogin() {
 
         try {
             const res = await loginAPI(form);
-            console.log("API response:", res.data);
-            //  lưu token
             localStorage.setItem("token", res.data.accessToken);
             // lưu toàn bộ thông tin người dùng vào localStorage dưới dạng JSON string
             localStorage.setItem("userInfo", JSON.stringify({
@@ -42,7 +40,6 @@ export default function useLogin() {
             } else {
                 navigate("/");
             }
-            console.log(res.data);
             alert("Đăng nhập thành công !");
 
             // reset

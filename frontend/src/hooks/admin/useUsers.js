@@ -62,7 +62,8 @@ export const useUsers = () => {
             await userAPI.delete(id);
             await fetchUsers();
         } catch (err) {
-            console.error("Lỗi khi xóa người dùng :", err);
+            console.error("Lỗi khi xóa người dùng:", err);
+            alert(err.response?.data?.message || "Không thể xóa người dùng này!");
         }
     };
 

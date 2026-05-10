@@ -37,7 +37,6 @@ export default function useForgotPassword() {
             alert("OTP đã được gửi về email");
             setStep(2);
         } catch (err) {
-            console.log(err.response?.data);
             alert(err.response?.data?.message || "Lỗi");
         } finally {
             setLoading(false);
@@ -71,7 +70,6 @@ export default function useForgotPassword() {
             navigate("/login");
 
         } catch (err) {
-            console.log(err.response?.data);
             alert(err.response?.data?.message || "Lỗi");
         } finally {
             setLoading(false);

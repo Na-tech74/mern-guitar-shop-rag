@@ -1,24 +1,29 @@
-import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faPen, faTrash, faSearch, faImage } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faPen, faTrash, faSearch, faImage, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { formatCurrency } from "../../helpers/format";
 import { useProducts } from "../../hooks/admin/useProducts";
 
 export default function Products() {
-    const { products, categories, loading, createProduct, updateProduct, deleteProduct,
-        handleSubmit, handleEdit, handleDelete , resetForm, filteredProducts
-     } = useProducts();
-    const [showModal, setShowModal] = useState(false);
-    const [editingProduct, setEditingProduct] = useState(null);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [formData, setFormData] = useState({
-        name: "",
-        description: "",
-        price: "",
-        category: "",
-        stock: "",
-        images: [],
-    });
+    const { 
+        loading, filteredProducts, searchTerm, setSearchTerm,
+        handleSubmit, handleDelete, handleEdit, resetForm, openModal,
+        showModal, setShowModal, editingProduct, formData, setFormData,
+        fetchProducts, categories
+    } = useProducts();
+
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length > 0) {
+            const imageUrls = files.map(file => URL.createObjectURL(file));
+            setFormData({ ...formData, images: [...formData.images, ...imageUrls] });
+        }
+    };
+
+    const removeImage = (index) => {
+        const newImages = [...formData.images];
+        newImages.splice(index, 1);
+        setFormData({ ...formData, images: newImages });
+    };
 
     if (loading) {
         return (
@@ -36,7 +41,7 @@ export default function Products() {
                     <p className="text-gray-500">Quản lý danh sách sản phẩm</p>
                 </div>
                 <button
-                    onClick={() => { resetForm(); setShowModal(true); }}
+                    onClick={openModal}
                     className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-amber-600 to-amber-500 px-4 py-2 text-sm font-medium text-white hover:from-amber-700 hover:to-amber-600"
                 >
                     <FontAwesomeIcon icon={faPlus} />
@@ -132,7 +137,7 @@ export default function Products() {
 
             {showModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                    <div className="w-full max-w-lg rounded-xl bg-white p-6">
+                    <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl bg-white p-6">
                         <h2 className="mb-4 text-xl font-semibold text-gray-800">
                             {editingProduct ? "Cập nhật sản phẩm" : "Thêm sản phẩm mới"}
                         </h2>
@@ -193,6 +198,55 @@ export default function Products() {
                                     ))}
                                 </select>
                             </div>
+                            
+                            {/* Preview ảnh hiện có (cho edit) */}
+                            {editingProduct?.images?.length > 0 && (
+                                <div>
+                                    <label className="mb-1 block text-sm font-medium text-gray-700">Ảnh hiện tại</label>
+                                    <div className="flex gap-2 flex-wrap">
+                                        {editingProduct.images.map((img, idx) => (
+                                            <div key={idx} className="relative w-20 h-20 rounded-lg overflow-hidden border">
+                                                <img src={img} alt="" className="w-full h-full object-cover" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            <div>
+                                <label className="mb-1 block text-sm font-medium text-gray-700">Thêm ảnh mới (chọn nhiều)</label>
+                                <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center hover:border-amber-500 transition">
+                                    <input
+                                        type="file"
+                                        multiple
+                                        accept="image/*"
+                                        onChange={handleFileChange}
+                                        className="hidden"
+                                        id="image-upload"
+                                    />
+                                    <label htmlFor="image-upload" className="cursor-pointer">
+                                        <FontAwesomeIcon icon={faUpload} className="text-gray-400 text-2xl mb-2" />
+                                        <p className="text-sm text-gray-500">Nhấn để chọn ảnh</p>
+                                    </label>
+                                </div>
+                                {formData.images.length > 0 && (
+                                    <div className="mt-2 flex gap-2 flex-wrap">
+                                        {formData.images.map((img, idx) => (
+                                            <div key={idx} className="relative w-20 h-20 rounded-lg overflow-hidden border">
+                                                <img src={img} alt="" className="w-full h-full object-cover" />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeImage(idx)}
+                                                    className="absolute top-0 right-0 bg-red-500 text-white w-5 h-5 flex items-center justify-center text-xs"
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
                             <div className="flex justify-end gap-3 pt-4">
                                 <button
                                     type="button"

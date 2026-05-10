@@ -7,10 +7,7 @@ export const uploadImages = async (files, folder = "default") => {
       try {
         const res = await cloudinary.uploader.upload(file.path, {
           folder,
-          transformation: [
-            { width: 800, height: 800, crop: "limit" },
-            { quality: "auto", fetch_format: "auto" },
-          ],
+          resource_type: "image"
         });
 
         // xoá file local an toàn
@@ -20,10 +17,7 @@ export const uploadImages = async (files, folder = "default") => {
           }
         });
 
-        return {
-          url: res.secure_url,
-          public_id: res.public_id,
-        };
+        return res.secure_url;
       } catch (err) {
         // nếu upload fail vẫn xoá file
         fs.unlink(file.path, () => { });
