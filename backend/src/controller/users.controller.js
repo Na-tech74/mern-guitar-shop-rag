@@ -59,7 +59,7 @@ export const getUserById = async (req, res) => {
  */
 export const update = async (req, res) => {
     const { id } = req.params;
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     // Kiểm tra quyền: chỉ người dùng đó hoặc admin mới được cập nhật
     if (req.user._id.toString() !== id && req.user.role !== 'admin') {
@@ -103,8 +103,11 @@ export const update = async (req, res) => {
     if (password) {
         const hashed = await bcrypt.hash(password, 10);
         user.password = hashed;
-    }
+    };
 
+    if (role && req.user.role === 'admin') {
+        user.role = role;
+    };
     await user.save();
 
     return res.json({

@@ -19,10 +19,7 @@ import {
     faXmark
 } from "@fortawesome/free-solid-svg-icons";
 
-export default function AdminSidebar({
-    isSidebarOpen,
-    setIsSidebarOpen
-}) {
+export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }) {
 
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
@@ -99,7 +96,7 @@ export default function AdminSidebar({
             {isSidebarOpen && (
                 <div
                     onClick={() => setIsSidebarOpen(false)}
-                    className="fixed inset-0 z-40 bg-black/40 lg:hidden"
+                    className="fixed inset-0 z-40  lg:hidden"
                 />
             )}
 
@@ -116,14 +113,14 @@ export default function AdminSidebar({
             >
 
                 {/* LOGO */}
-                <div className="flex items-center justify-between border-b bg-black/95 px-3 py-3">
+                <div className="flex items-center justify-between border-b bg-gray-200  px-3 py-3">
 
                     <div className="flex items-center gap-3">
                         <div>
                             <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-amber-500 to-amber-300 bg-clip-text text-transparent">
                                 Nam Acoustic
                             </h1>
-                            <p className="text-[9px] text-gray-400 sm:block">Premium Music Store</p>
+                            <p className="text-sm text-black/40 sm:block">Admin Panel</p>
                         </div>
                     </div>
 

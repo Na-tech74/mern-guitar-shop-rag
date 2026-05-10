@@ -4,6 +4,7 @@ import { asyncHandler } from '../middleware/asyncHandler.js';
 import {
     resetPassword, forgotPassword, logout,
     login, register,
+    refreshToken,
 } from '../controller/auth.controller.js';
 
 const router = expess.Router()
@@ -13,5 +14,6 @@ router.post("/login", asyncHandler(login));
 router.post("/forgot-password", asyncHandler(forgotPassword));
 router.post("/reset-password", asyncHandler(resetPassword));
 router.post("/logout/:id", protect, asyncHandler(logout));
+router.post("/refresh-token", asyncHandler(refreshToken));
 
 export default router;

@@ -1,10 +1,11 @@
 import usersModel from "../models/users.model.js";
 import bcrypt from 'bcryptjs';
+import jwt from "jsonwebtoken";
 import crypto from 'crypto';
 import { generateAccessToken, generateRefreshToken } from "../services/generateToken.js";
 import { sendEmail } from "../services/sendEmail.js";
 import { appError } from "../common/appError.js";
-import { validateEmail , validatePassword}  from "../utils//vaildate.js"
+import { validateEmail, validatePassword } from "../utils//vaildate.js"
 /**
  * @desc Đăng ký người dùng mới
  * @route POST /api/auth/register
@@ -255,5 +256,27 @@ export const resetPassword = async (req, res) => {
 
     return res.json({
         message: "Đặt lại mật khẩu thành công!"
+    });
+};
+
+/**
+ * @desc Làm mới token
+ * @route POST /api/auth/refesh
+ * @access Private
+ */
+export const refreshToken = async (req, res) => {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+        throw appError(" No resfesh token !", 401);
+    };
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const user = await usersModel.findById(decoded.id)
+    if (!user || user.refreshToken !== refreshToken) {
+        throw appError("Token không xác định ! ", 401);
+
+    };
+    const newAccessToken = generateAccessToken(user._id);
+    return res.json({
+        accessToken: newAccessToken
     });
 };

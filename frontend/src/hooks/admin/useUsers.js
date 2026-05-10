@@ -17,7 +17,7 @@ export const useUsers = () => {
             const response = await userAPI.getAll();
             setUsers(response.data);
         } catch (err) {
-            console.error("Error fetching users:", err);
+            console.error("Lỗi khi tìm người dùng", err);
             setError(err);
         } finally {
             setLoading(false);
@@ -53,7 +53,7 @@ export const useUsers = () => {
             await fetchUsers();
             closeModal();
         } catch (err) {
-            console.error("Error updating user:", err);
+            console.error("Lỗi khi update người dùng:", err);
         }
     };
 
@@ -62,7 +62,7 @@ export const useUsers = () => {
             await userAPI.delete(id);
             await fetchUsers();
         } catch (err) {
-            console.error("Error deleting user:", err);
+            console.error("Lỗi khi xóa người dùng :", err);
         }
     };
 

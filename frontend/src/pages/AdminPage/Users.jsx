@@ -5,7 +5,7 @@ import { useUsers } from "../../hooks/admin/useUsers";
 import { formatDate } from "../../helpers/format";
 
 export default function Users() {
-    
+
     const { users, loading, updateUser, deleteUser, filteredUsers, searchTerm, setSearchTerm } = useUsers();
     const [showModal, setShowModal] = useState(false);
     const [editingUser, setEditingUser] = useState(null);
@@ -68,13 +68,15 @@ export default function Users() {
                                     </td>
                                     <td className="py-3 text-sm text-gray-600">{user.email}</td>
                                     <td className="py-3">
-                                        <span className={`rounded-full px-3 py-1 text-xs font-medium ${user.role === "admin" ? "bg-purple-100 text-purple-700" : "bg-gray-100 text-gray-700"}`}>
-                                            {user.role === "admin" ? (
-                                                <span className="flex items-center gap-1">
-                                                    <FontAwesomeIcon icon={faUserShield} className="text-[10px]" />
-                                                    Admin
-                                                </span>
-                                            ) : "User"}
+                                        <span className="bg-gray-200 rounded-full px-3 py-1 text-xs font-medium" >
+                                            {user.role === "admin"
+                                                ? (
+                                                    <span>
+                                                        <FontAwesomeIcon icon={faUserShield} className="text-[10px]" />
+                                                        Admin
+                                                    </span>
+                                                )
+                                                : "User"}
                                         </span>
                                     </td>
                                     <td className="py-3 text-sm text-gray-500">
