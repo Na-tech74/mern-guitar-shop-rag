@@ -1,26 +1,30 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import AdminLayout from "./layouts/AdminLayout";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Register from "./pages/AuthPage/Register";
-import Login from "./pages/AuthPage/Login";
-import ForgotPassword from "./pages/AuthPage/ForgotPassword";
-import Dashboard from "./pages/AdminPage/Dashboard";
-import Products from "./pages/AdminPage/Products";
-import Orders from "./pages/AdminPage/Orders";
-import Users from "./pages/AdminPage/Users";
-import Categories from "./pages/AdminPage/Categories";
-import Settings from "./pages/AdminPage/Settings";
+import ProtectedRoute from "./components/common/ProtectedRoute";
+import Login from "./pages/AuthPage/ui/Login";
+import Register from "./pages/AuthPage/ui/Register";
+import ForgotPassword from "./pages/AuthPage/ui/ForgotPassword";
+import HomePage from "./pages/HomePage/ui/HomePage";
+import Dashboard from "./pages/AdminPage/ui/Dashboard";
+import Products from "./pages/AdminPage/ui/Products";
+import Orders from "./pages/AdminPage/ui/Orders";
+import Users from "./pages/AdminPage/ui/Users";
+import Categories from "./pages/AdminPage/ui/Categories";
+import Settings from "./pages/AdminPage/ui/Settings";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<MainLayout />} />
+        <Route path="/" element={<MainLayout />}>
+          <Route index element={<HomePage />} />
+        </Route>
+
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        
+
         <Route path="/admin" element={
           <ProtectedRoute roleRequired="admin">
             <AdminLayout />

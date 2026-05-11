@@ -1,4 +1,5 @@
-import Header from '../components/common/Header';
+import Header from '../components/Header';
+import Footer from '../components/Footer'
 import { Outlet } from "react-router-dom";
 
 export default function MainLayout() {
@@ -8,6 +9,7 @@ export default function MainLayout() {
             <main className="container mx-auto mt-4">
                 <Outlet />
             </main>
+            <Footer/>
         </>
     );
 }

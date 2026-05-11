@@ -1,5 +1,6 @@
-// Menu items với dropdown
-  export const menuItems = [
+import { faChartPie, faChartColumn, faFileLines, faUsers, faBox, faCartShopping, faTag, faGear, faBell } from '@fortawesome/free-solid-svg-icons';
+
+export const menuItems = [
     {
       name: 'TRANG CHỦ',
       path: '/',
@@ -65,4 +66,69 @@
       path: '/lien-he',
       hasDropdown: false
     },
-  ];
+];
+
+export const adminSidebarMenuItems = [
+    {
+        title: "Tổng quan",
+        items: [
+            {
+                name: "Bảng điều khiển",
+                path: "/admin",
+                icon: faChartPie,
+                badge: ""
+            },
+            {
+                name: "Phân tích",
+                path: "/admin/analytics",
+                icon: faChartColumn
+            },
+            {
+                name: "Báo cáo",
+                path: "/admin/reports",
+                icon: faFileLines,
+                badge: "Mới"
+            }
+        ]
+    },
+    {
+        title: "Quản lý",
+        items: [
+            {
+                name: "Người dùng",
+                path: "/admin/users",
+                icon: faUsers
+            },
+            {
+                name: "Sản phẩm",
+                path: "/admin/products",
+                icon: faBox
+            },
+            {
+                name: "Đơn hàng",
+                path: "/admin/orders",
+                icon: faCartShopping
+            },
+            {
+                name: "Danh mục",
+                path: "/admin/categories",
+                icon: faTag
+            }
+        ]
+    },
+    {
+        title: "Hệ thống",
+        items: [
+            {
+                name: "Cài đặt",
+                path: "/admin/settings",
+                icon: faGear
+            },
+            {
+                name: "Thông báo",
+                path: "/admin/notifications",
+                icon: faBell
+            }
+        ]
+    }
+];
