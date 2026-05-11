@@ -14,3 +14,11 @@ export const validateEmail = (email) => {
  * @returns {boolean} - True nếu password >= 8 ký tự
  */
 export  const validatePassword = (password) => password.length >= 8;
+
+
+/**
+ * Validate MongoDB ObjectId format
+ * @param {string} id - ID to validate
+ * @returns {boolean} - True if valid ObjectId
+ */
+export const isValidObjectId = (id) => id.match(/^[0-9a-fA-F]{24}$/);

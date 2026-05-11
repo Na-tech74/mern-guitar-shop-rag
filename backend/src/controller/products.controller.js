@@ -7,13 +7,7 @@ import {
     formatDate,
     sanitizeText
 } from "../utils/format.js";
-
-/**
- * Validate MongoDB ObjectId format
- * @param {string} id - ID to validate
- * @returns {boolean} - True if valid ObjectId
- */
-const isValidObjectId = (id) => id.match(/^[0-9a-fA-F]{24}$/);
+import { isValidObjectId } from "../utils/vaildate.js";
 
 /**
  * @desc Tạo sản phẩm mới

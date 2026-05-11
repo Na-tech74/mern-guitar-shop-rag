@@ -5,7 +5,7 @@ import crypto from 'crypto';
 import { generateAccessToken, generateRefreshToken } from "../services/generateToken.js";
 import { sendEmail } from "../services/sendEmail.js";
 import { appError } from "../common/appError.js";
-import { validateEmail, validatePassword } from "../utils//vaildate.js"
+import { validateEmail, validatePassword } from "../utils/vaildate.js"
 /**
  * @desc Đăng ký người dùng mới
  * @route POST /api/auth/register
@@ -232,7 +232,7 @@ export const resetPassword = async (req, res) => {
     const user = await usersModel.findOne({ email });
 
     if (!user) {
-        throw appError("User not found!", 404);
+        throw appError("Người dùng không tồn tại!", 404);
     }
 
     // Xác thực OTP: kiểm tra sự tồn tại, giá trị và thời hạn
@@ -261,20 +261,19 @@ export const resetPassword = async (req, res) => {
 
 /**
  * @desc Làm mới token
- * @route POST /api/auth/refesh
+ * @route POST /api/auth/refresh
  * @access Private
  */
 export const refreshToken = async (req, res) => {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
-        throw appError(" No resfesh token !", 401);
+        throw appError(" Không thể làm mới Token!", 401);
     };
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
     const user = await usersModel.findById(decoded.id)
     if (!user || user.refreshToken !== refreshToken) {
         throw appError("Token không xác định ! ", 401);
-
-    };
+    }
     const newAccessToken = generateAccessToken(user._id);
     return res.json({
         accessToken: newAccessToken

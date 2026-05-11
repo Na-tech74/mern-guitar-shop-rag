@@ -9,6 +9,7 @@ import { faFacebook, faYoutube, faTiktok, faInstagram } from '@fortawesome/free-
 import { menuItems } from '../../data/dbContext';
 
 export default function Header() {
+  
   const [isSticky, setIsSticky] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
@@ -95,7 +96,7 @@ export default function Header() {
         </div>
 
         {/* Main Header */}
-        <div className="py-3 px-4 bg-white">
+        <div className="py-3 px-4 bg-gray-100">
           <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
             {/* Logo */}
             <Link to="/" className="shrink-0">
@@ -123,6 +124,7 @@ export default function Header() {
 
             {/* Right Icons */}
             <div className="hidden md:flex items-center gap-5">
+
               <Link to="/wishlist" className="relative group">
                 <FontAwesomeIcon icon={faHeart} className="text-xl text-gray-600 group-hover:text-amber-600 transition-all duration-200 ease-in-out" />
                 {wishlistCount > 0 && (
@@ -211,7 +213,7 @@ export default function Header() {
           </div>
         </div>
 
-{/* Mobile Search */}
+        {/* Mobile Search */}
         {isSearchOpen && (
           <div className="lg:hidden px-4 pb-3 border-b border-gray-100 transition-all duration-300 ease-out">
             <form onSubmit={handleSearch} className="flex">
