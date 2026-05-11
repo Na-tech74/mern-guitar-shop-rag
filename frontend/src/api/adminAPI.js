@@ -1,10 +1,10 @@
 import { API } from "./axiosClient.js";
 
 export const productAPI = {
-    getAll: (params) => API.get("/products", { params }),
+    getAll: (params) => API.get("/products/get-all-products", { params }),
     getById: (id) => API.get(`/products/${id}`),
-    create: (data) => API.post("/products", data),
-    update: (id, data) => API.put(`/products/${id}`, data),
+    create: (data) => API.post("/products/create-products", data),
+    update: (id, data) => API.put(`/products/update-products/${id}`, data),
     delete: (id) => API.delete(`/products/${id}`),
     uploadImages: (productId, formData) => API.post(`/products/${productId}/images`, formData, {
         headers: { "Content-Type": "multipart/form-data" }
@@ -28,7 +28,9 @@ export const userAPI = {
 };
 
 export const orderAPI = {
-    getAll: () => API.get("/orders"),
+    create: (data) => API.post("/orders/create-orders", data),
+    getMyOrders: () => API.get("/orders/get-my-orders"),
+    getAll: (params) => API.get("/orders/get-all-orders", { params }),
     getById: (id) => API.get(`/orders/${id}`),
     updateStatus: (id, status) => API.put(`/orders/${id}/status`, { status }),
     delete: (id) => API.delete(`/orders/${id}`),

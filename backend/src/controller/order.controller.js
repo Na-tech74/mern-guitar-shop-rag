@@ -4,13 +4,61 @@ import { formatSuccessResponse } from "../utils/format.js";
 
 const isValidObjectId = (id) => id.match(/^[0-9a-fA-F]{24}$/);
 
-export const getAllOrders = async (req, res) => {
+export const createOrder = async (req, res) => {
+    const { items, shippingInfo, paymentMethod, totalPrice, shippingPrice, total, note } = req.body;
+
+    if (!items || items.length === 0) {
+        throw appError("Giỏ hàng trống!", 400);
+    }
+
+    if (!shippingInfo?.fullName || !shippingInfo?.phone || !shippingInfo?.address || !shippingInfo?.city) {
+        throw appError("Thông tin giao hàng không đầy đủ!", 400);
+    }
+
+    const order = await orderModel.create({
+        user: req.user._id,
+        items,
+        shippingInfo,
+        paymentMethod: paymentMethod || 'cod',
+        totalPrice,
+        shippingPrice: shippingPrice || 0,
+        total,
+        note
+    });
+
+    return res.status(201).json(formatSuccessResponse("Tạo đơn hàng thành công!", order));
+};
+
+export const getUserOrders = async (req, res) => {
     const orders = await orderModel
-        .find()
-        .populate("user", "name email")
+        .find({ user: req.user._id })
+        .populate("items.product", "name image price")
         .sort({ createdAt: -1 });
 
-    return res.json(formatSuccessResponse("Lấy danh sách đơn hàng thành công!", orders));
+    return res.json(formatSuccessResponse("Lấy đơn hàng thành công!", orders));
+};
+
+export const getAllOrders = async (req, res) => {
+    const { page = 1, limit = 10, status } = req.query;
+    
+    const query = {};
+    if (status) query.status = status;
+
+    const total = await orderModel.countDocuments(query);
+    const orders = await orderModel
+        .find(query)
+        .populate("user", "name email phone")
+        .populate("items.product", "name image")
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(Number(limit));
+
+    return res.json(formatSuccessResponse("Lấy danh sách đơn hàng thành công!", {
+        orders,
+        total,
+        page: Number(page),
+        pages: Math.ceil(total / limit)
+    }));
 };
 
 export const getOrderById = async (req, res) => {
@@ -22,10 +70,15 @@ export const getOrderById = async (req, res) => {
 
     const order = await orderModel
         .findById(id)
-        .populate("user", "name email");
+        .populate("user", "name email phone")
+        .populate("items.product", "name image price");
 
     if (!order) {
         throw appError("Đơn hàng không tồn tại!", 404);
+    }
+
+    if (order.user._id.toString() !== req.user._id.toString() && !req.user.isAdmin) {
+        throw appError("Bạn không có quyền xem đơn hàng này!", 403);
     }
 
     return res.json(formatSuccessResponse("Lấy thông tin đơn hàng thành công!", order));
@@ -39,7 +92,7 @@ export const updateOrderStatus = async (req, res) => {
         throw appError("ID đơn hàng không hợp lệ!", 400);
     }
 
-    const validStatuses = ["pending", "processing", "completed", "cancelled"];
+    const validStatuses = ["pending", "processing", "shipped", "delivered", "cancelled"];
     if (!validStatuses.includes(status)) {
         throw appError("Trạng thái không hợp lệ!", 400);
     }
@@ -50,6 +103,12 @@ export const updateOrderStatus = async (req, res) => {
     }
 
     order.status = status;
+    
+    if (status === 'delivered') {
+        order.isDelivered = true;
+        order.deliveredAt = new Date();
+    }
+    
     await order.save();
 
     return res.json(formatSuccessResponse("Cập nhật trạng thái thành công!", order));

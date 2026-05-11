@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faCheck, faXmark, faTruck } from "@fortawesome/free-solid-svg-icons";
 import { useOrders } from "../../hooks/admin/useOrders";
 
 export default function Orders() {
@@ -10,8 +10,9 @@ export default function Orders() {
     const getStatusColor = (status) => {
         switch (status) {
             case "pending": return "bg-yellow-100 text-yellow-700";
-            case "completed": return "bg-green-100 text-green-700";
             case "processing": return "bg-blue-100 text-blue-700";
+            case "shipped": return "bg-purple-100 text-purple-700";
+            case "delivered": return "bg-green-100 text-green-700";
             case "cancelled": return "bg-red-100 text-red-700";
             default: return "bg-gray-100 text-gray-700";
         }
@@ -20,8 +21,9 @@ export default function Orders() {
     const getStatusLabel = (status) => {
         switch (status) {
             case "pending": return "Chờ xử lý";
-            case "completed": return "Hoàn thành";
             case "processing": return "Đang xử lý";
+            case "shipped": return "Đang giao";
+            case "delivered": return "Đã giao";
             case "cancelled": return "Đã hủy";
             default: return status;
         }
@@ -119,9 +121,18 @@ export default function Orders() {
                                             )}
                                             {order.status === "processing" && (
                                                 <button
-                                                    onClick={() => updateStatus(order._id, "completed")}
+                                                    onClick={() => updateStatus(order._id, "shipped")}
+                                                    className="rounded-lg p-2 text-purple-600 hover:bg-purple-50"
+                                                    title="Giao hàng"
+                                                >
+                                                    <FontAwesomeIcon icon={faTruck} />
+                                                </button>
+                                            )}
+                                            {order.status === "shipped" && (
+                                                <button
+                                                    onClick={() => updateStatus(order._id, "delivered")}
                                                     className="rounded-lg p-2 text-green-600 hover:bg-green-50"
-                                                    title="Hoàn thành"
+                                                    title="Đã giao"
                                                 >
                                                     <FontAwesomeIcon icon={faCheck} />
                                                 </button>
