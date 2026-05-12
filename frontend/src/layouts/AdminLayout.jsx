@@ -12,11 +12,11 @@ export default function AdminLayout() {
                 isSidebarOpen={isSidebarOpen}
                 setIsSidebarOpen={setIsSidebarOpen}
             />
-            <div className="lg:ml-[260px]">
-                <div className="fixed top-0 right-0 left-0 lg:left-[260px] z-40">
+            <div className={`transition-all duration-300 lg:ml-[260px] ${isSidebarOpen ? "ml-0" : ""}`}>
+                <div className="sticky top-0 z-40">
                     <AdminHeader toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
                 </div>
-                <main className="p-6 pt-[86px] min-h-screen">
+                <main className="p-4 md:p-6 lg:p-8 pt-20 md:pt-24 min-h-screen">
                     <Outlet />
                 </main>
             </div>

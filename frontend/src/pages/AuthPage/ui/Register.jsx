@@ -1,16 +1,28 @@
-import Input from "../../../components/common/Input";
-import Button from "../../../components/common/Button";
-import AuthHeader from "../components/AuthHeader";
-import AuthLink from "../components/AuthLink";
+import Input from "../../../components/Input";
+import Button from "../../../components/Button";
 import useRegister from "../hooks/useRegister";
+import Logo from "../../../components/Logo";
+import AuthLink from "../components/AuthLink";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 
 export default function Register() {
-    const { form, loading, handleChange, handleSubmit } = useRegister();
+    const { form, errors, loading, handleChange, handleSubmit } = useRegister();
 
     return (
-        <div className="min-h-screen flex items-center justify-center px-4">
-            <div className="w-full max-w-sm bg-white border border-[#e8dcc8] rounded-2xl p-8 relative overflow-hidden">
-                <AuthHeader title="Tạo tài khoản" />
+        <div className="min-h-screen flex items-center justify-center px-4 py-8 bg-gradient-to-br from-amber-50 to-gray-100">
+            <div className="w-full max-w-sm bg-white rounded-2xl p-8 shadow-xl shadow-amber-100/50">
+
+                <div className="flex justify-center mb-6">
+                    <Logo />
+                </div>
+                
+                {errors.general && (
+                    <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-600 text-sm">
+                        <FontAwesomeIcon icon={faExclamationCircle} />
+                        {errors.general}
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <Input
@@ -19,6 +31,7 @@ export default function Register() {
                         onChange={handleChange}
                         placeholder="Họ tên"
                         disabled={loading}
+                        error={errors.name}
                         required
                     />
 
@@ -29,6 +42,7 @@ export default function Register() {
                         onChange={handleChange}
                         placeholder="Email"
                         disabled={loading}
+                        error={errors.email}
                         required
                     />
 
@@ -37,19 +51,23 @@ export default function Register() {
                         name="password"
                         value={form.password}
                         onChange={handleChange}
-                        placeholder="Password"
+                        placeholder="Mật khẩu"
                         disabled={loading}
+                        error={errors.password}
                         required
                     />
 
-                    <Button type="submit" loading={loading} className="w-full uppercase tracking-widest">
+                    <Button type="submit" loading={loading} className="w-full">
                         {loading ? "Đang đăng ký..." : "Đăng ký"}
                     </Button>
+                    
                 </form>
 
-                <p className="text-center text-xs mt-4">
-                    Đã có tài khoản? <AuthLink to="/login">Đăng nhập</AuthLink>
-                </p>
+                <div className="mt-6 text-center">
+                    <p className="text-sm text-gray-500">
+                        Đã có tài khoản? <AuthLink to="/login">Đăng nhập</AuthLink>
+                    </p>
+                </div>
             </div>
         </div>
     );

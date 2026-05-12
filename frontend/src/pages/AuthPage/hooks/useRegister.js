@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { registerAPI } from "../api/authAPI";
+import { useNavigate } from "react-router-dom";
 
 export default function useRegister() {
     const [form, setForm] = useState({
@@ -8,42 +9,52 @@ export default function useRegister() {
         password: ""
     });
 
+    const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
-    const handleChange = (e) => {
-        setForm(prev => ({
-            ...prev,
-            [e.target.name]: e.target.value
-        }));
+    const validate = () => {
+        const newErrors = {};
+        if (!form.name.trim()) {
+            newErrors.name = "Vui lòng nhập họ tên";
+        } else if (form.name.trim().length < 2) {
+            newErrors.name = "Họ tên phải có ít nhất 2 ký tự";
+        }
+        if (!form.email.trim()) {
+            newErrors.email = "Vui lòng nhập email";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+            newErrors.email = "Email không hợp lệ";
+        }
+        if (!form.password) {
+            newErrors.password = "Vui lòng nhập mật khẩu";
+        } else if (form.password.length < 6) {
+            newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự";
+        }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
-    const resetForm = () => {
-        setForm({
-            name: "",
-            email: "",
-            password: ""
-        });
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setForm(prev => ({ ...prev, [name]: value }));
+        setErrors(prev => ({ ...prev, [name]: "" }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
+        if (!validate()) return;
 
+        setLoading(true);
         try {
-            const res = await registerAPI(form);
-            alert("Đăng ký thành công!");
-            resetForm();
+            await registerAPI(form);
+            alert("Đăng ký thành công! Vui lòng đăng nhập.");
+            navigate("/login");
         } catch (err) {
-            alert(err.response?.data?.message || "Lỗi server");
+            setErrors({ general: err.response?.data?.message || "Đăng ký thất bại" });
         } finally {
             setLoading(false);
         }
     };
 
-    return {
-        form,
-        loading,
-        handleChange,
-        handleSubmit
-    };
+    return { form, errors, loading, handleChange, handleSubmit };
 }

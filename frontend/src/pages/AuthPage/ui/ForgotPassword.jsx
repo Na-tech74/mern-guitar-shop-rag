@@ -1,7 +1,7 @@
-import Input from "../../../components/common/Input";
-import Button from "../../../components/common/Button";
-import AuthHeader from "../components/AuthHeader";
+import Input from "../../../components/Input";
+import Button from "../../../components/Button";
 import useForgotPassword from "../hooks/useForgotPassword";
+import Logo from "../../../components/Logo";
 
 export default function ForgotPassword() {
     const { step, loading, form, handleChange, handleSendOTP, handleReset } = useForgotPassword();
@@ -9,7 +9,7 @@ export default function ForgotPassword() {
     return (
         <div className="min-h-screen flex items-center border border-[#e8dcc8] justify-center bg-white">
             <div className="w-full max-w-sm border p-6 rounded-xl">
-                <AuthHeader 
+                <Logo
                     title={step === 1 ? "Quên mật khẩu" : "Nhập OTP để đặt lại mật khẩu"} 
                 />
 

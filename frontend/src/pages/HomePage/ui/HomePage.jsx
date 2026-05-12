@@ -1,7 +1,9 @@
-import Carousel from "../../../components/common/Carousel";
-
-export default function HomePage() {
-    return (
-        <Carousel />
+import Carousel from "../../../components/Carousel"
+export default function HomePage(){
+    return(
+          <section>
+            <Carousel/>
+          </section>
+            
     )
 }

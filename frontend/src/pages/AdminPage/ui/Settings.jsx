@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock, faBell } from "@fortawesome/free-solid-svg-icons";
-import Button from "../../../components/common/Button";
-import Input from "../../../components/common/Input";
+import Button from "../../../components/Button";
+import Input from "../../../components/Input";
 
 export default function Settings() {
     const [activeTab, setActiveTab] = useState("profile");

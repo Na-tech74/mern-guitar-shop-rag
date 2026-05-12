@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faCheck, faXmark, faTruck } from "@fortawesome/free-solid-svg-icons";
 import { useOrders } from "../hooks/useOrders";
-import Button from "../../../components/common/Button";
+import Button from "../../../components/Button";
 
 export default function Orders() {
     const { orders, loading, error, updateStatus } = useOrders();

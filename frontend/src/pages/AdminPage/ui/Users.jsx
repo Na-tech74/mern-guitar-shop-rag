@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrash, faSearch, faUserShield } from "@fortawesome/free-solid-svg-icons";
 import { useUsers } from "../hooks/useUsers";
 import { formatDate } from "../../../helpers/format";
-import Button from "../../../components/common/Button";
-import Input from "../../../components/common/Input";
+import Button from "../../../components/Button";
+import Input from "../../../components/Input";
 
 export default function Users() {
     const { users, loading, updateUser, deleteUser, filteredUsers, searchTerm, setSearchTerm } = useUsers();

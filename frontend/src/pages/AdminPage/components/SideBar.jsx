@@ -2,8 +2,26 @@
 
 import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsisVertical, faXmark } from "@fortawesome/free-solid-svg-icons";
-import { adminSidebarMenuItems } from "../../../data/dbContext";
+import { faEllipsisVertical, faXmark, faChartPie, faBox, faUsers, faCartShopping, faTag, faGear } from "@fortawesome/free-solid-svg-icons";
+
+const adminSidebarMenuItems = [
+    {
+        title: "Quản lý",
+        items: [
+            { name: "Bảng điều khiển", path: "/admin", icon: faChartPie },
+            { name: "Sản phẩm", path: "/admin/products", icon: faBox },
+            { name: "Đơn hàng", path: "/admin/orders", icon: faCartShopping },
+            { name: "Người dùng", path: "/admin/users", icon: faUsers },
+            { name: "Danh mục", path: "/admin/categories", icon: faTag },
+        ]
+    },
+    {
+        title: "Hệ thống",
+        items: [
+            { name: "Cài đặt", path: "/admin/settings", icon: faGear },
+        ]
+    }
+];
 
 export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }) {
 
