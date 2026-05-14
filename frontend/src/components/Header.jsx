@@ -10,13 +10,17 @@ import Logo from '../components/Logo.jsx';
 
 const menuItems = [
   { name: 'TRANG CHỦ', path: '/', hasDropdown: false },
-  { name: 'SẢN PHẨM', path: '/products', hasDropdown: true, dropdownItems: [
-    { name: 'Guitar Acoustic', path: '/products?category=acoustic' },
-    { name: 'Guitar Classic', path: '/products?category=classic' },
-    { name: 'Piano', path: '/products?category=piano' },
-    { name: 'Ukulele', path: '/products?category=ukulele' },
-  ]},
+  {
+    name: 'SẢN PHẨM', path: '/products', hasDropdown: true, dropdownItems: [
+      { name: 'Guitar Acoustic', path: '/products?category=acoustic' },
+      { name: 'Guitar Classic', path: '/products?category=classic' },
+      { name: 'Piano', path: '/products?category=piano' },
+      { name: 'Ukulele', path: '/products?category=ukulele' },
+    ]
+  },
+  { name: 'KHÓA HỌC ', path: '/contact', hasDropdown: false },
   { name: 'GIỚI THIỆU', path: '/about', hasDropdown: false },
+   { name: 'BÀI VIẾT', path: '/about', hasDropdown: false },
   { name: 'LIÊN HỆ', path: '/contact', hasDropdown: false },
 ];
 
@@ -85,7 +89,7 @@ export default function Header() {
 
   return (
     <>
-      <header className= "w-full fixed top-0 z-50 ">
+      <header className="w-full fixed top-0 z-50 ">
 
         {/* Top Bar */}
         <div className="hidden lg:block bg-gradient-to-r from-amber-600 to-amber-400 text-white text-xs py-2">

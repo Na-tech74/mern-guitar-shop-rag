@@ -2,7 +2,7 @@
 
 import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsisVertical, faXmark, faChartPie, faBox, faUsers, faCartShopping, faTag, faGear } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsisVertical, faXmark, faChartPie, faBox, faUsers, faCartShopping, faTag, faGear, faNewspaper } from "@fortawesome/free-solid-svg-icons";
 
 const adminSidebarMenuItems = [
     {
@@ -13,6 +13,7 @@ const adminSidebarMenuItems = [
             { name: "Đơn hàng", path: "/admin/orders", icon: faCartShopping },
             { name: "Người dùng", path: "/admin/users", icon: faUsers },
             { name: "Danh mục", path: "/admin/categories", icon: faTag },
+            { name: "Blog", path: "/admin/blog", icon: faNewspaper }
         ]
     },
     {

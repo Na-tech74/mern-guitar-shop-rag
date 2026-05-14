@@ -6,7 +6,6 @@ import { appError } from "../common/appError.js";
 
 const router = express.Router();
 
-// Upload chung (không cần auth)
 router.post(
     "/",
     upload.array("images", 5),

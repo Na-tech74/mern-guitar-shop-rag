@@ -11,8 +11,7 @@ const slides = [
         description: "Khám phá bộ sưu tập guitar acoustic cao cấp với thiết kế tinh xảo và âm thanh sống động",
         image: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=1600&q=80",
         cta: "Mua ngay",
-        path: "/products",
-        badge: "Bestseller"
+        path: "/products"
     },
     {
         id: 2,
@@ -21,8 +20,7 @@ const slides = [
         description: "Bộ sưu tập piano điện tử và acoustic từ các thương hiệu nổi tiếng thế giới",
         image: "https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=1600&q=80",
         cta: "Khám phá",
-        path: "/products",
-        badge: "New Arrival"
+        path: "/products"
     },
     {
         id: 3,
@@ -31,8 +29,7 @@ const slides = [
         description: "Đăng ký khóa học guitar, piano, violin và nhiều nhạc cụ khác với giáo viên giàu kinh nghiệm",
         image: "https://images.unsplash.com/photo-1514119412350-e174d90d280e?w=1600&q=80",
         cta: "Đăng ký ngay",
-        path: "/products",
-        badge: "Limited"
+        path: "/products"
     },
 ];
 
@@ -95,22 +92,12 @@ export default function Carousel() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 </div>
             ))}
-
-            {/* Badge */}
-            {slides[currentSlide].badge && (
-                <div className="absolute top-4 md:top-6 left-4 md:left-6 z-20">
-                    <span className="px-3 md:px-4 py-1.5 bg-amber-500 text-white text-xs md:text-sm font-semibold rounded-full shadow-lg">
-                        {slides[currentSlide].badge}
-                    </span>
-                </div>
-            )}
-
             {/* Content */}
             <div className="relative h-full flex items-center z-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     <div className="max-w-2xl">
                         <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full mb-4 border border-white/20">
-                            <FontAwesomeIcon icon={faMusic} className="text-amber-400" />
+                            <FontAwesomeIcon icon={faMusic} className="text-amber-500 " />
                             <span className="text-white/90 text-sm">Nam Acoustic</span>
                         </div>
 

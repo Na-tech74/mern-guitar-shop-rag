@@ -35,3 +35,24 @@ export const orderAPI = {
     updateStatus: (id, status) => API.put(`/orders/${id}/status`, { status }),
     delete: (id) => API.delete(`/orders/${id}`),
 };
+
+export const uploadAPI = {
+    uploadImages: (files) => {
+        const formData = new FormData();
+        files.forEach((file) => formData.append("images", file));
+        return API.post("/uploads", formData, {
+            headers: { "Content-Type": "multipart/form-data" }
+        });
+    },
+};
+
+export const blogAPI = {
+    getAll: (params) => API.get("/blogs/get-all-blogs", { params }),
+    getById: (id) => API.get(`/blogs/${id}`),
+    create: (data) => API.post("/blogs/create-blogs", data),
+    update: (id, data) => API.put(`/blogs/update-blogs/${id}`, data),
+    delete: (id) => API.delete(`/blogs/delete-blogs/${id}`),
+    uploadBanner: (blogId, formData) => API.post(`/blogs/${blogId}/banner`, formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+    }),
+};

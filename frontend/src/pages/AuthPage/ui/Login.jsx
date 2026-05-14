@@ -56,9 +56,9 @@ export default function Login() {
                 </form>
 
                 <div className="mt-6 text-center">
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-600">
                         Chưa có tài khoản? 
-                     <Link to="/register" className="text-gray-600 hover:text-blue-600" >
+                     <Link to="/register" className=" hover:text-blue-600" >
                            Đăng ký ngay
                      </Link>
                     </p>

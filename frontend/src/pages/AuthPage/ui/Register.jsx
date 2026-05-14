@@ -2,7 +2,7 @@ import Input from "../../../components/Input";
 import Button from "../../../components/Button";
 import useRegister from "../hooks/useRegister";
 import Logo from "../../../components/Logo";
-import AuthLink from "../components/AuthLink";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 
@@ -64,8 +64,9 @@ export default function Register() {
                 </form>
 
                 <div className="mt-6 text-center">
-                    <p className="text-sm text-gray-500">
-                        Đã có tài khoản? <AuthLink to="/login">Đăng nhập</AuthLink>
+                    <p className="text-sm text-gray-600">
+                        Đã có tài khoản? 
+                        <Link to="/login" className=" hover:text-blue-600" >Đăng Nhập</Link>
                     </p>
                 </div>
             </div>

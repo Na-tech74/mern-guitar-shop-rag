@@ -15,6 +15,7 @@ import Orders from "./pages/AdminPage/ui/Orders";
 import Users from "./pages/AdminPage/ui/Users";
 import Categories from "./pages/AdminPage/ui/Categories";
 import Settings from "./pages/AdminPage/ui/Settings";
+import Blog from "./pages/AdminPage/ui/Blog";
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
             <Route path="users" element={<Users />} />
             <Route path="categories" element={<Categories />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="blog" element={<Blog />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

@@ -25,7 +25,7 @@ const fetchDashboardData = async (setStats, setRecentOrders, setLoading) => {
             totalOrders: 0,
         });
     } catch (error) {
-        console.error("Error fetching dashboard data:", error);
+        // error
     } finally {
         setLoading(false);
     }
