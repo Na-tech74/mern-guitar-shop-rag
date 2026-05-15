@@ -24,6 +24,12 @@ const categorySchema = new mongoose.Schema(
       default: "", // nếu không nhập thì để rỗng
     },
 
+    // Hình ảnh category
+    image: {
+      type: String,
+      default: "",
+    },
+
     // trạng thái hiển thị (true = đang dùng)
     isActive: {
       type: Boolean,

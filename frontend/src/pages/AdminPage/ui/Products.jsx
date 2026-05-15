@@ -13,12 +13,34 @@ export default function Products() {
         fetchProducts, categories
     } = useProducts();
 
-    const handleFileChange = (e) => {
+    const handleFileChange = async (e) => {
         const files = Array.from(e.target.files);
-        if (files.length > 0) {
-            const imageUrls = files.map(file => URL.createObjectURL(file));
-            setFormData({ ...formData, images: [...formData.images, ...imageUrls] });
+        if (files.length === 0) return;
+
+        const newImages = [...formData.images];
+        
+        for (const file of files) {
+            try {
+                const formDataUpload = new FormData();
+                formDataUpload.append("images", file);
+                const res = await fetch("http://localhost:5000/api/uploads", {
+                    method: "POST",
+                    body: formDataUpload
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    alert(data.message || "Upload failed");
+                    continue;
+                }
+                if (data.images && data.images[0]) {
+                    newImages.push(data.images[0]);
+                }
+            } catch (err) {
+                newImages.push(URL.createObjectURL(file));
+            }
         }
+        
+        setFormData({ ...formData, images: newImages });
     };
 
     const removeImage = (index) => {

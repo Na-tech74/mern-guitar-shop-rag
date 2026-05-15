@@ -50,9 +50,18 @@ export const blogAPI = {
     getAll: (params) => API.get("/blogs/get-all-blogs", { params }),
     getById: (id) => API.get(`/blogs/${id}`),
     create: (data) => API.post("/blogs/create-blogs", data),
-    update: (id, data) => API.put(`/blogs/update-blogs/${id}`, data),
-    delete: (id) => API.delete(`/blogs/delete-blogs/${id}`),
+    update: (id, data) => API.put("/blogs/update-blogs/${id}", data),
+    delete: (id) => API.delete("/blogs/delete-blogs/${id}"),
     uploadBanner: (blogId, formData) => API.post(`/blogs/${blogId}/banner`, formData, {
         headers: { "Content-Type": "multipart/form-data" }
     }),
+};
+
+export const carouselAPI = {
+    getAll: () => API.get("/carousels/get-all-carousels"),
+    getActive: () => API.get("/carousels/get-active-carousels"),
+    getById: (id) => API.get(`/carousels/${id}`),
+    create: (data) => API.post("/carousels", data),
+    update: (id, data) => API.put(`/carousels/${id}`, data),
+    delete: (id) => API.delete(`/carousels/${id}`),
 };

@@ -73,11 +73,37 @@ export const useProducts = () => {
         }
     }, [fetchProducts]);
 
+    const uploadImagesToCloud = async (images) => {
+        const cloudinaryUrls = [];
+        for (const img of images) {
+            if (img.startsWith('blob:') || img.startsWith('http://localhost')) {
+                const formDataUpload = new FormData();
+                const response = await fetch(img);
+                const blob = await response.blob();
+                formDataUpload.append("images", blob, "image.jpg");
+                const res = await fetch("http://localhost:5000/api/uploads", {
+                    method: "POST",
+                    body: formDataUpload
+                });
+                const data = await res.json();
+                if (data.images && data.images[0]) {
+                    cloudinaryUrls.push(data.images[0]);
+                }
+            } else {
+                cloudinaryUrls.push(img);
+            }
+        }
+        return cloudinaryUrls;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            const uploadedImages = await uploadImagesToCloud(formData.images);
+            
             const productData = {
                 ...formData,
+                images: uploadedImages,
                 price: Number(formData.price),
                 stock: Number(formData.stock),
             };

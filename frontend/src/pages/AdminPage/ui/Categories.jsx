@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faPen, faTrash, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faPen, faTrash, faSearch, faImage } from "@fortawesome/free-solid-svg-icons";
 import { formatDate } from "../../../helpers/format";
 import { useCategories } from "../hooks/useCategories";
 import Button from "../../../components/Button";
@@ -10,7 +11,7 @@ export default function Categories() {
         loading, filteredCategories, searchTerm, setSearchTerm,
         handleSubmit, handleDelete, handleEdit, resetForm, openModal,
         showModal, setShowModal, editingCategory, setEditingCategory, 
-        formData, setFormData
+        formData, setFormData, imagePreview, handleImageChange
     } = useCategories();
 
     if (loading) {
@@ -51,17 +52,23 @@ export default function Categories() {
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {filteredCategories.map((category) => (
                         <div key={category._id} className="rounded-xl border border-gray-200 p-4 transition-all hover:shadow-md">
-                            <div className="flex items-start justify-between">
-                                <div className="flex-1">
+                            <div className="flex gap-4">
+                                <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                                    {category.image ? (
+                                        <img src={category.image} alt={category.name} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                            <FontAwesomeIcon icon={faImage} />
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="flex-1 min-w-0">
                                     <h3 className="font-semibold text-gray-800">{category.name}</h3>
-                                    <p className="mt-1 text-sm text-gray-500">
+                                    <p className="mt-1 text-sm text-gray-500 line-clamp-2">
                                         {category.description || "Chưa có mô tả"}
                                     </p>
                                     <p className="mt-2 text-xs text-gray-400">
                                         Slug: {category.slug}
-                                    </p>
-                                    <p className="text-xs text-gray-400">
-                                        Ngày tạo: {category.createdAt ? formatDate(category.createdAt) : "-"}
                                     </p>
                                 </div>
                                 <div className="flex gap-1">
@@ -73,10 +80,13 @@ export default function Categories() {
                                     </Button>
                                 </div>
                             </div>
-                            <div className="mt-3">
+                            <div className="mt-3 flex items-center justify-between">
                                 <span className={`rounded-full px-2 py-1 text-xs font-medium ${category.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"}`}>
                                     {category.isActive ? "Hoạt động" : "Không hoạt động"}
                                 </span>
+                                <p className="text-xs text-gray-400">
+                                    {category.createdAt ? formatDate(category.createdAt) : "-"}
+                                </p>
                             </div>
                         </div>
                     ))}
@@ -90,11 +100,38 @@ export default function Categories() {
 
             {showModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                    <div className="w-full max-w-lg rounded-xl bg-white p-6">
+                    <div className="w-full max-w-lg rounded-xl bg-white p-6 max-h-[90vh] overflow-y-auto">
                         <h2 className="mb-4 text-xl font-semibold text-gray-800">
                             {editingCategory ? "Cập nhật danh mục" : "Thêm danh mục mới"}
                         </h2>
                         <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <label className="mb-1 block text-sm font-medium text-gray-700">Hình ảnh</label>
+                                <div className="flex items-center gap-4">
+                                    <div className="w-20 h-20 rounded-lg border-2 border-dashed border-gray-300 overflow-hidden bg-gray-50 flex items-center justify-center">
+                                        {imagePreview ? (
+                                            <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <FontAwesomeIcon icon={faImage} className="text-gray-400 text-2xl" />
+                                        )}
+                                    </div>
+                                    <div>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleImageChange}
+                                            className="hidden"
+                                            id="category-image"
+                                        />
+                                        <label
+                                            htmlFor="category-image"
+                                            className="cursor-pointer px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 text-sm"
+                                        >
+                                            Chọn ảnh
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                             <Input
                                 label="Tên danh mục"
                                 value={formData.name}

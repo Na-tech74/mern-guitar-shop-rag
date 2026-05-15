@@ -13,7 +13,7 @@ router.post(
         if (!req.files || req.files.length === 0) {
             throw appError("No files uploaded!", 400);
         }
-        const images = await uploadImages(req.files, "guitar-shop");
+        const images = await uploadImages(req.files, "guitar-shop/products");
         res.json({
             message: "Images uploaded successfully!",
             images

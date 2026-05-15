@@ -9,7 +9,8 @@ export const useCategories = () => {
     
     const [showModal, setShowModal] = useState(false);
     const [editingCategory, setEditingCategory] = useState(null);
-    const [formData, setFormData] = useState({ name: "", description: "" });
+    const [formData, setFormData] = useState({ name: "", description: "", image: "" });
+    const [imagePreview, setImagePreview] = useState("");
 
     const fetchCategories = useCallback(async () => {
         try {
@@ -90,18 +91,42 @@ export const useCategories = () => {
         setFormData({
             name: category.name,
             description: category.description || "",
+            image: category.image || "",
         });
+        setImagePreview(category.image || "");
         setShowModal(true);
     };
 
     const resetForm = () => {
         setEditingCategory(null);
-        setFormData({ name: "", description: "" });
+        setFormData({ name: "", description: "", image: "" });
+        setImagePreview("");
     };
 
     const openModal = () => {
         resetForm();
         setShowModal(true);
+    };
+
+    const handleImageChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        try {
+            const formDataUpload = new FormData();
+            formDataUpload.append("images", file);
+            const res = await fetch("http://localhost:5000/api/uploads", {
+                method: "POST",
+                body: formDataUpload
+            });
+            const data = await res.json();
+            if (data.images && data.images[0]) {
+                setFormData({ ...formData, image: data.images[0] });
+                setImagePreview(data.images[0]);
+            }
+        } catch (err) {
+            alert("Upload ảnh thất bại!");
+        }
     };
 
     return {
@@ -125,5 +150,7 @@ export const useCategories = () => {
         setEditingCategory,
         formData,
         setFormData,
+        imagePreview,
+        handleImageChange,
     };
 };

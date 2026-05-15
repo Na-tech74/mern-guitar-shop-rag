@@ -12,7 +12,7 @@ import {
  * @access Private (chỉ admin)
  */
 export const createCategory = async (req, res) => {
-    const { name, description } = req.body;
+    const { name, description, image } = req.body;
 
     // Kiểm tra quyền admin
     if (req.user.role !== 'admin') {
@@ -20,20 +20,21 @@ export const createCategory = async (req, res) => {
     }
 
     // Kiểm tra các trường bắt buộc
-    if (!name || !description) {
+    if (!name) {
         throw appError("Thiếu trường bắt buộc!", 400);
     }
 
     // Tạo danh mục mới (sanitize text để tránh XSS)
-    const createCategory = await categoryModel.create({
+    const newCategory = await categoryModel.create({
         name: sanitizeText(name),
         slug: createSlug(name),
-        description: sanitizeText(description)
+        description: description ? sanitizeText(description) : "",
+        image: image || ""
     });
 
     return res.status(201).json(formatSuccessResponse(
         'Danh mục đã được tạo thành công!',
-        createCategory
+        newCategory
     ));
 };
 
@@ -81,7 +82,7 @@ export const getCategoryById = async (req, res) => {
  */
 export const updateCategory = async (req, res) => {
     const { id } = req.params;
-    const { name, description } = req.body || {};
+    const { name, description, image } = req.body || {};
 
     // Kiểm tra quyền admin
     if (req.user.role !== 'admin') {
@@ -103,6 +104,11 @@ export const updateCategory = async (req, res) => {
     // Cập nhật mô tả (sanitize)
     if (description) {
         category.description = sanitizeText(description);
+    }
+
+    // Cập nhật hình ảnh
+    if (image !== undefined) {
+        category.image = image;
     }
 
     await category.save();

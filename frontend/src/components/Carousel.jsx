@@ -2,8 +2,9 @@ import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight, faCartPlus, faMusic } from "@fortawesome/free-solid-svg-icons";
+import { API } from "../api/axiosClient";
 
-const slides = [
+const defaultSlides = [
     {
         id: 1,
         title: "Guitar Acoustic Cao Cấp",
@@ -27,30 +28,45 @@ const slides = [
         title: "Ukulele & Nhạc Cụ",
         subtitle: "Học nhạc cùng giáo viên chuyên nghiệp",
         description: "Đăng ký khóa học guitar, piano, violin và nhiều nhạc cụ khác với giáo viên giàu kinh nghiệm",
-        image: "https://images.unsplash.com/photo-1514119412350-e174d90d280e?w=1600&q=80",
+        image: "https://images.unsplash.com/photo-1514117445517-2ec90fa4b84b?w=1600&q=80",
         cta: "Đăng ký ngay",
         path: "/products"
     },
 ];
 
 export default function Carousel() {
+    const [slides, setSlides] = useState(defaultSlides);
     const [currentSlide, setCurrentSlide] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
+
+    useEffect(() => {
+        const fetchCarousels = async () => {
+            try {
+                const response = await API.get("/carousels/get-active-carousels");
+                if (response.data && response.data.length > 0) {
+                    setSlides(response.data);
+                }
+            } catch (error) {
+                console.log("Using default carousel slides");
+            }
+        };
+        fetchCarousels();
+    }, []);
 
     const goNext = useCallback(() => {
         if (isAnimating) return;
         setIsAnimating(true);
         setCurrentSlide((prev) => (prev + 1) % slides.length);
         setTimeout(() => setIsAnimating(false), 700);
-    }, [isAnimating]);
+    }, [isAnimating, slides.length]);
 
-    const goPrev = () => {
+    const goPrev = useCallback(() => {
         if (isAnimating) return;
         setIsAnimating(true);
         setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
         setTimeout(() => setIsAnimating(false), 700);
-    };
+    }, [isAnimating, slides.length]);
 
     const goTo = (index) => {
         if (isAnimating || index === currentSlide) return;
@@ -65,16 +81,17 @@ export default function Carousel() {
         return () => clearInterval(timer);
     }, [isPaused, goNext]);
 
+    if (slides.length === 0) return null;
+
     return (
         <div
             className="relative w-full h-[400px] md:h-[480px] lg:h-[520px] overflow-hidden group"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
         >
-            {/* Slides */}
             {slides.map((slide, index) => (
                 <div
-                    key={slide.id}
+                    key={slide._id || slide.id}
                     className={`absolute inset-0 transition-opacity duration-700 ease-out ${
                         index === currentSlide
                             ? "opacity-100 z-10"
@@ -92,7 +109,6 @@ export default function Carousel() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 </div>
             ))}
-            {/* Content */}
             <div className="relative h-full flex items-center z-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     <div className="max-w-2xl">
@@ -117,10 +133,10 @@ export default function Carousel() {
 
                         <div className="flex flex-wrap gap-3 md:gap-4">
                             <Link
-                                to={slides[currentSlide].path}
+                                to={slides[currentSlide].path || "/products"}
                                 className="inline-flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 bg-amber-600 hover:bg-amber-500 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
                             >
-                                {slides[currentSlide].cta}
+                                {slides[currentSlide].cta || "Xem thêm"}
                                 <FontAwesomeIcon icon={faCartPlus} className="transform group-hover:translate-x-1 transition-transform" />
                             </Link>
                             <Link
@@ -134,7 +150,6 @@ export default function Carousel() {
                 </div>
             </div>
 
-            {/* Navigation Arrows */}
             <button
                 onClick={goPrev}
                 className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white rounded-full flex items-center justify-center transition-all duration-300 border border-white/20 hover:scale-110 opacity-0 group-hover:opacity-100"
@@ -148,7 +163,6 @@ export default function Carousel() {
                 <FontAwesomeIcon icon={faChevronRight} />
             </button>
 
-            {/* Dots */}
             <div className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
                 {slides.map((_, index) => (
                     <button
@@ -163,7 +177,6 @@ export default function Carousel() {
                 ))}
             </div>
 
-            {/* Progress Bar */}
             <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 z-20">
                 <div
                     className="h-full bg-gradient-to-r from-amber-400 to-amber-600 transition-all duration-300"
