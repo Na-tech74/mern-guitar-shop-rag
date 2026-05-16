@@ -16,7 +16,6 @@ import Users from "./pages/AdminPage/ui/Users";
 import Categories from "./pages/AdminPage/ui/Categories";
 import Settings from "./pages/AdminPage/ui/Settings";
 import Blog from "./pages/AdminPage/ui/Blog";
-import Carousels from "./pages/AdminPage/ui/Carousels";
 
 function App() {
   return (
@@ -57,7 +56,6 @@ function App() {
             <Route path="categories" element={<Categories />} />
             <Route path="settings" element={<Settings />} />
             <Route path="blog" element={<Blog />} />
-            <Route path="carousels" element={<Carousels />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

@@ -12,10 +12,10 @@ export const generateAccessToken = (id) => {
 
 export const generateRefreshToken = (id) => {
     return jwt.sign(
-        { id }, // Payload - dữ liệu muốn lưu trong token
-        process.env.JWT_REFRESH_SECRET, // Secret key - chữ ký bí mật
+        { id },
+        process.env.JWT_REFRESH_SECRET,
         {
-            expiresIn: "7d" // Options - token hết hạn sau 7 ngày
+            expiresIn: "7d"
         }
     );
 };

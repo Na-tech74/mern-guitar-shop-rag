@@ -1,30 +1,21 @@
 import categoryModel from "../models/categories.model.js";
-import { appError } from "../common/appError.js";
-import { createSlug } from "../utils/slug.js";
+import { appError } from "../utils/appError.js";
 import {
     formatSuccessResponse,
     sanitizeText
 } from "../utils/format.js";
 
-/**
- * @desc Tạo danh mục mới
- * @route POST /api/categories
- * @access Private (chỉ admin)
- */
 export const createCategory = async (req, res) => {
     const { name, description, image } = req.body;
 
-    // Kiểm tra quyền admin
     if (req.user.role !== 'admin') {
         throw appError("Chỉ admin mới có quyền!", 403);
     }
 
-    // Kiểm tra các trường bắt buộc
     if (!name) {
         throw appError("Thiếu trường bắt buộc!", 400);
     }
 
-    // Tạo danh mục mới (sanitize text để tránh XSS)
     const newCategory = await categoryModel.create({
         name: sanitizeText(name),
         slug: createSlug(name),
@@ -38,11 +29,6 @@ export const createCategory = async (req, res) => {
     ));
 };
 
-/**
- * @desc Lấy tất cả danh mục
- * @route GET /api/categories
- * @access Public
- */
 export const getAllCategory = async (req, res) => {
     const category = await categoryModel.find();
 
@@ -56,11 +42,6 @@ export const getAllCategory = async (req, res) => {
     ));
 };
 
-/**
- * @desc Lấy danh mục theo ID
- * @route GET /api/categories/:id
- * @access Public
- */
 export const getCategoryById = async (req, res) => {
     const { id } = req.params;
     const category = await categoryModel.findById(id);
@@ -75,38 +56,28 @@ export const getCategoryById = async (req, res) => {
     ));
 };
 
-/**
- * @desc Cập nhật danh mục
- * @route PUT /api/categories/:id
- * @access Private (chỉ admin)
- */
 export const updateCategory = async (req, res) => {
     const { id } = req.params;
     const { name, description, image } = req.body || {};
 
-    // Kiểm tra quyền admin
     if (req.user.role !== 'admin') {
         throw appError("Chỉ admin mới có quyền!", 403);
     }
 
-    // Tìm danh mục
     const category = await categoryModel.findById(id);
     if (!category) {
         throw appError("Danh mục không tồn tại!", 404);
     }
 
-    // Cập nhật tên (tạo slug mới)
     if (name) {
         category.name = sanitizeText(name);
         category.slug = createSlug(name);
     }
 
-    // Cập nhật mô tả (sanitize)
     if (description) {
         category.description = sanitizeText(description);
     }
 
-    // Cập nhật hình ảnh
     if (image !== undefined) {
         category.image = image;
     }
@@ -119,20 +90,13 @@ export const updateCategory = async (req, res) => {
     ));
 };
 
-/**
- * @desc Xóa danh mục
- * @route DELETE /api/categories/:id
- * @access Private (chỉ admin)
- */
 export const deleteCategory = async (req, res) => {
     const { id } = req.params;
 
-    // Kiểm tra quyền admin
     if (req.user.role !== 'admin') {
         throw appError("Chỉ admin mới có quyền!", 403);
     }
 
-    // Tìm danh mục
     const category = await categoryModel.findById(id);
     if (!category) {
         throw appError("Danh mục không tồn tại!", 404);

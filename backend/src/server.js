@@ -13,7 +13,6 @@ import productRoutes from './routers/product.routes.js';
 import orderRoutes from './routers/order.routes.js';
 import uploadRoutes from './routers/upload.routes.js';
 import blogRoutes from './routers/blog.routes.js';
-import carouselRoutes from './routers/carousel.routes.js';
 
 import { errorHandler } from './middleware/error.middleware.js';
 
@@ -37,7 +36,6 @@ app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/uploads', uploadRoutes);
 app.use('/api/blogs', blogRoutes);
-app.use('/api/carousels', carouselRoutes);
 app.use(errorHandler);
 app.get('/', (req, res) => {
     res.send({

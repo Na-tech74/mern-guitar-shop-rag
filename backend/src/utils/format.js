@@ -1,10 +1,8 @@
-/* ==================== FORMAT GIÁ TIỀN ==================== */
 export const formatPrice = (price) => {
     if (!price) return 0;
     return new Intl.NumberFormat('vi-VN').format(price);
 };
 
-/* ==================== FORMAT NGÀY THÁNG ==================== */
 export const formatDate = (date) => {
     if (!date) return '';
     const d = new Date(date);
@@ -25,7 +23,6 @@ export const formatDateTime = (date) => {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
 };
 
-/* ==================== LOẠI BỎ KÝ TỰ XẤU ==================== */
 export const sanitizeText = (text) => {
     if (!text) return '';
     return text.trim().replace(/\s+/g, ' ');
@@ -36,7 +33,6 @@ export const sanitizeEmail = (email) => {
     return email.toLowerCase().trim();
 };
 
-/* ==================== FORMAT RESPONSE ==================== */
 export const formatSuccessResponse = (message, data = null, pagination = null) => {
     const response = {
         status: 'success',

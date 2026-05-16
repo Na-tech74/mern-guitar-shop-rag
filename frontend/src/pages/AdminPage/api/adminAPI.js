@@ -56,12 +56,3 @@ export const blogAPI = {
         headers: { "Content-Type": "multipart/form-data" }
     }),
 };
-
-export const carouselAPI = {
-    getAll: () => API.get("/carousels/get-all-carousels"),
-    getActive: () => API.get("/carousels/get-active-carousels"),
-    getById: (id) => API.get(`/carousels/${id}`),
-    create: (data) => API.post("/carousels", data),
-    update: (id, data) => API.put(`/carousels/${id}`, data),
-    delete: (id) => API.delete(`/carousels/${id}`),
-};

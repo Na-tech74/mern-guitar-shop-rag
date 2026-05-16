@@ -14,10 +14,15 @@ export default function AdminHeader({ toggleSidebar }) {
     const navigate = useNavigate();
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        try {
+            const { logoutAPI } = await import("../../AuthPage/api/authAPI.js");
+            await logoutAPI();
+        } catch {
+            // ignore
+        }
         localStorage.removeItem("userInfo");
         localStorage.removeItem("token");
-        localStorage.removeItem("refreshToken");
         navigate("/");
     };
 

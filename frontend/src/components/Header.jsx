@@ -80,7 +80,13 @@ export default function Header() {
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const isLoggedIn = !!userInfo;
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      const { logoutAPI } = await import("../pages/AuthPage/api/authAPI.js");
+      await logoutAPI();
+    } catch {
+      // ignore
+    }
     localStorage.removeItem("userInfo");
     localStorage.removeItem("token");
     setIsAccountOpen(false);

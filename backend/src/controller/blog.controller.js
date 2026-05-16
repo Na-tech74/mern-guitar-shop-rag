@@ -1,6 +1,5 @@
 import blogModel from "../models/blogs.model.js";
-import { appError } from "../common/appError.js";
-import { createSlug } from "../utils/slug.js";
+import { appError } from "../utils/appError.js";
 import { uploadImages } from "../services/uploadImages.js";
 import { formatSuccessResponse, sanitizeText } from "../utils/format.js";
 import { isValidObjectId } from "../utils/vaildate.js";
@@ -16,14 +15,8 @@ export const createBlog = async (req, res) => {
         throw appError("Nhập đầy đủ thông tin bài viết!", 400);
     }
 
-    const blogExist = await blogModel.findOne({ slug: createSlug(title) });
-    if (blogExist) {
-        throw appError("Tiêu đề bài viết đã tồn tại!", 400);
-    }
-
     const newBlog = await blogModel.create({
         title: sanitizeText(title),
-        slug: createSlug(title),
         excerpt: excerpt ? sanitizeText(excerpt) : "",
         content,
         banner,
@@ -104,14 +97,13 @@ export const updateBlog = async (req, res) => {
 
     if (title && title !== blog.title) {
         const existingBlog = await blogModel.findOne({
-            slug: createSlug(title),
+            title: sanitizeText(title),
             _id: { $ne: id }
         });
         if (existingBlog) {
             throw appError("Tiêu đề bài viết đã tồn tại!", 400);
         }
         blog.title = sanitizeText(title);
-        blog.slug = createSlug(title);
     }
 
     if (content) blog.content = content;
