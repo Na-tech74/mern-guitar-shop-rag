@@ -1,46 +1,87 @@
 import productModel from "../models/products.models.js";
-import { appError } from "../utils/appResponse.js";
+import { appError, appSuccess } from "../utils/appResponse.js";
 import { uploadImages } from "../services/uploadImages.js";
-import { formatSuccessResponse, formatDate, sanitizeText } from "../utils/format.js";
+import { formatSuccessResponse, formatDate, formatDateTime, sanitizeText, formatPrice } from "../utils/format.js";
 import { isValidObjectId } from "../utils/vaildate.js";
 
+/**
+ * Tạo sản phẩm mới (Admin only)
+ * @param {string} name - Tên sản phẩm (bắt buộc)
+ * @param {string} description - Mô tả sản phẩm (bắt buộc)
+ * @param {number} price - Giá sản phẩm (bắt buộc, > 0)
+ * @param {string} category - ID danh mục (bắt buộc)
+ * @param {number} stock - Số lượng tồn kho (bắt buộc, > 0)
+ * @param {File[]} images - Hình ảnh sản phẩm (bắt buộc, tối đa 5)
+ * @requires req.user.role = 'admin'
+ * @throws {400} Thiếu thông tin | Sản phẩm đã tồn tại
+ * @throws {403} Không có quyền
+ * @returns {201} Sản phẩm vừa tạo
+ */
 export const createProduct = async (req, res) => {
-    const { name, description, price, category, stock, images } = req.body;
+    // Lấy dữ liệu từ form-data
+    const { name, description, price, category, stock } = req.body;
+    const imageFiles = req.files;
 
+    // Kiểm tra quyền admin
     if (req.user.role !== 'admin') {
         throw appError("Chỉ admin mới có quyền!", 403);
     }
 
+    // Validate thông tin bắt buộc
     if (!name || !description || !price || !category || !stock) {
         throw appError("Nhập đầy đủ thông tin sản phẩm!", 400);
     }
 
-    const productExist = await productModel.findOne({ slug: createSlug(name) });
+    // Validate hình ảnh
+    if (!imageFiles || imageFiles.length === 0) {
+        throw appError("Vui lòng tải lên hình ảnh sản phẩm!", 400);
+    }
+
+    // Kiểm tra sản phẩm đã tồn tại chưa
+    const productExist = await productModel.findOne({ name: sanitizeText(name) });
     if (productExist) {
         throw appError("Sản phẩm đã tồn tại!", 400);
     }
 
+    // Validate giá và tồn kho > 0
     if (price <= 0 || stock <= 0) {
         throw appError("Giá và số lượng tồn kho phải lớn hơn 0", 400);
     }
 
+    // Upload ảnh lên Cloudinary (thư mục: guitar-shop/products)
+    const imageUrls = await uploadImages(imageFiles, "guitar-shop/products");
+
+    // Tạo sản phẩm mới trong database
     const newProduct = await productModel.create({
         name: sanitizeText(name),
-        slug: createSlug(name),
         description: sanitizeText(description),
-        price: parseFloat(price),
+        price: formatPrice(price),
         category,
         stock: parseInt(stock),
-        images: images || []
+        images: imageUrls
     });
 
-    await newProduct.populate('category', 'name slug');
+    // Lấy thông tin category để trả về
+    await newProduct.populate('category', 'name');
 
-    return res.status(201).json(formatSuccessResponse(
-        'Sản phẩm đã được tạo thành công!',
-        newProduct
-    ));
+    // Trả về thông tin sản phẩm đã tạo
+    return appSuccess(res, {
+        statusCode: 201,
+        message: "Tạo sản phẩm mới thành công!",
+        data: {
+            id: newProduct._id,
+            name: newProduct.name,
+            description: newProduct.description,
+            category: newProduct.category,
+            stock: newProduct.stock,
+            images: newProduct.images,
+            price: newProduct.price,
+            createdAt: formatDateTime(newProduct.createdAt),
+            updatedAt: formatDateTime(newProduct.updatedAt),
+        }
+    });
 };
+
 
 export const getAllProducts = async (req, res) => {
     const { page = 1,

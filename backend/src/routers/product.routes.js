@@ -21,7 +21,7 @@ import { upload } from "../middleware/upload.middleware.js";
 
 const router = express.Router();
 
-router.post("/create-products", protect, adminOnly, asyncHandler(createProduct));
+router.post("/create-products", protect, adminOnly, upload.array("images", 5), asyncHandler(createProduct));
 
 router.get("/get-all-products", asyncHandler(getAllProducts));
 

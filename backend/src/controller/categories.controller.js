@@ -47,7 +47,7 @@ export const createCategory = async (req, res) => {
     const newCategory = await Category.create({
         name: sanitizeText(name),
         description: sanitizeText(description),
-        image: imageUrl
+        image: imageUrl,
     });
 
     return appSuccess(res, {
