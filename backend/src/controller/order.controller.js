@@ -1,5 +1,5 @@
 import orderModel from "../models/order.models.js";
-import { appError } from "../utils/appError.js";
+import { appError } from "../utils/appResponse.js";
 import { formatSuccessResponse } from "../utils/format.js";
 import { isValidObjectId } from "../utils/vaildate.js";
 

@@ -1,5 +1,5 @@
 import productModel from "../models/products.models.js";
-import { appError } from "../utils/appError.js";
+import { appError } from "../utils/appResponse.js";
 import { uploadImages } from "../services/uploadImages.js";
 import { formatSuccessResponse, formatDate, sanitizeText } from "../utils/format.js";
 import { isValidObjectId } from "../utils/vaildate.js";

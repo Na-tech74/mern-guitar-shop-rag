@@ -2,7 +2,7 @@ import express from "express";
 import { upload } from "../middleware/upload.middleware.js";
 import { uploadImages } from "../services/uploadImages.js";
 import { asyncHandler } from "../middleware/asyncHandler.js";
-import { appError } from "../utils/appError.js";
+import { appError } from "../utils/appResponse.js";
 
 const router = express.Router();
 

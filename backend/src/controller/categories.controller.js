@@ -1,5 +1,5 @@
 import categoryModel from "../models/categories.model.js";
-import { appError } from "../utils/appError.js";
+import { appError } from "../utils/appResponse.js";
 import {
     formatSuccessResponse,
     sanitizeText

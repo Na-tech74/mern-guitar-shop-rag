@@ -1,32 +1,62 @@
-import expess from 'express';
-import rateLimit from 'express-rate-limit';
-import { protect } from '../middleware/auth.middleware.js';
+/**
+ * auth.routes.js
+ * Router xử lý các API xác thực người dùng theo chuẩn RESTful
+ */
+
+import express from 'express';
+import { protect, authLimiter, refreshLimiter } from '../middleware/auth.middleware.js';
 import { asyncHandler } from '../middleware/asyncHandler.js';
 import {
-    resetPassword, forgotPassword, logout,
-    login, register,
-    refreshToken,
+    resetPassword,
+    forgotPassword,
+    logout,
+    login,
+    register,
+    refreshAccessToken
 } from '../controller/auth.controller.js';
 
-const router = expess.Router()
+const router = express.Router();
 
-const authLimiter = rateLimit({
-    windowMs: 60 * 1000,
-    max: 5,
-    message: { success: false, message: "Quá nhiều yêu cầu, vui lòng thử lại sau 1 phút!" }
-});
+/**
+ * POST /api/auth/register
+ * Đăng ký tài khoản mới
+ * Public - Rate limited
+ */
+router.post("/register", authLimiter(), asyncHandler(register));
 
-const refreshLimiter = rateLimit({
-    windowMs: 60 * 1000,
-    max: 10,
-    message: { success: false, message: "Quá nhiều yêu cầu, vui lòng thử lại sau!" }
-});
+/**
+ * POST /api/auth/login
+ * Đăng nhập tài khoản
+ * Public - Rate limited
+ */
+router.post("/login", authLimiter(), asyncHandler(login));
 
-router.post("/register", authLimiter, asyncHandler(register));
-router.post("/login", authLimiter, asyncHandler(login));
-router.post("/forgot-password", authLimiter, asyncHandler(forgotPassword));
-router.post("/reset-password", authLimiter, asyncHandler(resetPassword));
+/**
+ * POST /api/auth/logout
+ * Đăng xuất tài khoản
+ * Protected - Cần authentication
+ */
 router.post("/logout", protect, asyncHandler(logout));
-router.post("/refresh-token", refreshLimiter, asyncHandler(refreshToken));
+
+/**
+ * POST /api/auth/refresh
+ * Làm mới access token
+ * Public - Rate limited
+ */
+router.post("/refresh", refreshLimiter(), asyncHandler(refreshAccessToken));
+
+/**
+ * POST /api/auth/password/forgot
+ * Gửi link đặt lại mật khẩu qua email
+ * Public - Rate limited
+ */
+router.post("/password/forgot", authLimiter(), asyncHandler(forgotPassword));
+
+/**
+ * POST /api/auth/password/reset
+ * Đặt lại mật khẩu mới
+ * Public - Rate limited
+ */
+router.post("/password/reset", authLimiter(), asyncHandler(resetPassword));
 
 export default router;
