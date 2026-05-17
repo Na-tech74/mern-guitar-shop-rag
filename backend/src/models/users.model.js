@@ -36,7 +36,6 @@ const userSchema = new mongoose.Schema({
         default: "",
         select: false // Không trả về khi query
     },
-
     // Mã OTP đặt lại mật khẩu (đã hash)
     resetOtp: {
         type: String,
@@ -58,4 +57,4 @@ const userSchema = new mongoose.Schema({
 
 }, { timestamps: true }); // Tự động thêm createdAt và updatedAt
 
-export default mongoose.model("User", userSchema);
+export default mongoose.model("Users", userSchema);

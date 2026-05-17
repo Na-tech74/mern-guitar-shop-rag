@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import { appError, appSuccess } from "../utils/appResponse.js";
 import { isValidateEmail, isValidatePassword, isValidObjectId } from '../utils/vaildate.js';
 import usersModel from '../models/users.model.js';
+import { formatDateTime } from '../utils/format.js';
 
 /**
  * Lấy danh sách tất cả người dùng (chỉ admin)
@@ -150,7 +151,9 @@ export const updateUser = async (req, res) => {
             id: user._id,
             name: user.name,
             email: user.email,
-            role: user.role
+            role: user.role,
+            createAt:formatDateTime(user.createdAt),
+            updatedAt: formatDateTime(user.updatedAt),
         }
     });
 };

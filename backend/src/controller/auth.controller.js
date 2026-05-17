@@ -15,6 +15,8 @@ import { sendEmail } from "../services/sendEmail.js"; // Service gửi email
 import { appError, appSuccess } from "../utils/appResponse.js"; // Utility xử lý response và lỗi
 import { isValidateEmail, isValidatePassword } from "../utils/vaildate.js"; // Utility validate input
 import { refreshTokenCookie, clearCookie } from "../utils/cookier.js"; // Utility xử lý cookie
+import { sanitizeEmail, sanitizeText, formatDateTime } from "../utils/format.js";
+import { create } from "domain";
 
 /**
  * Đăng ký tài khoản mới
@@ -48,27 +50,28 @@ export const register = async (req, res) => {
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-        throw appError("Email đã tồn tại!", 409);
+        throw appError("Người dùng đã tồn tại!", 409);
     }
 
     // Mã hóa mật khẩu trước khi lưu
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Tạo user mới trong database
-    const createdUser = await User.create({
-        name,
-        email,
+    const newUser = await User.create({
+        name: sanitizeText(name),
+        email: sanitizeEmail(email),
         password: hashedPassword
     });
 
     // Tạo JWT tokens cho phiên đăng nhập
-    const accessToken = generateAccessToken(createdUser._id);
-    const refreshToken = generateRefreshToken(createdUser._id);
+    const accessToken = generateAccessToken(newUser._id);
+    const refreshToken = generateRefreshToken(newUser._id);
 
-    // Lưu refresh token vào database để track phiên
-    createdUser.refreshToken = refreshToken;
+    // Lưu refresh token và access token vào database để track phiên
+    newUser.refreshToken = refreshToken;
+    newUser.accessToken = accessToken;
 
-    await createdUser.save();
+    await newUser.save();
 
     // Gửi refresh token qua cookie HttpOnly
     refreshTokenCookie(res, refreshToken);
@@ -79,10 +82,12 @@ export const register = async (req, res) => {
         message: "Đăng ký thành công!",
         data: {
             user: {
-                id: createdUser._id,
-                name: createdUser.name,
-                email: createdUser.email,
-                role: createdUser.role
+                id: newUser._id,
+                name: newUser.name,
+                email: newUser.email,
+                role: newUser.role,
+                createdAt: formatDateTime(newUser.createdAt),
+                updatedAt: formatDateTime(newUser.updatedAt),
             },
             accessToken
         }
@@ -100,6 +105,7 @@ export const register = async (req, res) => {
  * @returns {200} user + accessToken
  */
 export const login = async (req, res) => {
+    
     const { email, password } = req.body;
 
     // Validate dữ liệu đầu vào
@@ -142,15 +148,20 @@ export const login = async (req, res) => {
     refreshTokenCookie(res, refreshToken);
 
     // Trả về thông tin user và access token
-    return res.status(200).json({
+    return appSuccess(res, {
+        statusCode: 200,
         message: "Đăng nhập thành công!",
-        user: {
-            id: existingUser._id,
-            name: existingUser.name,
-            email: existingUser.email,
-            role: existingUser.role
-        },
-        accessToken
+        data: {
+            user: {
+                id: existingUser._id,
+                name: existingUser.name,
+                email: existingUser.email,
+                role: existingUser.role,
+                createdAt: formatDateTime(existingUser.createdAt),
+                updatedAt: formatDateTime(existingUser.updatedAt),
+            },
+            accessToken
+        }
     });
 };
 
@@ -171,9 +182,10 @@ export const logout = async (req, res) => {
     // Xóa refresh token cookie khỏi browser
     clearCookie(res);
 
-    return res.status(200).json({
-        message: "Đăng xuất thành công!"
-    });
+    return appSuccess(res, {
+        statusCode: 200,
+        message: " Đăng xuất thành công!",
+    })
 };
 
 
@@ -228,9 +240,10 @@ export const forgotPassword = async (req, res) => {
         `
     });
 
-    return res.status(200).json({
-        message: "OTP đã được gửi qua email!"
-    });
+    return appSuccess(res, {
+        statusCode: 200,
+        message: `OTP đã được gửi qua email ${existingUser.email}`
+    })
 };
 
 
@@ -304,9 +317,10 @@ export const resetPassword = async (req, res) => {
     // Xóa cookie refresh token
     clearCookie(res);
 
-    return res.status(200).json({
-        message: "Đặt lại mật khẩu thành công!"
-    });
+    return appSuccess(res, {
+        statusCode: 200,
+        message: "Thay đổi mật khẩu thành công!",
+    })
 };
 
 
@@ -336,7 +350,7 @@ export const refreshAccessToken = async (req, res) => {
         );
     } catch (error) {
         throw appError(
-            "Refresh token không hợp lệ hoặc đã hết hạn!",
+            "Token không hợp lệ hoặc đã hết hạn!",
             401
         );
     }

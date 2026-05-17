@@ -24,10 +24,14 @@ export const appError = (message, statusCode) => {
  * @param {object} options - { statusCode, message, data }
  * @returns {JSON} Response JSON chuẩn format
  */
-export const appSuccess = (res, { message, statusCode, data = {} } = {}) => {
-    return res.status(statusCode).json({
+export const appSuccess = (res, { message, statusCode, data } = {}) => {
+    const response = {
         success: true,
-        message,
-        data
-    });
+        message
+    };
+    // Chỉ thêm field data khi có truyền vào (tránh trả về data: {} khi không cần)
+    if (data !== undefined) {
+        response.data = data;
+    }
+    return res.status(statusCode).json(response);
 };

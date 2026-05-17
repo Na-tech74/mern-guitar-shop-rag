@@ -13,7 +13,7 @@ export const uploadImages = async (files, folder = "default") => {
         if (file.path) {
           fs.unlink(file.path, (err) => {
             if (err) {
-              console.error("Delete file error:", err);
+              console.error("Xóa file ảnh thất bại", err);
             }
           });
         }
