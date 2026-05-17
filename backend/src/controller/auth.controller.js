@@ -1,12 +1,19 @@
-import usersModel from "../models/users.model.js";
-import bcrypt from 'bcryptjs';
+import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import crypto from 'crypto';
+
+import User from "../models/user.model.js";
+
 import { generateAccessToken, generateRefreshToken } from "../services/generateToken.js";
 import { sendEmail } from "../services/sendEmail.js";
+
 import { appError } from "../utils/appError.js";
-import { isValidateEmail, isValidatePassword } from "../utils/vaildate.js"
+import { isValidateEmail, isValidatePassword } from "../utils/vaildate.js";
 import { refreshTokenCookie, clearCookie } from "../utils/cookier.js";
+
+
+
+// ================= REGISTER =================
 
 export const register = async (req, res) => {
     const { name, email, password } = req.body;
@@ -20,40 +27,50 @@ export const register = async (req, res) => {
     }
 
     if (!isValidatePassword(password)) {
-        throw appError("Mật khẩu phải có ít nhất 8 ký tự!", 400);
+        throw appError(
+            "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường và số!",
+            400
+        );
     }
 
-    const existingUser = await usersModel.findOne({ email });
+    const existingUser = await User.findOne({ email });
+
     if (existingUser) {
-        throw appError("Người dùng đã tồn tại!", 400);
+        throw appError("Email đã tồn tại!", 409);
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await usersModel.create({
+
+    const createdUser = await User.create({
         name,
         email,
-        password: hashedPassword,
-        role: 'user'
+        password: hashedPassword
     });
 
-    const accessToken = generateAccessToken(newUser._id);
-    const refreshToken = generateRefreshToken(newUser._id);
+    const accessToken = generateAccessToken(createdUser._id);
+    const refreshToken = generateRefreshToken(createdUser._id);
+
+    createdUser.refreshToken = refreshToken;
+
+    await createdUser.save();
 
     refreshTokenCookie(res, refreshToken);
 
-    newUser.refreshToken = refreshToken;
-    await newUser.save();
-
-    return res.json({
-        id: newUser._id,
-        name: newUser.name,
-        email: newUser.email,
-        role: newUser.role,
-        accessToken: accessToken,
-        createdAt: newUser.createdAt
+    return res.status(201).json({
+        message: "Đăng ký thành công!",
+        user: {
+            id: createdUser._id,
+            name: createdUser.name,
+            email: createdUser.email,
+            role: createdUser.role
+        },
+        accessToken
     });
 };
 
+
+
+// ================= LOGIN =================
 
 export const login = async (req, res) => {
     const { email, password } = req.body;
@@ -66,40 +83,64 @@ export const login = async (req, res) => {
         throw appError("Email không hợp lệ!", 400);
     }
 
-    const user = await usersModel.findOne({ email });
-    const passwordIsMatch = await bcrypt.compare(password, user.password);
-    if (!user || !passwordIsMatch) {
+    const existingUser = await User.findOne({ email })
+        .select("+password +refreshToken");
+
+    if (!existingUser) {
         throw appError("Email hoặc mật khẩu không đúng!", 401);
     }
 
-    const accessToken = generateAccessToken(user._id);
-    const refreshToken = generateRefreshToken(user._id);
+    const isPasswordMatch = await bcrypt.compare(
+        password,
+        existingUser.password
+    );
 
-    user.refreshToken = refreshToken;
-    await user.save();
+    if (!isPasswordMatch) {
+        throw appError("Email hoặc mật khẩu không đúng!", 401);
+    }
+
+    const accessToken = generateAccessToken(existingUser._id);
+    const refreshToken = generateRefreshToken(existingUser._id);
+
+    existingUser.refreshToken = refreshToken;
+
+    await existingUser.save();
 
     refreshTokenCookie(res, refreshToken);
 
-    return res.json({
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        accessToken: accessToken
+    return res.status(200).json({
+        message: "Đăng nhập thành công!",
+        user: {
+            id: existingUser._id,
+            name: existingUser.name,
+            email: existingUser.email,
+            role: existingUser.role
+        },
+        accessToken
     });
 };
+
+
+
+// ================= LOGOUT =================
 
 export const logout = async (req, res) => {
     const userId = req.user._id;
 
-    await usersModel.findByIdAndUpdate(userId, { refreshToken: "" });
+    await User.findByIdAndUpdate(userId, {
+        refreshToken: ""
+    });
 
     clearCookie(res);
 
-    return res.json({
+    return res.status(200).json({
         message: "Đăng xuất thành công!"
     });
 };
+
+
+
+// ================= FORGOT PASSWORD =================
 
 export const forgotPassword = async (req, res) => {
     const { email } = req.body;
@@ -112,8 +153,10 @@ export const forgotPassword = async (req, res) => {
         throw appError("Email không hợp lệ!", 400);
     }
 
-    const user = await usersModel.findOne({ email });
-    if (!user) {
+    const existingUser = await User.findOne({ email })
+        .select("+resetOtp +resetOtpExpire");
+
+    if (!existingUser) {
         throw appError("Email không tồn tại!", 404);
     }
 
@@ -121,26 +164,30 @@ export const forgotPassword = async (req, res) => {
 
     const hashedOtp = await bcrypt.hash(otp, 10);
 
-    user.resetOtp = hashedOtp;
-    user.resetOtpExpire = Date.now() + 10 * 60 * 1000;
+    existingUser.resetOtp = hashedOtp;
+    existingUser.resetOtpExpire = Date.now() + 10 * 60 * 1000;
 
-    await user.save();
+    await existingUser.save();
 
     await sendEmail({
-        email: user.email,
-        subject: "Cấp lại mật khẩu OTP",
+        email: existingUser.email,
+        subject: "OTP Đặt Lại Mật Khẩu",
         html: `
-            <h3>Đặt lại mật khẩu</h3>
+            <h2>Đặt lại mật khẩu</h2>
             <p>Mã OTP của bạn là:</p>
-            <h1 style="color:red">${otp}</h1>
-            <p>Mã có hiệu lực trong 10 phút</p>
+            <h1>${otp}</h1>
+            <p>OTP có hiệu lực trong 10 phút.</p>
         `
     });
 
-    return res.json({
-        message: `OTP đã được gửi đến email ${user.email}`
+    return res.status(200).json({
+        message: "OTP đã được gửi qua email!"
     });
 };
+
+
+
+// ================= RESET PASSWORD =================
 
 export const resetPassword = async (req, res) => {
     const { email, otp, password } = req.body;
@@ -149,60 +196,102 @@ export const resetPassword = async (req, res) => {
         throw appError("Thiếu dữ liệu!", 400);
     }
 
-    if (!isValidatePassword(password)) {
-        throw appError("Mật khẩu phải có ít nhất 8 ký tự!", 400);
+    if (!isValidateEmail(email)) {
+        throw appError("Email không hợp lệ!", 400);
     }
 
-    const user = await usersModel.findOne({ email });
+    if (!isValidatePassword(password)) {
+        throw appError(
+            "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường và số!",
+            400
+        );
+    }
 
-    if (!user) {
+    const existingUser = await User.findOne({ email })
+        .select("+password +refreshToken +resetOtp +resetOtpExpire");
+
+    if (!existingUser) {
         throw appError("Người dùng không tồn tại!", 404);
     }
 
-    const otpIsMatch = await bcrypt.compare(otp, user.resetOtp);
-    if (!user.resetOtp || user.resetOtpExpire < Date.now() || !otpIsMatch) {
+    if (
+        !existingUser.resetOtp ||
+        existingUser.resetOtpExpire < Date.now()
+    ) {
         throw appError("OTP không hợp lệ hoặc đã hết hạn!", 400);
     }
 
-    const hashedNewPassword = await bcrypt.hash(password, 10);
+    const isOtpMatch = await bcrypt.compare(
+        otp,
+        existingUser.resetOtp
+    );
 
-    user.password = hashedNewPassword;
-    user.resetOtp = undefined;
-    user.resetOtpExpire = undefined;
+    if (!isOtpMatch) {
+        throw appError("OTP không hợp lệ hoặc đã hết hạn!", 400);
+    }
 
-    await user.save();
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    return res.json({
+    existingUser.password = hashedPassword;
+    existingUser.resetOtp = "";
+    existingUser.resetOtpExpire = 0;
+    existingUser.refreshToken = "";
+
+    await existingUser.save();
+
+    clearCookie(res);
+
+    return res.status(200).json({
         message: "Đặt lại mật khẩu thành công!"
     });
 };
 
-export const refreshToken = async (req, res) => {
 
+
+// ================= REFRESH ACCESS TOKEN =================
+
+export const refreshAccessToken = async (req, res) => {
     const oldRefreshToken = req.cookies.refreshToken;
+
     if (!oldRefreshToken) {
-        throw appError("Không thể làm mới Token!", 401);
+        throw appError("Không tìm thấy refresh token!", 401);
     }
 
-    let decoded = jwt.verify(oldRefreshToken, process.env.JWT_REFRESH_SECRET);
-    if (!decoded) {
-        throw appError("Token không hợp lệ hoặc đã hết hạn!", 401);
+    let decodedToken;
+
+    try {
+        decodedToken = jwt.verify(
+            oldRefreshToken,
+            process.env.JWT_REFRESH_SECRET
+        );
+    } catch (error) {
+        throw appError(
+            "Refresh token không hợp lệ hoặc đã hết hạn!",
+            401
+        );
     }
 
-    const user = await usersModel.findById(decoded.id)
-    if (!user || user.refreshToken !== oldRefreshToken) {
-        throw appError("Token không xác định!", 401);
+    const existingUser = await User.findById(decodedToken.id)
+        .select("+refreshToken");
+
+    if (!existingUser) {
+        throw appError("Người dùng không tồn tại!", 404);
     }
 
-    const newAccessToken = generateAccessToken(user._id);
-    const newRefreshToken = generateRefreshToken(user._id);
+    if (existingUser.refreshToken !== oldRefreshToken) {
+        throw appError("Refresh token không hợp lệ!", 401);
+    }
 
-    user.refreshToken = newRefreshToken;
-    await user.save();
+    const newAccessToken = generateAccessToken(existingUser._id);
+    const newRefreshToken = generateRefreshToken(existingUser._id);
+
+    existingUser.refreshToken = newRefreshToken;
+
+    await existingUser.save();
 
     refreshTokenCookie(res, newRefreshToken);
 
-    return res.json({
+    return res.status(200).json({
         accessToken: newAccessToken
     });
 };

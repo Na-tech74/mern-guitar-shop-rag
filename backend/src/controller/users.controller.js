@@ -4,13 +4,12 @@ import { isValidateEmail, isValidatePassword, isValidObjectId } from '../utils/v
 import usersModel from '../models/users.model.js';
 
 export const getAllUser = async (req, res) => {
+
     if (req.user.role !== 'admin') {
         throw appError("Chỉ admin mới có quyền", 403);
     }
 
-    const findAllUser = await usersModel
-        .find()
-        .select("-password -refreshToken");
+    const findAllUser = await usersModel.find().select("-password -refreshToken");
 
     return res.json(findAllUser);
 };
@@ -26,9 +25,7 @@ export const getUserById = async (req, res) => {
         throw appError("ID người dùng không hợp lệ!", 400);
     }
 
-    const findUserById = await usersModel
-        .findById(id)
-        .select("-password -refreshToken");
+    const findUserById = await usersModel.findById(id).select("-password -refreshToken");
 
     if (!findUserById) {
         throw appError("Không tìm thấy người dùng!", 404);
@@ -37,52 +34,83 @@ export const getUserById = async (req, res) => {
     return res.json(findUserById);
 };
 
-export const update = async (req, res) => {
+export const updateUser = async (req, res) => {
+
     const { id } = req.params;
+
     const { name, email, password, role } = req.body;
 
-    if ( req.user.role !== 'admin') {
-        throw appError("Bạn không có quyền cập nhật người dùng này!", 403);
+    if (req.user.role !== "admin") {
+        throw appError("Bạn không có quyền!", 403);
     }
 
     if (!isValidObjectId(id)) {
-        throw appError("ID người dùng không hợp lệ!", 400);
+        throw appError("ID không hợp lệ!", 400);
     }
 
-    const user = await usersModel.findById(id);
+    const user = await usersModel
+        .findById(id)
+        .select("+password");
+
     if (!user) {
         throw appError("Không tìm thấy người dùng!", 404);
     }
 
-    if (!isValidateEmail(email)) {
-        throw appError("Email không hợp lệ!", 400);
+    if (name) {
+        user.name = name;
     }
 
-    const existingEmail = await usersModel.findOne({ email });
-    if (existingEmail) {
-        throw appError("Email đã được sử dụng!", 400);
-    }
+    if (email) {
 
-    if (!isValidatePassword(password)) {
-        throw appError("Mật khẩu phải có ít nhất 8 ký tự!", 400);
+        if (!isValidateEmail(email)) {
+            throw appError("Email không hợp lệ!", 400);
+        }
+
+        const existingUser = await usersModel.findOne({ email });
+
+        if (
+            existingUser &&
+            existingUser._id.toString() !== id
+        ) {
+            throw appError("Email đã tồn tại!", 400);
+        }
+
+        user.email = email;
     }
 
     if (password) {
-        const hashed = await bcrypt.hash(password, 10);
-        user.password = hashed;
+
+        if (!isValidatePassword(password)) {
+            throw appError(
+                "Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường và số!",
+                400
+            );
+        }
+
+        user.password = await bcrypt.hash(password, 10);
     }
 
-    if (role && req.user.role === 'admin') {
+    if (role) {
+
+        const allowedRoles = ["user", "admin"];
+
+        if (!allowedRoles.includes(role)) {
+            throw appError("Role không hợp lệ!", 400);
+        }
+
         user.role = role;
     }
 
     await user.save();
 
     return res.json({
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role
+        message: "Cập nhật thành công!",
+        user: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role
+        }
     });
 };
 
@@ -135,7 +163,7 @@ export const changePassword = async (req, res) => {
         throw appError("Vui lòng nhập mật khẩu hiện tại và mật khẩu mới!", 400);
     }
 
-    if (!isValidatePassword(newPassword)) {
+    if (newPassword && !isValidatePassword(newPassword)) {
         throw appError("Mật khẩu mới phải có ít nhất 8 ký tự!", 400);
     }
 
@@ -143,15 +171,16 @@ export const changePassword = async (req, res) => {
     if (!user) {
         throw appError("Không tìm thấy người dùng!", 404);
     }
-
+    // Kiểm tra mật khẩu check mật khẫu người dùng so với mật khẩu DB
     const isMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isMatch) {
         throw appError("Mật khẩu hiện tại không đúng!", 401);
     }
-
+    //  khi mật khẩu đúng thì hasd mật khẩu mới và lưu vào database
     const hashed = await bcrypt.hash(newPassword, 10);
     user.password = hashed;
-
+    
+    // xóa token cũ để vô hiệu hóa phiên đăng nhập cũ
     user.refreshToken = "";
 
     await user.save();

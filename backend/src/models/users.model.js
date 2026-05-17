@@ -1,7 +1,11 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-    name: { type: String, required: true },
+    name: {
+        type: String,
+        required: true,
+        trim: true
+    },
 
     email: {
         type: String,
@@ -14,18 +18,31 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
+        select: false
     },
 
-    accessToken: String,
-    refreshToken: String,
+    refreshToken: {
+        type: String,
+        default: "",
+        select: false
+    },
 
-    resetOtp: { type: String, default: "" },
-    resetOtpExpire: { type: Number, default: 0 },
-    
+    resetOtp: {
+        type: String,
+        default: ""
+    },
+
+    resetOtpExpire: {
+        type: Number,
+        default: 0
+    },
+
     role: {
         type: String,
+        enum: ["user", "admin"],
         default: "user"
     }
+
 }, { timestamps: true });
 
 export default mongoose.model("User", userSchema);
