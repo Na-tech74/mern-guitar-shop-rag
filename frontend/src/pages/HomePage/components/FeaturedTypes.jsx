@@ -1,51 +1,62 @@
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 const features = [
     {
         title: "Guitar Acoustic",
         subtitle: "Đa dạng mẫu mã",
-        image: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=600&q=80",
+        image: "https://res.cloudinary.com/dsh9anp7p/image/upload/v1778732551/guitar-shop/blogs/rnrmbpbtrjlqiyrpc9f9.jpg",
         link: "/products"
     },
     {
         title: "Guitar Classic",
         subtitle: "Thiết kế sang trọng",
-        image: "https://images.unsplash.com/photo-1550291652-6ea9114a47b1?w=600&q=80",
+        image: "https://res.cloudinary.com/dsh9anp7p/image/upload/v1779347115/guitar-shop/blogs/xgdfhlwkckxxftyeetrn.jpg",
         link: "/products"
     },
     {
         title: "Ukulele",
         subtitle: "Nhỏ gọn, tiện lợi",
-        image: "https://images.unsplash.com/photo-1514117445517-2ec90fa4b84b?w=600&q=80",
+        image: "https://res.cloudinary.com/dsh9anp7p/image/upload/v1779346001/guitar-shop/products/lsyl4pypymtcuxf5lzca.jpg",
         link: "/products"
     }
 ];
 
 export default function FeaturedTypes() {
     return (
-        <section className="py-16">
+        <section className="py-10" style={{ contentVisibility: 'auto' }}>
             <div className="max-w-7xl mx-auto px-4">
                 <div className="text-center mb-12">
                     <h2 className="text-3xl font-bold text-gray-800 mb-2">Bộ sưu tập</h2>
                     <p className="text-gray-500">Khám phá các dòng guitar phổ biến nhất</p>
                 </div>
                 <div className="grid md:grid-cols-3 gap-6">
-                    {features.map((item, index) => (
-                        <Link 
-                            key={index} 
+                    {features.map((item) => (
+                        <Link
+                            key={item.title}
                             to={item.link}
-                            className="group relative overflow-hidden rounded-xl"
+                            className="group relative h-[200px] rounded-2xl overflow-hidden"
                         >
-                            <img 
-                                src={item.image} 
+                            <img
+                                src={item.image}
                                 alt={item.title}
                                 loading="lazy"
-                                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                                decoding="async"
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-                            <div className="absolute bottom-6 left-6 text-white">
-                                <h3 className="text-xl font-bold mb-1">{item.title}</h3>
-                                <p className="text-white/80">{item.subtitle}</p>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                            <div className="absolute inset-0 ring-1 ring-inset ring-white/10 group-hover:ring-amber-400/50 rounded-2xl transition-all duration-500" />
+                            <div className="absolute bottom-0 left-0 right-0 p-6">
+                                <h3 className="text-xl font-bold text-white mb-1.5">{item.title}</h3>
+                                <p className="text-sm text-white/70 mb-4">{item.subtitle}</p>
+                                <span className="inline-flex items-center gap-2 text-sm font-medium text-amber-400 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                                    Khám phá
+                                    <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
+                                </span>
+                            </div>
+                            <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <FontAwesomeIcon icon={faArrowRight} className="text-white text-xs" />
                             </div>
                         </Link>
                     ))}

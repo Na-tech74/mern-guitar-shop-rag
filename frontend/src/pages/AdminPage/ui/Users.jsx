@@ -7,7 +7,7 @@ import Button from "../../../components/Button";
 import Input from "../../../components/Input";
 
 export default function Users() {
-    const { users, loading, updateUser, deleteUser, filteredUsers, searchTerm, setSearchTerm } = useUsers();
+    const { users, loading, fetchUsers, updateUser, deleteUser, filteredUsers, searchTerm, setSearchTerm } = useUsers();
     const [showModal, setShowModal] = useState(false);
     const [editingUser, setEditingUser] = useState(null);
     const [formData, setFormData] = useState({ name: "", email: "", role: "user" });

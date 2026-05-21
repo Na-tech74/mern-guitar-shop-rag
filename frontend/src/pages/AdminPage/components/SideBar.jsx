@@ -1,5 +1,6 @@
 // components/dashboard/AdminSidebar.jsx
 
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical, faXmark, faChartPie, faBox, faUsers, faCartShopping, faTag, faGear, faNewspaper } from "@fortawesome/free-solid-svg-icons";
@@ -26,7 +27,7 @@ const adminSidebarMenuItems = [
 
 export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }) {
 
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const [userInfo] = useState(() => JSON.parse(sessionStorage.getItem("userInfo")));
 
     return (
         <>
@@ -73,8 +74,8 @@ export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }) {
                 {/* MENU */}
                 <div className="space-y-6 overflow-y-auto p-3">
 
-                    {adminSidebarMenuItems.map((section, index) => (
-                        <div key={index}>
+                    {adminSidebarMenuItems.map((section) => (
+                        <div key={section.title}>
 
                             <h3 className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
                                 {section.title}
@@ -82,9 +83,9 @@ export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }) {
 
                             <div className="space-y-1">
 
-                                {section.items.map((item, idx) => (
+                                {section.items.map((item) => (
                                     <NavLink
-                                        key={idx}
+                                        key={item.name}
                                         to={item.path}
                                         className={({ isActive }) =>
                                             `

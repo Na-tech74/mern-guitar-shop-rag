@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileInvoice, faImage } from "@fortawesome/free-solid-svg-icons";
 import { orderAPI } from "../AdminPage/api/adminAPI";
+import { getOptimizedImage } from "../../helpers/format";
 
 export default function OrdersPage() {
     const navigate = useNavigate();
@@ -10,7 +11,7 @@ export default function OrdersPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         if (!token) {
             navigate("/login", { replace: true });
             return;
@@ -73,10 +74,10 @@ export default function OrdersPage() {
                                 </div>
                                 <div className="space-y-2">
                                     {order.items?.map((item, i) => (
-                                        <div key={i} className="flex items-center gap-3">
+                                        <div key={item._id || `${item.product}-${i}`} className="flex items-center gap-3">
                                             <div className="w-12 h-12 rounded-lg bg-gray-100 overflow-hidden shrink-0">
                                                 {item.image ? (
-                                                    <img src={item.image} alt="" loading="lazy" className="w-full h-full object-cover" />
+                                                    <img src={getOptimizedImage(item.image, 100)} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover" />
                                                 ) : (
                                                     <div className="w-full h-full flex items-center justify-center text-gray-400">
                                                         <FontAwesomeIcon icon={faImage} />

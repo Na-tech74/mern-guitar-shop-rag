@@ -24,6 +24,7 @@ export const useProducts = () => {
     const fetchProducts = useCallback(async () => {
         try {
             setLoading(true);
+            setError(null);
             const [productsRes, categoriesRes] = await Promise.all([
                 productAPI.getAll(),
                 categoryAPI.getAll().catch(() => ({ data: { data: { categories: [] } } }))
@@ -39,6 +40,16 @@ export const useProducts = () => {
 
     useEffect(() => {
         fetchProducts();
+    }, [fetchProducts]);
+
+    useEffect(() => {
+        const handleVisibility = () => {
+            if (document.visibilityState === "visible") {
+                fetchProducts();
+            }
+        };
+        document.addEventListener("visibilitychange", handleVisibility);
+        return () => document.removeEventListener("visibilitychange", handleVisibility);
     }, [fetchProducts]);
 
     const filteredProducts = useMemo(() => {

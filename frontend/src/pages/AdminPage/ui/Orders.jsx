@@ -102,7 +102,7 @@ export default function Orders() {
                                     </td>
                                     <td className="py-3 text-sm text-gray-600">
                                         {order.items?.map((item, idx) => (
-                                            <div key={idx}>{item.product} x{item.quantity}</div>
+                                            <div key={item._id || `${item.product}-${idx}`}>{item.product} x{item.quantity}</div>
                                         ))}
                                     </td>
                                     <td className="py-3 font-medium text-gray-800">{formatCurrency(order.total)}</td>
@@ -159,7 +159,7 @@ export default function Orders() {
                             <div>
                                 <p className="text-sm text-gray-500">Sản phẩm</p>
                                 {selectedOrder.items?.map((item, idx) => (
-                                    <div key={idx} className="flex justify-between py-2">
+                                    <div key={item._id || `${item.product}-${idx}`} className="flex justify-between py-2">
                                         <span className="text-gray-800">{item.product} x{item.quantity}</span>
                                         <span className="font-medium text-gray-800">{formatCurrency(item.price * item.quantity)}</span>
                                     </div>

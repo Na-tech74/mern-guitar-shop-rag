@@ -10,6 +10,7 @@ export const useOrders = () => {
     const fetchOrders = useCallback(async (page = 1, status = "") => {
         try {
             setLoading(true);
+            setError(null);
             const res = await orderAPI.getAll({ page, limit: 10, status });
             const data = res.data?.data;
             setOrders(data?.orders || []);
@@ -27,6 +28,16 @@ export const useOrders = () => {
 
     useEffect(() => {
         fetchOrders();
+    }, [fetchOrders]);
+
+    useEffect(() => {
+        const handleVisibility = () => {
+            if (document.visibilityState === "visible") {
+                fetchOrders();
+            }
+        };
+        document.addEventListener("visibilitychange", handleVisibility);
+        return () => document.removeEventListener("visibilitychange", handleVisibility);
     }, [fetchOrders]);
 
     const updateStatus = useCallback(async (orderId, status) => {

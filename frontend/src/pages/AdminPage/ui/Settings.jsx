@@ -19,7 +19,7 @@ export default function Settings() {
         }
     });
 
-    const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
+    const userInfo = JSON.parse(sessionStorage.getItem("userInfo") || "{}");
     const name = userInfo?.name || "";
     const email = userInfo?.email || "";
 

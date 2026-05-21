@@ -20,12 +20,11 @@ const menuItems = [
   },
   { name: 'KHÓA HỌC ', path: '/contact', hasDropdown: false },
   { name: 'GIỚI THIỆU', path: '/about', hasDropdown: false },
-   { name: 'BÀI VIẾT', path: '/about', hasDropdown: false },
+   { name: 'BÀI VIẾT', path: '/blog', hasDropdown: false },
   { name: 'LIÊN HỆ', path: '/contact', hasDropdown: false },
 ];
 
 const Header = memo(function Header() {
-  const [isSticky, setIsSticky] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -36,6 +35,9 @@ const Header = memo(function Header() {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
+  const [userInfo] = useState(() => JSON.parse(sessionStorage.getItem("userInfo")));
+  const isLoggedIn = !!userInfo;
+
   useEffect(() => {
     const updateCounts = () => {
       const cart = JSON.parse(localStorage.getItem("cart") || "[]");
@@ -43,31 +45,22 @@ const Header = memo(function Header() {
       setCartCount(cart.length);
       setWishlistCount(wishlist.length);
     };
-    updateCounts();
-    window.addEventListener("storage", updateCounts);
-    window.addEventListener("cart-updated", updateCounts);
-    window.addEventListener("wishlist-updated", updateCounts);
-    return () => {
-      window.removeEventListener("storage", updateCounts);
-      window.removeEventListener("cart-updated", updateCounts);
-      window.removeEventListener("wishlist-updated", updateCounts);
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleScroll = () => setIsSticky(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsAccountOpen(false);
       }
     };
+    updateCounts();
+    window.addEventListener("storage", updateCounts);
+    window.addEventListener("cart-updated", updateCounts);
+    window.addEventListener("wishlist-updated", updateCounts);
     document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    return () => {
+      window.removeEventListener("storage", updateCounts);
+      window.removeEventListener("cart-updated", updateCounts);
+      window.removeEventListener("wishlist-updated", updateCounts);
+      document.removeEventListener('click', handleClickOutside);
+    };
   }, []);
 
   const handleSearch = (e) => {
@@ -79,9 +72,6 @@ const Header = memo(function Header() {
     }
   };
 
-  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-  const isLoggedIn = !!userInfo;
-
   const handleLogout = async () => {
     try {
       const { logoutAPI } = await import("../pages/AuthPage/api/authAPI.js");
@@ -89,15 +79,15 @@ const Header = memo(function Header() {
     } catch {
       // ignore
     }
-    localStorage.removeItem("userInfo");
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("userInfo");
+    sessionStorage.removeItem("token");
     setIsAccountOpen(false);
     navigate("/");
   };
 
   return (
     <>
-      <header className="w-full fixed top-0 z-50 ">
+      <header className="w-full fixed top-0 z-50 will-change-transform">
 
         {/* Top Bar */}
         <div className="hidden lg:block bg-gradient-to-r from-amber-600 to-amber-400 text-white text-xs py-2">
@@ -267,19 +257,19 @@ const Header = memo(function Header() {
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center justify-between">
               <ul className="flex">
-                {menuItems.map((item, idx) => (
-                  <li key={idx} className="relative"
-                    onMouseEnter={() => item.hasDropdown && setOpenDropdown(idx)}
+                {menuItems.map((item) => (
+                  <li key={item.name} className="relative"
+                    onMouseEnter={() => item.hasDropdown && setOpenDropdown(item.name)}
                     onMouseLeave={() => setOpenDropdown(null)}>
                     <Link to={item.path} className="flex items-center gap-1 text-gray-600 hover:text-amber-600 px-4 py-3 text-sm font-medium transition">
                       <span>{item.icon}</span>
                       {item.name}
                       {item.hasDropdown && <FontAwesomeIcon icon={faChevronDown} className="text-[10px]" />}
                     </Link>
-                    {item.hasDropdown && openDropdown === idx && (
+                    {item.hasDropdown && openDropdown === item.name && (
                       <div className="absolute top-full left-0 w-56 bg-white rounded-lg shadow-lg border border-gray-100 z-50 py-2">
-                        {item.dropdownItems.map((subItem, subIdx) => (
-                          <Link key={subIdx} to={subItem.path} className="block px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">
+                        {item.dropdownItems.map((subItem) => (
+                          <Link key={subItem.name} to={subItem.path} className="block px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">
                             {subItem.name}
                           </Link>
                         ))}
@@ -329,22 +319,28 @@ const Header = memo(function Header() {
               )}
             </div>
             <div className="py-2">
-              {menuItems.map((item, idx) => (
-                <div key={idx}>
-                  <button onClick={() => setOpenDropdown(openDropdown === idx ? null : idx)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-gray-50">
-                    <span>{item.name}</span>
-                    {item.hasDropdown && (
-                      <FontAwesomeIcon icon={faChevronDown} className={`text-xs transition-transform ${openDropdown === idx ? 'rotate-180' : ''}`} />
-                    )}
-                  </button>
-                  {item.hasDropdown && openDropdown === idx && (
-                    <div className="bg-gray-50 pl-4">
-                      {item.dropdownItems.map((subItem, subIdx) => (
-                        <Link key={subIdx} to={subItem.path} className="block px-4 py-2 text-sm text-gray-600" onClick={() => setIsMobileMenuOpen(false)}>
-                          {subItem.name}
-                        </Link>
-                      ))}
-                    </div>
+              {menuItems.map((item) => (
+                <div key={item.name}>
+                  {item.hasDropdown ? (
+                    <>
+                      <button onClick={() => setOpenDropdown(openDropdown === item.name ? null : item.name)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-gray-50">
+                        <span>{item.name}</span>
+                        <FontAwesomeIcon icon={faChevronDown} className={`text-xs transition-transform ${openDropdown === item.name ? 'rotate-180' : ''}`} />
+                      </button>
+                      {openDropdown === item.name && (
+                        <div className="bg-gray-50 pl-4">
+                          {item.dropdownItems.map((subItem) => (
+                            <Link key={subItem.name} to={subItem.path} className="block px-4 py-2 text-sm text-gray-600" onClick={() => setIsMobileMenuOpen(false)}>
+                              {subItem.name}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <Link to={item.path} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-gray-50">
+                      <span>{item.name}</span>
+                    </Link>
                   )}
                 </div>
               ))}

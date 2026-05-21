@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faImage } from "@fortawesome/free-solid-svg-icons";
 import { API } from "../../api/axiosClient";
+import { getOptimizedImage } from "../../helpers/format";
 
 export default function SearchPage() {
     const [searchParams] = useSearchParams();
@@ -50,7 +51,7 @@ export default function SearchPage() {
                             <Link key={product._id} to={`/products/${product._id}`} className="group bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition">
                                 <div className="h-48 bg-gray-100 overflow-hidden">
                                     {product.images?.[0] ? (
-                                        <img src={product.images[0]} alt={product.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition" />
+                                        <img src={getOptimizedImage(product.images[0], 400)} alt={product.name} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition" />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center text-gray-400">
                                             <FontAwesomeIcon icon={faImage} className="text-3xl" />

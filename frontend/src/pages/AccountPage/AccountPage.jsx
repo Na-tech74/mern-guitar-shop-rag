@@ -8,7 +8,7 @@ export default function AccountPage() {
     const [userInfo, setUserInfo] = useState(null);
 
     useEffect(() => {
-        const info = JSON.parse(localStorage.getItem("userInfo") || "null");
+        const info = JSON.parse(sessionStorage.getItem("userInfo") || "null");
         if (!info) {
             navigate("/login", { replace: true });
             return;
@@ -19,8 +19,8 @@ export default function AccountPage() {
     if (!userInfo) return null;
 
     const handleLogout = () => {
-        localStorage.removeItem("userInfo");
-        localStorage.removeItem("token");
+        sessionStorage.removeItem("userInfo");
+        sessionStorage.removeItem("token");
         navigate("/");
     };
 
@@ -52,8 +52,8 @@ export default function AccountPage() {
                         { icon: faUser, title: "Thông tin tài khoản", desc: "Xem và chỉnh sửa thông tin cá nhân", link: "/account" },
                         { icon: faFileInvoice, title: "Đơn hàng của tôi", desc: "Theo dõi lịch sử đơn hàng", link: "/orders" },
                         { icon: faSignOutAlt, title: "Đăng xuất", desc: "Đăng xuất khỏi tài khoản", link: "#", onClick: handleLogout, danger: true },
-                    ].map((item, i) => (
-                        <div key={i} onClick={item.onClick} className="cursor-pointer bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition">
+                    ].map((item) => (
+                        <div key={item.title} onClick={item.onClick} className="cursor-pointer bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition">
                             <div className={`w-12 h-12 rounded-lg ${item.danger ? "bg-red-100" : "bg-amber-100"} flex items-center justify-center mb-4`}>
                                 <FontAwesomeIcon icon={item.icon} className={`text-xl ${item.danger ? "text-red-600" : "text-amber-600"}`} />
                             </div>

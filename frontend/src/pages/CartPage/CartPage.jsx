@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faPlus, faTrash, faShoppingCart, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { getOptimizedImage } from "../../helpers/format";
 
 export default function CartPage() {
     const [cartItems, setCartItems] = useState([]);
@@ -11,18 +12,25 @@ export default function CartPage() {
         setCartItems(cart);
     }, []);
 
-    const updateQuantity = (index, delta) => {
-        const updated = [...cartItems];
-        updated[index].quantity = Math.max(1, (updated[index].quantity || 1) + delta);
-        setCartItems(updated);
-        localStorage.setItem("cart", JSON.stringify(updated));
-    };
+    const updateQuantity = useCallback((id, delta) => {
+        setCartItems(prev => {
+            const updated = prev.map(item =>
+                item._id === id
+                    ? { ...item, quantity: Math.max(1, (item.quantity || 1) + delta) }
+                    : item
+            );
+            localStorage.setItem("cart", JSON.stringify(updated));
+            return updated;
+        });
+    }, []);
 
-    const removeItem = (index) => {
-        const updated = cartItems.filter((_, i) => i !== index);
-        setCartItems(updated);
-        localStorage.setItem("cart", JSON.stringify(updated));
-    };
+    const removeItem = useCallback((id) => {
+        setCartItems(prev => {
+            const updated = prev.filter(item => item._id !== id);
+            localStorage.setItem("cart", JSON.stringify(updated));
+            return updated;
+        });
+    }, []);
 
     const total = cartItems.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
 
@@ -51,21 +59,21 @@ export default function CartPage() {
                 ) : (
                     <div className="grid lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-2 space-y-4">
-                            {cartItems.map((item, index) => (
-                                <div key={index} className="flex gap-4 bg-white rounded-xl border border-gray-200 p-4">
+                            {cartItems.map((item) => (
+                                <div key={item._id} className="flex gap-4 bg-white rounded-xl border border-gray-200 p-4">
                                     <div className="w-24 h-24 rounded-lg bg-gray-100 overflow-hidden shrink-0">
-                                        <img src={item.images?.[0] || "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=200&q=80"} alt={item.name} loading="lazy" className="w-full h-full object-cover" />
+                                        <img src={getOptimizedImage(item.images?.[0], 200) || "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=200&q=80"} alt={item.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <Link to={`/products/${item._id}`} className="font-semibold text-gray-800 hover:text-amber-600">{item.name}</Link>
                                         <p className="text-amber-600 font-bold mt-1">{new Intl.NumberFormat("vi-VN").format(item.price)} ₫</p>
                                         <div className="flex items-center justify-between mt-3">
                                             <div className="flex items-center border border-gray-200 rounded-lg">
-                                                <button onClick={() => updateQuantity(index, -1)} className="p-2 hover:bg-gray-50"><FontAwesomeIcon icon={faMinus} className="text-xs" /></button>
+                                                <button onClick={() => updateQuantity(item._id, -1)} className="p-2 hover:bg-gray-50"><FontAwesomeIcon icon={faMinus} className="text-xs" /></button>
                                                 <span className="px-3 text-sm font-medium">{item.quantity || 1}</span>
-                                                <button onClick={() => updateQuantity(index, 1)} className="p-2 hover:bg-gray-50"><FontAwesomeIcon icon={faPlus} className="text-xs" /></button>
+                                                <button onClick={() => updateQuantity(item._id, 1)} className="p-2 hover:bg-gray-50"><FontAwesomeIcon icon={faPlus} className="text-xs" /></button>
                                             </div>
-                                            <button onClick={() => removeItem(index)} className="text-red-500 hover:text-red-700 p-2">
+                                            <button onClick={() => removeItem(item._id)} className="text-red-500 hover:text-red-700 p-2">
                                                 <FontAwesomeIcon icon={faTrash} />
                                             </button>
                                         </div>

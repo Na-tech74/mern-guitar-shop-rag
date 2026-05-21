@@ -35,9 +35,9 @@ export default function FeaturesBanner() {
             <div className="max-w-7xl mx-auto px-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
 
-                    {features.map((item, index) => (
+                    {features.map((item) => (
                         <div
-                            key={index}
+                            key={item.title}
                             className="flex items-start gap-4 p-5 rounded-2xl border border-gray-200 bg-white shadow-sm hover:shadow-lg transition duration-300"
                         >
 

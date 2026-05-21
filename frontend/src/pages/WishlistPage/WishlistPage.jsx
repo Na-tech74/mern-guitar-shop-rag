@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faShoppingCart, faTrash, faImage } from "@fortawesome/free-solid-svg-icons";
+import { getOptimizedImage } from "../../helpers/format";
 
 export default function WishlistPage() {
     const [wishlist, setWishlist] = useState([]);
@@ -11,11 +12,13 @@ export default function WishlistPage() {
         setWishlist(stored);
     }, []);
 
-    const removeFromWishlist = (index) => {
-        const updated = wishlist.filter((_, i) => i !== index);
-        setWishlist(updated);
-        localStorage.setItem("wishlist", JSON.stringify(updated));
-    };
+    const removeFromWishlist = useCallback((id) => {
+        setWishlist(prev => {
+            const updated = prev.filter(item => item._id !== id);
+            localStorage.setItem("wishlist", JSON.stringify(updated));
+            return updated;
+        });
+    }, []);
 
     return (
         <div className="min-h-screen">
@@ -40,11 +43,11 @@ export default function WishlistPage() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {wishlist.map((item, index) => (
-                            <div key={index} className="bg-white rounded-xl border border-gray-200 overflow-hidden group">
+                        {wishlist.map((item) => (
+                            <div key={item._id} className="bg-white rounded-xl border border-gray-200 overflow-hidden group">
                                 <Link to={`/products/${item._id}`} className="block h-48 bg-gray-100 overflow-hidden">
                                     {item.images?.[0] ? (
-                                        <img src={item.images[0]} alt={item.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition" />
+                                        <img src={getOptimizedImage(item.images[0], 400)} alt={item.name} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition" />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center text-gray-400">
                                             <FontAwesomeIcon icon={faImage} className="text-3xl" />
@@ -59,7 +62,7 @@ export default function WishlistPage() {
                                             <FontAwesomeIcon icon={faShoppingCart} />
                                             Thêm
                                         </button>
-                                        <button onClick={() => removeFromWishlist(index)} className="p-2 border border-gray-200 rounded-lg text-gray-500 hover:text-red-600 hover:border-red-200 transition">
+                                        <button onClick={() => removeFromWishlist(item._id)} className="p-2 border border-gray-200 rounded-lg text-gray-500 hover:text-red-600 hover:border-red-200 transition">
                                             <FontAwesomeIcon icon={faTrash} />
                                         </button>
                                     </div>

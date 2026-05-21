@@ -15,6 +15,7 @@ export const useCategories = () => {
     const fetchCategories = useCallback(async () => {
         try {
             setLoading(true);
+            setError(null);
             const res = await categoryAPI.getAll();
             setCategories(res.data?.data?.categories || []);
         } catch (err) {
@@ -26,6 +27,16 @@ export const useCategories = () => {
 
     useEffect(() => {
         fetchCategories();
+    }, [fetchCategories]);
+
+    useEffect(() => {
+        const handleVisibility = () => {
+            if (document.visibilityState === "visible") {
+                fetchCategories();
+            }
+        };
+        document.addEventListener("visibilitychange", handleVisibility);
+        return () => document.removeEventListener("visibilitychange", handleVisibility);
     }, [fetchCategories]);
 
     const filteredCategories = useMemo(() => {

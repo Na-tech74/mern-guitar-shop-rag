@@ -42,8 +42,8 @@ export default function useLogin() {
         try {
             const res = await loginAPI(form);
             const { data } = res.data;
-            localStorage.setItem("token", data.accessToken);
-            localStorage.setItem("userInfo", JSON.stringify({
+            sessionStorage.setItem("token", data.accessToken);
+            sessionStorage.setItem("userInfo", JSON.stringify({
                 name: data.user.name,
                 email: data.user.email,
                 role: data.user.role,

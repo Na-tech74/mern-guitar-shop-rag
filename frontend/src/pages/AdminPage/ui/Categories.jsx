@@ -51,7 +51,7 @@ export default function Categories() {
 
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {filteredCategories.map((category) => (
-                        <div key={category._id} className="rounded-xl border border-gray-200 p-4 transition-all hover:shadow-md">
+                        <div key={category._id} className="rounded-xl border border-gray-200 p-4 transition-shadow hover:shadow-md">
                             <div className="flex gap-4">
                                 <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
                                     {category.image ? (

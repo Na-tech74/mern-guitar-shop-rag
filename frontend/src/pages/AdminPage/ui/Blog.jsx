@@ -10,7 +10,7 @@ const formatDate = (date) =>
     });
 
 export default function Blog() {
-    const { blogs, loading, createBlog, updateBlog, deleteBlog } = useBlog();
+    const { blogs, loading, error, setError, createBlog, updateBlog, deleteBlog } = useBlog();
     const [showForm, setShowForm] = useState(false);
     const [editingBlog, setEditingBlog] = useState(null);
     const [formData, setFormData] = useState({ title: "", content: "", excerpt: "" });
@@ -40,7 +40,9 @@ export default function Blog() {
             }
             resetForm();
         } catch (error) {
-            alert("Có lỗi xảy ra!");
+            const msg = error.response?.data?.message || error.message || "Có lỗi xảy ra!";
+            setError(msg);
+            alert(msg);
         }
     };
 
@@ -81,6 +83,15 @@ export default function Blog() {
                     Thêm bài viết
                 </button>
             </div>
+
+            {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                    {error}
+                    <button onClick={() => setError(null)} className="float-right text-red-500 hover:text-red-700">
+                        <FontAwesomeIcon icon={faTimes} />
+                    </button>
+                </div>
+            )}
 
             {showForm && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">

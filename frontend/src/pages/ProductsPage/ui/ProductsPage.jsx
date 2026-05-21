@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThLarge, faList, faShoppingCart, faImage } from "@fortawesome/free-solid-svg-icons";
 import useProducts from "../hooks/useProducts";
 import { API } from "../../../api/axiosClient";
+import { getOptimizedImage } from "../../../helpers/format";
 import Carousel from "../../../components/Carousel";
 
 const formatPrice = (price) => {
@@ -136,15 +137,16 @@ export default function ProductsPage() {
                                     <Link
                                         key={product._id}
                                         to={`/products/${product._id}`}
-                                        className={`bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:shadow-amber-100 transition-all group ${viewMode === "list" ? "flex" : ""}`}
+                                        className={`bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:shadow-amber-100 transition-shadow group ${viewMode === "list" ? "flex" : ""}`}
                                     >
                                         <div className={`relative ${viewMode === "list" ? "w-48 shrink-0" : ""}`}>
                                             <div className={`w-full ${viewMode === "list" ? "h-full" : "h-56"} bg-gray-100 overflow-hidden`}>
                                                 {product.images?.[0] ? (
                                                     <img
-                                                        src={product.images[0]}
+                                                        src={getOptimizedImage(product.images[0], 400)}
                                                         alt={product.name}
                                                         loading="lazy"
+                                                        decoding="async"
                                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                                     />
                                                 ) : (

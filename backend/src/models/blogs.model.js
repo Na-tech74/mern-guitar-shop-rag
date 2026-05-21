@@ -24,7 +24,7 @@ const blogSchema = new mongoose.Schema({
     // Tham chiếu đến người dùng đã viết bài
     author: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "user",
+        ref: "Users",
     },
     // URL ảnh banner của bài viết
     images: {

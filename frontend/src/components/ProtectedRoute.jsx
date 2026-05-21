@@ -1,9 +1,9 @@
 import { Navigate } from "react-router-dom";
 
 export default function ProtectedRoute({ children, roleRequired }) {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
    
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
     const role = userInfo?.role; 
 
     //  chưa login

@@ -4,9 +4,10 @@ import Carousel from "../../../components/Carousel";
 import FeaturesBanner from "../components/FeaturesBanner";
 import CategoriesSection from "../components/CategoriesSection";
 import FeaturedProducts from "../components/FeaturedProducts";
-import BannerPromotion from "../components/BannerPromotion";
+import BannerPromotion from "../components/Clip.jsx";
 import FeaturedTypes from "../components/FeaturedTypes";
 import CTASection from "../components/CTASection";
+import Clip from "../components/Clip.jsx";
 
 export default function HomePage() {
   const [products, setProducts] = useState([]);
@@ -14,21 +15,29 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const abortController = new AbortController();
     const fetchData = async () => {
       try {
         const [productsRes, categoriesRes] = await Promise.all([
-          API.get("/products?limit=8"),
-          API.get("/categories")
+          API.get("/products?limit=8", { signal: abortController.signal }),
+          API.get("/categories", { signal: abortController.signal })
         ]);
-        setProducts(productsRes.data?.data?.products || []);
-        setCategories(categoriesRes.data?.data?.categories || []);
+        if (!abortController.signal.aborted) {
+          setProducts(productsRes.data?.data?.products || []);
+          setCategories(categoriesRes.data?.data?.categories || []);
+        }
       } catch (error) {
-        // Handle error
+        if (error.name !== 'CanceledError' && !abortController.signal.aborted) {
+          // Handle error
+        }
       } finally {
-        setLoading(false);
+        if (!abortController.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
     fetchData();
+    return () => abortController.abort();
   }, []);
 
   return (
@@ -37,7 +46,7 @@ export default function HomePage() {
       <FeaturesBanner />
       <CategoriesSection categories={categories} />
       <FeaturedProducts products={products} loading={loading} />
-      <BannerPromotion />
+      <Clip/>
       <FeaturedTypes />
       <CTASection />
     </div>

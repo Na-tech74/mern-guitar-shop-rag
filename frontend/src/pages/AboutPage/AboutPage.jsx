@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGuitar, faMusic, faAward, faUsers } from "@fortawesome/free-solid-svg-icons";
+import Logo from "../../components/Logo";
 
 export default function AboutPage() {
     return (
@@ -15,7 +16,7 @@ export default function AboutPage() {
                 </nav>
 
                 <div className="text-center mb-16">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-4">Về Nam Acoustic</h1>
+                    <Logo/>
                     <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                         Cửa hàng nhạc cụ hàng đầu Việt Nam, mang đến những sản phẩm chất lượng nhất cho đam mê âm nhạc của bạn.
                     </p>
@@ -38,6 +39,8 @@ export default function AboutPage() {
                             src="https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=800&q=80"
                             alt="Nam Acoustic Store"
                             className="w-full h-80 object-cover"
+                            loading="lazy"
+                            decoding="async"
                         />
                     </div>
                 </div>
@@ -47,10 +50,10 @@ export default function AboutPage() {
                         { icon: faMusic, title: "Đa dạng sản phẩm", desc: "Hàng trăm mẫu đàn guitar, piano, ukulele từ các thương hiệu nổi tiếng" },
                         { icon: faAward, title: "Chất lượng cam kết", desc: "100% sản phẩm chính hãng, bảo hành lên đến 24 tháng" },
                         { icon: faUsers, title: "Đội ngũ chuyên nghiệp", desc: "Tư vấn viên giàu kinh nghiệm, sẵn sàng hỗ trợ 24/7" },
-                    ].map((item, i) => (
-                        <div key={i} className="text-center p-8 rounded-xl bg-white border border-gray-200 shadow-sm">
-                            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-100 flex items-center justify-center">
-                                <FontAwesomeIcon icon={item.icon} className="text-2xl text-amber-600" />
+                    ].map((item) => (
+                        <div key={item.title} className="text-center p-8 rounded-xl bg-white border border-gray-200 shadow-sm">
+                            <div className="w-16 h-16 mx-auto mb-4 rounded-full  flex items-center justify-center">
+                                <FontAwesomeIcon icon={item.icon} className="text-2xl text-black" />
                             </div>
                             <h3 className="text-lg font-semibold text-gray-900 mb-2">{item.title}</h3>
                             <p className="text-gray-600">{item.desc}</p>

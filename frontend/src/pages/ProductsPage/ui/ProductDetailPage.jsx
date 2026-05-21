@@ -1,43 +1,51 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart, faMinus, faPlus, faShoppingCart, faStar, faTruck, faShieldAlt, faUndo } from "@fortawesome/free-solid-svg-icons";
-
-const product = {
-    id: 1,
-    name: "Guitar Acoustic Yamaha F310",
-    price: 4500000,
-    originalPrice: 5200000,
-    images: [
-        "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=800&q=80",
-        "https://images.unsplash.com/photo-1525201548942-d8732f6617a0?w=800&q=80",
-        "https://images.unsplash.com/photo-1564186763535-ebb21ef5277f?w=800&q=80"
-    ],
-    rating: 4.5,
-    reviews: 128,
-    brand: "Yamaha",
-    category: "Acoustic",
-    description: "Guitar Acoustic Yamaha F310 là lựa chọn hoàn hảo cho người mới bắt đầu học guitar. Với thân đàn bằng gỗ spruce và lưng/hông bằng gỗ nato, cây đàn mang lại âm thanh cân bằng và ấm áp. Đàn phù hợp cho nhiều thể loại nhạc từ ballad đến pop.",
-    specs: {
-        "Loại": "Acoustic",
-        "Thương hiệu": "Yamaha",
-        "Mặt trước": "Spruce",
-        "Lưng/Hông": "Nato",
-        "Cần đàn": "Nato",
-        "Số phím": "20"
-    }
-};
+import { faHeart, faMinus, faPlus, faShoppingCart, faStar, faTruck, faShieldAlt, faUndo, faImage } from "@fortawesome/free-solid-svg-icons";
+import { productAPI } from "../api/productAPI";
+import { getOptimizedImage } from "../../../helpers/format";
 
 const formatPrice = (price) => new Intl.NumberFormat("vi-VN").format(price) + " đ";
 
 export default function ProductDetailPage() {
     const { id } = useParams();
+    const [product, setProduct] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [selectedImage, setSelectedImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
 
+    useEffect(() => {
+        productAPI.getById(id)
+            .then((res) => {
+                setProduct(res.data?.data?.product);
+                setSelectedImage(0);
+            })
+            .catch(() => {})
+            .finally(() => setLoading(false));
+    }, [id]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
+            </div>
+        );
+    }
+
+    if (!product) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center text-gray-400">
+                <FontAwesomeIcon icon={faImage} className="text-5xl mb-4" />
+                <p className="text-lg">Sản phẩm không tồn tại</p>
+                <Link to="/products" className="mt-4 text-amber-600 hover:underline">Quay lại</Link>
+            </div>
+        );
+    }
+
+    const images = product.images?.length > 0 ? product.images : [];
+
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            {/* Breadcrumb */}
             <nav className="text-sm mb-6">
                 <ol className="flex items-center gap-2 text-gray-500">
                     <li><Link to="/" className="hover:text-amber-600">Trang chủ</Link></li>
@@ -49,74 +57,56 @@ export default function ProductDetailPage() {
             </nav>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-                {/* Images */}
                 <div>
                     <div className="aspect-square rounded-xl overflow-hidden bg-gray-100 mb-4">
-                        <img
-                            src={product.images[selectedImage]}
-                            alt={product.name}
-                            className="w-full h-full object-cover"
-                        />
+                        {images.length > 0 ? (
+                            <img
+                                src={getOptimizedImage(images[selectedImage], 800)}
+                                alt={product.name}
+                                className="w-full h-full object-cover"
+                                loading="eager"
+                                decoding="async"
+                            />
+                        ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-300">
+                                <FontAwesomeIcon icon={faImage} className="text-6xl" />
+                            </div>
+                        )}
                     </div>
-                    <div className="flex gap-3">
-                        {product.images.map((img, idx) => (
-                            <button
-                                key={idx}
-                                onClick={() => setSelectedImage(idx)}
-                                className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition ${
-                                    selectedImage === idx ? "border-amber-500" : "border-transparent hover:border-gray-300"
-                                }`}
-                            >
-                                <img src={img} alt="" loading="lazy" className="w-full h-full object-cover" />
-                            </button>
-                        ))}
-                    </div>
+                    {images.length > 1 && (
+                        <div className="flex gap-3">
+                            {images.map((img, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => setSelectedImage(idx)}
+                                    className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition ${
+                                        selectedImage === idx ? "border-amber-500" : "border-transparent hover:border-gray-300"
+                                    }`}
+                                >
+                                    <img src={getOptimizedImage(img, 150)} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
-                {/* Info */}
                 <div className="space-y-6">
                     <div>
-                        <p className="text-amber-600 font-medium mb-2">{product.brand}</p>
+                        {product.category?.name && (
+                            <p className="text-amber-600 font-medium mb-2">{product.category.name}</p>
+                        )}
                         <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
-                        <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-1">
-                                {[...Array(5)].map((_, i) => (
-                                    <FontAwesomeIcon key={i} icon={faStar} className={`text-amber-400 ${i < Math.floor(product.rating) ? "" : "text-gray-300"}`} />
-                                ))}
-                            </div>
-                            <span className="text-gray-500">{product.rating} ({product.reviews} đánh giá)</span>
-                        </div>
                     </div>
 
                     <div className="bg-amber-50 rounded-xl p-6">
                         <div className="flex items-baseline gap-3 mb-2">
                             <span className="text-3xl font-bold text-amber-600">{formatPrice(product.price)}</span>
-                            {product.originalPrice && (
-                                <span className="text-lg text-gray-400 line-through">{formatPrice(product.originalPrice)}</span>
-                            )}
                         </div>
-                        {product.originalPrice && (
-                            <span className="inline-block px-3 py-1 bg-red-100 text-red-600 text-sm font-medium rounded-full">
-                                Tiết kiệm {formatPrice(product.originalPrice - product.price)}
-                            </span>
-                        )}
                     </div>
 
                     <div>
                         <h3 className="font-semibold text-gray-900 mb-3">Mô tả</h3>
                         <p className="text-gray-600 leading-relaxed">{product.description}</p>
-                    </div>
-
-                    <div>
-                        <h3 className="font-semibold text-gray-900 mb-3">Thông số kỹ thuật</h3>
-                        <div className="grid grid-cols-2 gap-3">
-                            {Object.entries(product.specs).map(([key, value]) => (
-                                <div key={key} className="flex justify-between py-2 border-b border-gray-100">
-                                    <span className="text-gray-500">{key}</span>
-                                    <span className="font-medium text-gray-800">{value}</span>
-                                </div>
-                            ))}
-                        </div>
                     </div>
 
                     <div className="flex items-center gap-4">

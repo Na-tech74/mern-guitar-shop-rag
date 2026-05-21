@@ -29,8 +29,8 @@ export default function ContactPage() {
                                 { icon: faPhone, label: "Điện thoại", value: "037.862.3181" },
                                 { icon: faEnvelope, label: "Email", value: "namn98561@gmail.com" },
                                 { icon: faClock, label: "Giờ làm việc", value: "T2 - CN: 8:00 - 22:00" },
-                            ].map((item, i) => (
-                                <div key={i} className="flex items-start gap-4">
+                            ].map((item) => (
+                                <div key={item.label} className="flex items-start gap-4">
                                     <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
                                         <FontAwesomeIcon icon={item.icon} className="text-amber-600" />
                                     </div>
@@ -43,8 +43,8 @@ export default function ContactPage() {
                         </div>
 
                         <div className="flex gap-3 pt-4">
-                            {[faFacebook, faInstagram, faYoutube].map((icon, i) => (
-                                <a key={i} href="#" className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-amber-100 hover:text-amber-600 transition">
+                            {[{ icon: faFacebook, name: 'facebook' }, { icon: faInstagram, name: 'instagram' }, { icon: faYoutube, name: 'youtube' }].map(({ icon, name }) => (
+                                <a key={name} href="#" className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-amber-100 hover:text-amber-600 transition">
                                     <FontAwesomeIcon icon={icon} />
                                 </a>
                             ))}
@@ -72,6 +72,19 @@ export default function ContactPage() {
                         </form>
                     </div>
                 </div>
+            </div>
+
+            <div className="mt-12 rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d13390.654967441898!2d106.68795299527685!3d10.823414364813097!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1svi!2s!4v1779364882168!5m2!1svi!2s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                    width="100%"
+                    height="400"
+                    style={{ border: 0 }}
+                    allowFullScreen=""
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Google Maps"
+                />
             </div>
         </div>
     );

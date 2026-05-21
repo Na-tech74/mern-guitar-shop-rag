@@ -60,7 +60,7 @@ export const getBlogsById = async (req, res) => {
         throw appError("ID bài viết không hợp lệ!", 400);
     }
 
-    const blog = await Blog.findById(id)
+    const blog = await Blog.findById(id).populate("author", "name email")
     if(!blog){
       throw appError("Bài viết không tồn tại ", 404)
     }

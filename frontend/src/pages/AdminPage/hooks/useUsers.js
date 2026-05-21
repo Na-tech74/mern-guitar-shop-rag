@@ -1,31 +1,32 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { userAPI } from "../api/adminAPI";
 
 export const useUsers = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
 
     const [showModal, setShowModal] = useState(false);
     const [editingUser, setEditingUser] = useState(null);
     const [formData, setFormData] = useState({ name: "", email: "", role: "user" });
 
-    const fetchUsers = async () => {
+    const fetchUsers = useCallback(async () => {
         try {
             setLoading(true);
             const response = await userAPI.getAll();
             setUsers(response.data?.data || []);
         } catch (err) {
-            setError(err);
+            console.error("fetchUsers error:", err);
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchUsers();
-    }, []);
+    }, [fetchUsers]);
+
+
 
     const filteredUsers = useMemo(() => {
         if (!searchTerm) return users || [];
@@ -52,7 +53,7 @@ export const useUsers = () => {
             await fetchUsers();
             closeModal();
         } catch (err) {
-            setError(err);
+            alert(err.response?.data?.message || "Không thể cập nhật!");
         }
     };
 
@@ -61,7 +62,6 @@ export const useUsers = () => {
             await userAPI.delete(id);
             await fetchUsers();
         } catch (err) {
-            setError(err);
             alert(err.response?.data?.message || "Không thể xóa!");
         }
     };
@@ -69,7 +69,7 @@ export const useUsers = () => {
     return {
         users,
         loading,
-        error,
+        fetchUsers,
         filteredUsers,
         searchTerm,
         setSearchTerm,

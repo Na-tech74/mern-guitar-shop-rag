@@ -9,11 +9,12 @@ export default function useBlog() {
 
     const fetchBlogs = useCallback(async () => {
         setLoading(true);
+        setError(null);
         try {
             const res = await blogAPI.getAll();
             setBlogs(res.data?.data?.blogs || []);
         } catch (err) {
-            setError(err.message);
+            setError(err.response?.data?.message || err.message);
         } finally {
             setLoading(false);
         }
@@ -23,13 +24,24 @@ export default function useBlog() {
         fetchBlogs();
     }, [fetchBlogs]);
 
+    useEffect(() => {
+        const handleVisibility = () => {
+            if (document.visibilityState === "visible") {
+                fetchBlogs();
+            }
+        };
+        document.addEventListener("visibilitychange", handleVisibility);
+        return () => document.removeEventListener("visibilitychange", handleVisibility);
+    }, [fetchBlogs]);
+
     const createBlog = async (data) => {
         try {
             const res = await blogAPI.create(data);
             setBlogs(prev => [res.data.data.newBlogs, ...prev]);
+            setError(null);
             return res.data.data.newBlogs;
         } catch (err) {
-            setError(err.message);
+            setError(err.response?.data?.message || err.message);
             throw err;
         }
     };
@@ -38,9 +50,10 @@ export default function useBlog() {
         try {
             const res = await blogAPI.update(id, data);
             setBlogs(prev => prev.map(b => b._id === id ? res.data.data.blog : b));
+            setError(null);
             return res.data.data.blog;
         } catch (err) {
-            setError(err.message);
+            setError(err.response?.data?.message || err.message);
             throw err;
         }
     };
@@ -49,8 +62,9 @@ export default function useBlog() {
         try {
             await blogAPI.delete(id);
             setBlogs(prev => prev.filter(b => b._id !== id));
+            setError(null);
         } catch (err) {
-            setError(err.message);
+            setError(err.response?.data?.message || err.message);
             throw err;
         }
     };
@@ -72,6 +86,7 @@ export default function useBlog() {
         blogs,
         loading,
         error,
+        setError,
         selectedBlog,
         setSelectedBlog,
         fetchBlogs,

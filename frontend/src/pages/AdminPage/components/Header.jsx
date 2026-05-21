@@ -1,5 +1,4 @@
-// components/dashboard/AdminHeader.jsx
-
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -12,7 +11,7 @@ import {
 
 export default function AdminHeader({ toggleSidebar }) {
     const navigate = useNavigate();
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    const [userInfo] = useState(() => JSON.parse(sessionStorage.getItem("userInfo")));
 
     const handleLogout = async () => {
         try {
@@ -21,8 +20,8 @@ export default function AdminHeader({ toggleSidebar }) {
         } catch {
             // ignore
         }
-        localStorage.removeItem("userInfo");
-        localStorage.removeItem("token");
+        sessionStorage.removeItem("userInfo");
+        sessionStorage.removeItem("token");
         navigate("/");
     };
 

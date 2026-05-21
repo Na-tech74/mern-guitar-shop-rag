@@ -2,10 +2,11 @@ import { memo } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar, faArrowRight, faMusic } from "@fortawesome/free-solid-svg-icons";
+import { getOptimizedImage } from "../../../helpers/format";
 
 export default function FeaturedProducts({ products, loading }) {
     return (
-        <section className="py-16 cursor-pointer">
+        <section className="py-16 bg-white">
             <div className="max-w-7xl mx-auto px-4">
                 <div className="flex items-center justify-between mb-12">
                     <div>
@@ -20,13 +21,26 @@ export default function FeaturedProducts({ products, loading }) {
                 {loading ? (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         {[...Array(8)].map((_, i) => (
-                            <div key={i} className="bg-gray-100 rounded-xl h-80 animate-pulse" />
+                            <div key={i} className="bg-gray-100 rounded-xl animate-pulse overflow-hidden">
+                                <div className="h-60 bg-gray-200" />
+                                <div className="p-4 space-y-2">
+                                    <div className="h-4 bg-gray-200 rounded w-3/4" />
+                                    <div className="h-3 bg-gray-200 rounded w-full" />
+                                    <div className="h-3 bg-gray-200 rounded w-5/6" />
+                                    <div className="pt-2 flex justify-between">
+                                        <div className="h-5 bg-gray-200 rounded w-1/3" />
+                                        <div className="h-4 bg-gray-200 rounded w-1/6" />
+                                    </div>
+                                </div>
+                            </div>
                         ))}
                     </div>
                 ) : products.length > 0 ? (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {products.map((product) => (
-                            <ProductCard key={product._id} product={product} />
+                        {products.map((product, i) => (
+                            <div key={product._id} className="animate-fadeInUp" style={{ animationDelay: `${i * 60}ms` }}>
+                                <ProductCard product={product} />
+                            </div>
                         ))}
                     </div>
                 ) : (
@@ -48,13 +62,14 @@ export default function FeaturedProducts({ products, loading }) {
 
 const ProductCard = memo(function ProductCard({ product }) {
     return (
-        <Link to={`/products/${product._id}`} className="group bg-gray-200 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 ">
+        <Link to={`/products/${product._id}`} className="group bg-gray-200 rounded-xl shadow-sm hover:shadow-xl transition-shadow duration-300">
             <div className="relative overflow-hidden rounded-t-xl">
                 <img 
-                    src={product.images?.[0] || "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=400&q=80"} 
+                    src={getOptimizedImage(product.images?.[0], 400) || "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=400&q=80"} 
                     alt={product.name}
                     loading="lazy"
-                    className="w-full h-60 object-cover group-hover:scale-105 transition-transform duration-300"
+                    decoding="async"
+                    className="w-full h-60 object-cover"
                 />
                 {product.sold > 0 && (
                     <div className="absolute top-3 left-3 bg-amber-500 text-white text-xs px-2 py-1 rounded">
@@ -62,7 +77,7 @@ const ProductCard = memo(function ProductCard({ product }) {
                     </div>
                 )}
             </div>
-            <div className="p-4">
+            <div className="p-4 bg-gray-200 rounded-b-xl">
                 <h3 className="font-semibold text-gray-800 mb-1 line-clamp-1 group-hover:text-amber-600">
                     {product.name}
                 </h3>
