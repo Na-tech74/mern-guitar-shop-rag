@@ -9,8 +9,8 @@ import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 export default function Login() {
     const { form, errors, loading, handleChange, handleLogin } = useLogin();
     return (
-        <div className="min-h-screen flex items-center justify-center px-4 py-8 bg-gradient-to-br from-amber-50 to-gray-100">
-            <div className="w-full max-w-sm bg-white rounded-2xl p-8 shadow-xl shadow-amber-100/50">
+        <div className="min-h-screen flex items-center justify-center px-4 py-8 bg-white to-gray-100">
+            <div className="w-full max-w-sm  rounded-2xl p-8 shadow-2xl">
 
                 <Link to="/" className="flex justify-center mb-6">
                     <Logo />
