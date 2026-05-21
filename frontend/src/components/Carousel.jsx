@@ -1,8 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight, faCartPlus, faMusic } from "@fortawesome/free-solid-svg-icons";
-import { API } from "../api/axiosClient";
 
 const defaultSlides = [
     {
@@ -10,7 +9,7 @@ const defaultSlides = [
         title: "Guitar Acoustic Cao Cấp",
         subtitle: "Chất lượng âm thanh tuyệt vời cho mọi không gian",
         description: "Khám phá bộ sưu tập guitar acoustic cao cấp với thiết kế tinh xảo và âm thanh sống động",
-        image: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=1600&q=80",
+        image: "https://res.cloudinary.com/dsh9anp7p/image/upload/v1778735126/guitar-shop/tpyifrrwagyagalzdhhy.jpg",
         cta: "Mua ngay",
         path: "/products"
     },
@@ -19,7 +18,7 @@ const defaultSlides = [
         title: "Piano Chính Hãng",
         subtitle: "Biểu diễn chuyên nghiệp với âm thanh hoàn hảo",
         description: "Bộ sưu tập piano điện tử và acoustic từ các thương hiệu nổi tiếng thế giới",
-        image: "https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=1600&q=80",
+        image: "https://res.cloudinary.com/dsh9anp7p/image/upload/v1778735619/guitar-shop/cwpqdps56lmbb4bdg2ye.jpg",
         cta: "Khám phá",
         path: "/products"
     },
@@ -28,7 +27,7 @@ const defaultSlides = [
         title: "Ukulele & Nhạc Cụ",
         subtitle: "Học nhạc cùng giáo viên chuyên nghiệp",
         description: "Đăng ký khóa học guitar, piano, violin và nhiều nhạc cụ khác với giáo viên giàu kinh nghiệm",
-        image: "https://images.unsplash.com/photo-1514117445517-2ec90fa4b84b?w=1600&q=80",
+        image: "https://res.cloudinary.com/dsh9anp7p/image/upload/v1778735833/guitar-shop/dj7rhxldvz3jayu42qhg.jpg",
         cta: "Đăng ký ngay",
         path: "/products"
     },
@@ -38,42 +37,32 @@ export default function Carousel() {
     const [slides, setSlides] = useState(defaultSlides);
     const [currentSlide, setCurrentSlide] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
-    const [isAnimating, setIsAnimating] = useState(false);
+    const animatingRef = useRef(false);
 
     useEffect(() => {
-        const fetchCarousels = async () => {
-            try {
-                const response = await API.get("/carousels/get-active-carousels");
-                if (response.data && response.data.length > 0) {
-                    setSlides(response.data);
-                }
-            } catch (error) {
-                console.log("Using default carousel slides");
-            }
-        };
-        fetchCarousels();
+        setSlides(defaultSlides);
     }, []);
 
     const goNext = useCallback(() => {
-        if (isAnimating) return;
-        setIsAnimating(true);
+        if (animatingRef.current) return;
+        animatingRef.current = true;
         setCurrentSlide((prev) => (prev + 1) % slides.length);
-        setTimeout(() => setIsAnimating(false), 700);
-    }, [isAnimating, slides.length]);
+        setTimeout(() => { animatingRef.current = false; }, 700);
+    }, [slides.length]);
 
     const goPrev = useCallback(() => {
-        if (isAnimating) return;
-        setIsAnimating(true);
+        if (animatingRef.current) return;
+        animatingRef.current = true;
         setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-        setTimeout(() => setIsAnimating(false), 700);
-    }, [isAnimating, slides.length]);
+        setTimeout(() => { animatingRef.current = false; }, 700);
+    }, [slides.length]);
 
-    const goTo = (index) => {
-        if (isAnimating || index === currentSlide) return;
-        setIsAnimating(true);
+    const goTo = useCallback((index) => {
+        if (animatingRef.current || index === currentSlide) return;
+        animatingRef.current = true;
         setCurrentSlide(index);
-        setTimeout(() => setIsAnimating(false), 700);
-    };
+        setTimeout(() => { animatingRef.current = false; }, 700);
+    }, [currentSlide]);
 
     useEffect(() => {
         if (isPaused) return;

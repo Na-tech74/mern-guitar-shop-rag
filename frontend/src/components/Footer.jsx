@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -78,7 +79,7 @@ const bottomLinks = [
   { to: "/privacy", label: "Bảo mật" },
 ];
 
-export default function Footer() {
+const Footer = memo(function Footer() {
   return (
     <footer className="bg-white text-gray-600">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -111,7 +112,7 @@ export default function Footer() {
 
           {/* Cột 2 */}
           <div>
-            <h4 className="text-base font-semibold text-white mb-4 pb-2 border-b border-gray-700">
+            <h4 className="text-base font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
               Danh mục
             </h4>
 
@@ -131,7 +132,7 @@ export default function Footer() {
 
           {/* Cột 3 */}
           <div>
-            <h4 className="text-base font-semibold text-white mb-4 pb-2 border-b border-gray-700">
+            <h4 className="text-base font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
               Hỗ trợ
             </h4>
 
@@ -151,7 +152,7 @@ export default function Footer() {
 
           {/* Cột 4 */}
           <div>
-            <h4 className="text-base font-semibold text-white mb-4 pb-2 border-b border-gray-700">
+            <h4 className="text-base font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
               Liên hệ
             </h4>
 
@@ -200,4 +201,6 @@ export default function Footer() {
       </div>
     </footer>
   );
-}
+});
+
+export default Footer;

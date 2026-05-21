@@ -17,6 +17,8 @@ export const useProducts = () => {
         category: "",
         stock: "",
         images: [],
+        fileList: [],
+        existingImages: [],
     });
 
     const fetchProducts = useCallback(async () => {
@@ -24,10 +26,10 @@ export const useProducts = () => {
             setLoading(true);
             const [productsRes, categoriesRes] = await Promise.all([
                 productAPI.getAll(),
-                categoryAPI.getAll()
+                categoryAPI.getAll().catch(() => ({ data: { data: { categories: [] } } }))
             ]);
-            setProducts(productsRes.data?.data || []);
-            setCategories(categoriesRes.data?.data || []);
+            setProducts(productsRes.data?.data?.products || []);
+            setCategories(categoriesRes.data?.data?.categories || []);
         } catch (err) {
             setError(err);
         } finally {
@@ -73,44 +75,25 @@ export const useProducts = () => {
         }
     }, [fetchProducts]);
 
-    const uploadImagesToCloud = async (images) => {
-        const cloudinaryUrls = [];
-        for (const img of images) {
-            if (img.startsWith('blob:') || img.startsWith('http://localhost')) {
-                const formDataUpload = new FormData();
-                const response = await fetch(img);
-                const blob = await response.blob();
-                formDataUpload.append("images", blob, "image.jpg");
-                const res = await fetch("http://localhost:5000/api/uploads", {
-                    method: "POST",
-                    body: formDataUpload
-                });
-                const data = await res.json();
-                if (data.images && data.images[0]) {
-                    cloudinaryUrls.push(data.images[0]);
-                }
-            } else {
-                cloudinaryUrls.push(img);
-            }
-        }
-        return cloudinaryUrls;
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const uploadedImages = await uploadImagesToCloud(formData.images);
-            
-            const productData = {
-                ...formData,
-                images: uploadedImages,
-                price: Number(formData.price),
-                stock: Number(formData.stock),
-            };
+            const fd = new FormData();
+            fd.append("name", formData.name);
+            fd.append("description", formData.description);
+            fd.append("price", String(formData.price).replace(/\./g, ""));
+            fd.append("category", formData.category);
+            fd.append("stock", String(formData.stock).replace(/\./g, ""));
+
+            const fileList = formData.fileList || [];
+            for (const file of fileList) {
+                fd.append("images", file);
+            }
+
             if (editingProduct) {
-                await updateProduct(editingProduct._id, productData);
+                await updateProduct(editingProduct._id, fd);
             } else {
-                await createProduct(productData);
+                await createProduct(fd);
             }
             setShowModal(false);
             resetForm();
@@ -137,6 +120,8 @@ export const useProducts = () => {
             category: product.category?._id || product.category,
             stock: product.stock,
             images: product.images || [],
+            fileList: [],
+            existingImages: product.images || [],
         });
         setShowModal(true);
     };
@@ -150,6 +135,8 @@ export const useProducts = () => {
             category: "",
             stock: "",
             images: [],
+            fileList: [],
+            existingImages: [],
         });
     };
 

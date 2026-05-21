@@ -16,7 +16,7 @@ export const useCategories = () => {
         try {
             setLoading(true);
             const res = await categoryAPI.getAll();
-            setCategories(res.data?.data || []);
+            setCategories(res.data?.data?.categories || []);
         } catch (err) {
             setError(err);
         } finally {

@@ -15,7 +15,7 @@ export const useUsers = () => {
         try {
             setLoading(true);
             const response = await userAPI.getAll();
-            setUsers(response.data);
+            setUsers(response.data?.data || []);
         } catch (err) {
             setError(err);
         } finally {

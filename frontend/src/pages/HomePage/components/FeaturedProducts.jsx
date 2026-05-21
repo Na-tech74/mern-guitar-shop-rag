@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar, faArrowRight, faMusic } from "@fortawesome/free-solid-svg-icons";
@@ -45,13 +46,14 @@ export default function FeaturedProducts({ products, loading }) {
     );
 }
 
-function ProductCard({ product }) {
+const ProductCard = memo(function ProductCard({ product }) {
     return (
         <Link to={`/products/${product._id}`} className="group bg-gray-200 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 ">
             <div className="relative overflow-hidden rounded-t-xl">
                 <img 
                     src={product.images?.[0] || "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=400&q=80"} 
                     alt={product.name}
+                    loading="lazy"
                     className="w-full h-60 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 {product.sold > 0 && (
@@ -81,4 +83,4 @@ function ProductCard({ product }) {
             </div>
         </Link>
     );
-}
+});

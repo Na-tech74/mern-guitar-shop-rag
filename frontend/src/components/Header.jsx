@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { memo, useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -24,7 +24,7 @@ const menuItems = [
   { name: 'LIÊN HỆ', path: '/contact', hasDropdown: false },
 ];
 
-export default function Header() {
+const Header = memo(function Header() {
   const [isSticky, setIsSticky] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
@@ -45,10 +45,12 @@ export default function Header() {
     };
     updateCounts();
     window.addEventListener("storage", updateCounts);
-    const interval = setInterval(updateCounts, 500);
+    window.addEventListener("cart-updated", updateCounts);
+    window.addEventListener("wishlist-updated", updateCounts);
     return () => {
       window.removeEventListener("storage", updateCounts);
-      clearInterval(interval);
+      window.removeEventListener("cart-updated", updateCounts);
+      window.removeEventListener("wishlist-updated", updateCounts);
     };
   }, []);
 
@@ -352,4 +354,6 @@ export default function Header() {
       )}
     </>
   );
-}
+});
+
+export default Header;

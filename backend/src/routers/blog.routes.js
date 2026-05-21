@@ -1,27 +1,48 @@
 import express from "express";
-import { protect, adminOnly } from "../middleware/auth.middleware.js";
-import { upload } from "../middleware/upload.middleware.js";
 import {
     createBlog,
     getAllBlogs,
-    getBlogById,
-    getBlogBySlug,
+    getBlogsById,
     updateBlog,
-    deleteBlog,
-    uploadBlogBanner,
-    uploadBlogBannerDirect
+    deleteBlog
 } from "../controller/blog.controller.js";
+import { asyncHandler } from "../middleware/asyncHandler.js";
+import { protect, adminOnly } from "../middleware/auth.middleware.js";
+import { upload } from "../middleware/upload.middleware.js";
 
 const router = express.Router();
 
-router.get("/get-all-blogs", getAllBlogs);
-router.get("/slug/:slug", getBlogBySlug);
-router.get("/:id", getBlogById);
+// @route   GET /api/blogs
+// @desc    Lấy danh sách tất cả bài viết
+// @access  Public
+router.get("/", asyncHandler(getAllBlogs));
 
-router.post("/create-blogs", protect, adminOnly, createBlog);
-router.put("/update-blogs/:id", protect, adminOnly, updateBlog);
-router.delete("/delete-blogs/:id", protect, adminOnly, deleteBlog);
-router.post("/:id/banner", protect, adminOnly, upload.single("banner"), uploadBlogBanner);
-router.post("/upload-banner", protect, adminOnly, upload.single("banner"), uploadBlogBannerDirect);
+// @route   GET /api/blogs/:id
+// @desc    Lấy chi tiết bài viết theo ID
+// @access  Public
+router.get("/:id", asyncHandler(getBlogsById));
+
+router.post(
+    "/",
+    protect,
+    adminOnly,
+    upload.single("banner"),
+    asyncHandler(createBlog)
+);
+
+router.put(
+    "/:id",
+    protect,
+    adminOnly,
+    upload.single("banner"),
+    asyncHandler(updateBlog)
+);
+
+router.delete(
+    "/:id",
+    protect,
+    adminOnly,
+    asyncHandler(deleteBlog)
+);
 
 export default router;

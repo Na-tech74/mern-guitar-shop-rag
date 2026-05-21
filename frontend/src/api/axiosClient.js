@@ -4,13 +4,15 @@ export const API = axios.create({
     withCredentials: true
 });
 
-// Thêm token vào request
 API.interceptors.request.use((config) => {
     const token = localStorage.getItem("token");
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
-    // Đảm bảo Content-Type luôn là JSON
+    if (config.data instanceof FormData) {
+        delete config.headers["Content-Type"];
+        return config;
+    }
     if (!config.headers["Content-Type"] && !config.headers.get("Content-Type")) {
         config.headers["Content-Type"] = "application/json";
     }

@@ -17,11 +17,11 @@ export default function HomePage() {
     const fetchData = async () => {
       try {
         const [productsRes, categoriesRes] = await Promise.all([
-          API.get("/products/get-all-products?limit=8"),
-          API.get("/categories/get-all-categories")
+          API.get("/products?limit=8"),
+          API.get("/categories")
         ]);
-        setProducts(productsRes.data?.data || []);
-        setCategories(categoriesRes.data?.data || []);
+        setProducts(productsRes.data?.data?.products || []);
+        setCategories(categoriesRes.data?.data?.categories || []);
       } catch (error) {
         // Handle error
       } finally {

@@ -13,40 +13,38 @@ export default function Products() {
         fetchProducts, categories
     } = useProducts();
 
-    const handleFileChange = async (e) => {
+    const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
         if (files.length === 0) return;
-
-        const newImages = [...formData.images];
-        
-        for (const file of files) {
-            try {
-                const formDataUpload = new FormData();
-                formDataUpload.append("images", file);
-                const res = await fetch("http://localhost:5000/api/uploads", {
-                    method: "POST",
-                    body: formDataUpload
-                });
-                const data = await res.json();
-                if (!res.ok) {
-                    alert(data.message || "Upload failed");
-                    continue;
-                }
-                if (data.images && data.images[0]) {
-                    newImages.push(data.images[0]);
-                }
-            } catch (err) {
-                newImages.push(URL.createObjectURL(file));
-            }
-        }
-        
-        setFormData({ ...formData, images: newImages });
+        const newFileList = [...(formData.fileList || []), ...files];
+        const previews = files.map((f) => URL.createObjectURL(f));
+        setFormData({
+            ...formData,
+            fileList: newFileList,
+            images: [...(formData.images || []), ...previews],
+        });
     };
 
     const removeImage = (index) => {
         const newImages = [...formData.images];
+        const newFileList = [...(formData.fileList || [])];
+        const existingImages = [...(formData.existingImages || [])];
+        const removedUrl = newImages[index];
+
+        const inFileList = formData.fileList?.length
+            ? index >= (formData.images.length - formData.fileList.length)
+            : false;
+
+        if (inFileList) {
+            const fileIdx = index - (formData.images.length - formData.fileList.length);
+            newFileList.splice(fileIdx, 1);
+        } else {
+            const existingIdx = existingImages.indexOf(removedUrl);
+            if (existingIdx !== -1) existingImages.splice(existingIdx, 1);
+        }
+
         newImages.splice(index, 1);
-        setFormData({ ...formData, images: newImages });
+        setFormData({ ...formData, images: newImages, fileList: newFileList, existingImages: existingImages });
     };
 
     if (loading) {
@@ -205,22 +203,9 @@ export default function Products() {
                                 </select>
                             </div>
                             
-                            {editingProduct?.images?.length > 0 && (
-                                <div>
-                                    <label className="mb-1 block text-sm font-medium text-gray-700">Ảnh hiện tại</label>
-                                    <div className="flex gap-2 flex-wrap">
-                                        {editingProduct.images.map((img, idx) => (
-                                            <div key={idx} className="relative w-20 h-20 rounded-lg overflow-hidden border">
-                                                <img src={img} alt="" className="w-full h-full object-cover" />
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
                             <div>
-                                <label className="mb-1 block text-sm font-medium text-gray-700">Thêm ảnh mới (chọn nhiều)</label>
-                                <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center hover:border-amber-500 transition">
+                                <label className="mb-1 block text-sm font-medium text-gray-700">Hình ảnh</label>
+                                <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center hover:border-amber-500 transition cursor-pointer">
                                     <input
                                         type="file"
                                         multiple
@@ -244,7 +229,7 @@ export default function Products() {
                                                     size="sm"
                                                     type="button"
                                                     onClick={() => removeImage(idx)}
-                                                    className="absolute top-0 right-0 w-5 h-5 !p-0"
+                                                    className="absolute top-0 right-0 w-5 h-5 !p-0 flex items-center justify-center"
                                                 >
                                                     ×
                                                 </Button>

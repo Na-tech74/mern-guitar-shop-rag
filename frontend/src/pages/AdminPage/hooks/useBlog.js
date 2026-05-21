@@ -11,7 +11,7 @@ export default function useBlog() {
         setLoading(true);
         try {
             const res = await blogAPI.getAll();
-            setBlogs(res.data?.data || []);
+            setBlogs(res.data?.data?.blogs || []);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -26,8 +26,8 @@ export default function useBlog() {
     const createBlog = async (data) => {
         try {
             const res = await blogAPI.create(data);
-            setBlogs(prev => [...prev, res.data.data]);
-            return res.data.data;
+            setBlogs(prev => [res.data.data.newBlogs, ...prev]);
+            return res.data.data.newBlogs;
         } catch (err) {
             setError(err.message);
             throw err;
@@ -37,8 +37,8 @@ export default function useBlog() {
     const updateBlog = async (id, data) => {
         try {
             const res = await blogAPI.update(id, data);
-            setBlogs(prev => prev.map(b => b._id === id ? res.data.data : b));
-            return res.data.data;
+            setBlogs(prev => prev.map(b => b._id === id ? res.data.data.blog : b));
+            return res.data.data.blog;
         } catch (err) {
             setError(err.message);
             throw err;
@@ -60,8 +60,8 @@ export default function useBlog() {
         formData.append("banner", file);
         try {
             const res = await blogAPI.uploadBanner(blogId, formData);
-            setBlogs(prev => prev.map(b => b._id === blogId ? { ...b, banner: res.data.data.banner } : b));
-            return res.data.data;
+            setBlogs(prev => prev.map(b => b._id === blogId ? { ...b, banner: res.data?.data?.banner } : b));
+            return res.data?.data;
         } catch (err) {
             setError(err.message);
             throw err;

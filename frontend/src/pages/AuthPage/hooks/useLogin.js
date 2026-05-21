@@ -41,15 +41,16 @@ export default function useLogin() {
         setLoading(true);
         try {
             const res = await loginAPI(form);
-            localStorage.setItem("token", res.data.accessToken);
+            const { data } = res.data;
+            localStorage.setItem("token", data.accessToken);
             localStorage.setItem("userInfo", JSON.stringify({
-                name: res.data.name,
-                email: res.data.email,
-                role: res.data.role,
-                accessToken: res.data.accessToken
+                name: data.user.name,
+                email: data.user.email,
+                role: data.user.role,
+                accessToken: data.accessToken
             }));
 
-            if (res.data.role === "admin") {
+            if (data.user.role === "admin") {
                 navigate("/admin");
             } else {
                 navigate("/");

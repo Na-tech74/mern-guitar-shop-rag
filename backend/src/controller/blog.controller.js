@@ -1,190 +1,135 @@
-import blogModel from "../models/blogs.model.js";
-import { appError } from "../utils/appResponse.js";
+import Blog from "../models/blogs.model.js"
+import { appError, appSuccess } from "../utils/appResponse.js";
+import { sanitizeText } from "../utils/format.js";
 import { uploadImages } from "../services/uploadImages.js";
-import { formatSuccessResponse, sanitizeText } from "../utils/format.js";
 import { isValidObjectId } from "../utils/vaildate.js";
 
 export const createBlog = async (req, res) => {
-    const { title, content, excerpt, banner, isPublished } = req.body;
+    const { title, excerpt, content } = req.body;
 
     if (req.user.role !== 'admin') {
-        throw appError("Chỉ admin mới có quyền!", 403);
+        throw appError("Chỉ admin mới có quyền!", 403)
     }
 
     if (!title || !content) {
-        throw appError("Nhập đầy đủ thông tin bài viết!", 400);
+        throw appError("Nhập đầy đủ thông tin bài viết!", 400)
     }
 
-    const newBlog = await blogModel.create({
-        title: sanitizeText(title),
-        excerpt: excerpt ? sanitizeText(excerpt) : "",
-        content,
-        banner,
-        isPublished: isPublished || false,
-        author: req.user._id
-    });
+    const blogExists = await Blog.findOne({ title: sanitizeText(title) });
+    if (blogExists) {
+        throw appError("Bài viết này đã tồn tại!", 400)
+    }
 
-    return res.status(201).json(formatSuccessResponse(
-        'Bài viết đã được tạo thành công!',
-        newBlog
-    ));
-};
+    let bannerUrl = "";
+    if (req.file) {
+        const [urls] = await uploadImages([req.file], "guitar-shop/blogs");
+        bannerUrl = urls;
+    }
+
+    const newBlog = await Blog.create({
+        title: sanitizeText(title),
+        excerpt: sanitizeText(excerpt || ""),
+        content: sanitizeText(content),
+        author: req.user._id,
+        images: bannerUrl
+    })
+
+    const populatedBlog = await Blog.findById(newBlog._id).populate("author", "name email")
+
+    return appSuccess(res, {
+        statusCode: 201,
+        message: "Tạo bài viết mới thành công!",
+        data: { newBlogs: populatedBlog }
+    })
+}
 
 export const getAllBlogs = async (req, res) => {
-    const blogs = await blogModel.find().sort({ createdAt: -1 });
-    
-    return res.json({
-        status: 'success',
-        message: 'Danh sách bài viết!',
-        data: blogs
-    });
-};
+    const blogs = await Blog.find()
+        .populate("author", "name email")
+        .sort({ createdAt: -1 });
+    return appSuccess(res, {
+        statusCode: 200,
+        message: "Lấy tất cả bài viết thành công",
+        data: { blogs }
+    })
+}
 
-export const getBlogById = async (req, res) => {
+export const getBlogsById = async (req, res) => {
     const { id } = req.params;
-
     if (!isValidObjectId(id)) {
         throw appError("ID bài viết không hợp lệ!", 400);
     }
 
-    const blog = await blogModel
-        .findById(id)
-        .populate('author', 'name email');
-
-    if (!blog) {
-        throw appError("Bài viết không tồn tại!", 404);
+    const blog = await Blog.findById(id)
+    if(!blog){
+      throw appError("Bài viết không tồn tại ", 404)
     }
-
-    return res.json(formatSuccessResponse(
-        'Bài viết đã được lấy thành công!',
-        blog
-    ));
-};
-
-export const getBlogBySlug = async (req, res) => {
-    const { slug } = req.params;
-
-    const blog = await blogModel
-        .findOne({ slug })
-        .populate('author', 'name email');
-
-    if (!blog) {
-        throw appError("Bài viết không tồn tại!", 404);
-    }
-
-    return res.json(formatSuccessResponse(
-        'Bài viết đã được lấy thành công!',
-        blog
-    ));
-};
+    return appSuccess(res, {
+        statusCode:200,
+        message:"Lấy bài viết thành công",
+        data:{
+            blog
+        }
+    })
+}
 
 export const updateBlog = async (req, res) => {
     const { id } = req.params;
-    const { title, content, excerpt, banner, isPublished } = req.body;
+    const { title, excerpt, content } = req.body;
 
     if (req.user.role !== 'admin') {
-        throw appError("Chỉ admin mới có quyền!", 403);
+        throw appError("Chỉ admin mới có quyền!", 403)
     }
 
     if (!isValidObjectId(id)) {
         throw appError("ID bài viết không hợp lệ!", 400);
     }
 
-    const blog = await blogModel.findById(id);
+    const blog = await Blog.findById(id);
     if (!blog) {
-        throw appError("Bài viết không tồn tại!", 404);
+        throw appError("Bài viết không tồn tại!", 404)
     }
 
-    if (title && title !== blog.title) {
-        const existingBlog = await blogModel.findOne({
-            title: sanitizeText(title),
-            _id: { $ne: id }
-        });
-        if (existingBlog) {
-            throw appError("Tiêu đề bài viết đã tồn tại!", 400);
-        }
-        blog.title = sanitizeText(title);
+    if (title) blog.title = sanitizeText(title);
+    if (excerpt !== undefined) blog.excerpt = sanitizeText(excerpt);
+    if (content) blog.content = sanitizeText(content);
+    if (req.file) {
+        const [urls] = await uploadImages([req.file], "guitar-shop/blogs");
+        blog.images = urls;
     }
-
-    if (content) blog.content = content;
-    if (excerpt) blog.excerpt = sanitizeText(excerpt);
-    if (banner !== undefined) blog.banner = banner;
-    if (isPublished !== undefined) blog.isPublished = isPublished;
 
     await blog.save();
 
-    return res.json(formatSuccessResponse(
-        'Bài viết đã được cập nhật thành công!',
-        blog
-    ));
-};
+    const populatedBlog = await Blog.findById(blog._id).populate("author", "name email")
 
+    return appSuccess(res, {
+        statusCode: 200,
+        message: "Cập nhật bài viết thành công!",
+        data: { blog: populatedBlog }
+    })
+}
+
+// Xóa bài viết
 export const deleteBlog = async (req, res) => {
     const { id } = req.params;
 
     if (req.user.role !== 'admin') {
-        throw appError("Chỉ admin mới có quyền!", 403);
+        throw appError("Chỉ admin mới có quyền!", 403)
     }
 
     if (!isValidObjectId(id)) {
         throw appError("ID bài viết không hợp lệ!", 400);
     }
 
-    const blog = await blogModel.findById(id);
+    const blog = await Blog.findById(id);
     if (!blog) {
-        throw appError("Bài viết không tồn tại!", 404);
+        throw appError("Bài viết không tồn tại!", 404)
     }
 
-    await blog.deleteOne();
+    await Blog.findByIdAndDelete(id);
 
-    return res.json(formatSuccessResponse(
-        'Bài viết đã được xóa thành công!'
-    ));
-};
-
-export const uploadBlogBanner = async (req, res) => {
-    const { id } = req.params;
-
-    if (req.user.role !== 'admin') {
-        throw appError("Chỉ admin mới có quyền!", 403);
-    }
-
-    if (!isValidObjectId(id)) {
-        throw appError("ID bài viết không hợp lệ!", 400);
-    }
-
-    if (!req.files || req.files.length === 0) {
-        throw appError("Không có tệp nào được tải lên!", 400);
-    }
-
-    const blog = await blogModel.findById(id);
-    if (!blog) {
-        throw appError("Bài viết không tồn tại!", 404);
-    }
-
-    const uploadedImages = await uploadImages(req.files, "guitar-shop/blogs");
-    blog.banner = uploadedImages[0];
-    await blog.save();
-
-    return res.json(formatSuccessResponse(
-        'Banner đã được tải lên thành công!',
-        { banner: blog.banner }
-    ));
-};
-
-export const uploadBlogBannerDirect = async (req, res) => {
-    if (req.user.role !== 'admin') {
-        throw appError("Chỉ admin mới có quyền!", 403);
-    }
-
-    if (!req.file) {
-        throw appError("Không có tệp nào được tải lên!", 400);
-    }
-
-    const uploadedImages = await uploadImages([req.file], "guitar-shop/blogs");
-    
-    return res.json(formatSuccessResponse(
-        'Banner đã được tải lên thành công!',
-        { banner: uploadedImages[0] }
-    ));
-};
+    return appSuccess(res, {
+        statusCode: 200,
+        message: "Xóa bài viết thành công!"
+    })
+}

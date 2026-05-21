@@ -67,7 +67,7 @@ export default function ProductDetailPage() {
                                     selectedImage === idx ? "border-amber-500" : "border-transparent hover:border-gray-300"
                                 }`}
                             >
-                                <img src={img} alt="" className="w-full h-full object-cover" />
+                                <img src={img} alt="" loading="lazy" className="w-full h-full object-cover" />
                             </button>
                         ))}
                     </div>

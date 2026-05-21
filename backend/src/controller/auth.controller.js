@@ -13,7 +13,7 @@ import { generateAccessToken, generateRefreshToken } from "../services/generateT
 import { sendEmail } from "../services/sendEmail.js"; // Service gửi email
 
 import { appError, appSuccess } from "../utils/appResponse.js"; // Utility xử lý response và lỗi
-import { isValidateEmail, isValidatePassword } from "../utils/vaildate.js"; // Utility validate input
+import { isValidateEmail, isValidatePassword, isValidObjectId } from "../utils/vaildate.js"; // Utility validate input
 import { refreshTokenCookie, clearCookie } from "../utils/cookier.js"; // Utility xử lý cookie
 import { sanitizeEmail, sanitizeText, formatDateTime } from "../utils/format.js";
 import { create } from "domain";
@@ -105,7 +105,7 @@ export const register = async (req, res) => {
  * @returns {200} user + accessToken
  */
 export const login = async (req, res) => {
-    
+
     const { email, password } = req.body;
 
     // Validate dữ liệu đầu vào
@@ -381,7 +381,10 @@ export const refreshAccessToken = async (req, res) => {
     refreshTokenCookie(res, newRefreshToken);
 
     // Trả về access token mới cho client
-    return res.status(200).json({
-        accessToken: newAccessToken
+    return appSuccess(res, {
+        statusCode: 200,
+        message: "Refesh token thành công!",
+        data: { accessToken: newAccessToken }
     });
+
 };

@@ -7,6 +7,7 @@ import Category from "../models/categories.model.js";
 import { appError, appSuccess } from "../utils/appResponse.js";
 import { formatDateTime, sanitizeText } from "../utils/format.js";
 import { uploadImages } from "../services/uploadImages.js";
+import { isValidObjectId } from "../utils/vaildate.js";
 /**
  * Tạo danh mục mới (Admin only)
  * @param {string} name - Tên danh mục (bắt buộc)
@@ -72,12 +73,7 @@ export const createCategory = async (req, res) => {
  * @throws {404} Không có danh mục nào
  */
 export const getAllCategory = async (req, res) => {
-    // chỉ lấy danh muc đang hoạt động isActive: true 
     const categories = await Category.find({ isActive: true });
-
-    if (!categories || categories.length === 0) {
-        throw appError("Danh mục không tồn tại!", 404);
-    }
 
     return appSuccess(res, {
         statusCode: 200,
@@ -94,6 +90,10 @@ export const getAllCategory = async (req, res) => {
  */
 export const getCategoryById = async (req, res) => {
     const { id } = req.params;
+
+    if (!isValidObjectId(id)) {
+        throw appError("ID không hợp lệ!", 400);
+    }
     const category = await Category.findById(id);
 
     if (!category) {
@@ -124,6 +124,9 @@ export const updateCategory = async (req, res) => {
 
     if (req.user.role !== 'admin') {
         throw appError("Chỉ admin mới có quyền!", 403);
+    }
+    if (!isValidObjectId(id)) {
+        throw appError("ID không hợp lệ!", 400);
     }
 
     const category = await Category.findById(id);
@@ -159,6 +162,10 @@ export const deleteCategory = async (req, res) => {
     if (req.user.role !== 'admin') {
         throw appError("Chỉ admin mới có quyền!", 403);
     }
+    
+    if (!isValidObjectId(id)) {
+        throw appError("ID không hợp lệ!", 400);
+    }
 
     const category = await Category.findById(id);
     if (!category) {
@@ -170,6 +177,5 @@ export const deleteCategory = async (req, res) => {
     return appSuccess(res, {
         statusCode: 200,
         message: "Danh mục đã được xóa!",
-        data: { category }
     });
 };

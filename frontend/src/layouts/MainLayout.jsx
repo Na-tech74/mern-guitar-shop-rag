@@ -1,11 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { Outlet } from "react-router-dom";
 
 export default function MainLayout() {
     const [headerHeight, setHeaderHeight] = useState(0);
-    const headerRef = useRef(null);
 
     useEffect(() => {
         const header = document.querySelector("header");

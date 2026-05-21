@@ -1,22 +1,20 @@
 import { API } from "../../../api/axiosClient.js";
 
 export const productAPI = {
-    getAll: (params) => API.get("/products/get-all-products", { params }),
+    getAll: (params) => API.get("/products", { params }),
     getById: (id) => API.get(`/products/${id}`),
-    create: (data) => API.post("/products/create-products", data),
-    update: (id, data) => API.put(`/products/update-products/${id}`, data),
+    create: (formData) => API.post("/products", formData),
+    update: (id, formData) => API.put(`/products/${id}`, formData),
     delete: (id) => API.delete(`/products/${id}`),
-    uploadImages: (productId, formData) => API.post(`/products/${productId}/images`, formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-    }),
+    uploadImages: (productId, formData) => API.post(`/products/${productId}/images`, formData),
 };
 
 export const categoryAPI = {
-    getAll: () => API.get("/categories/get-all-categories"),
-    getById: (id) => API.get(`/categories/get-categories-only/${id}`),
-    create: (data) => API.post("/categories/create-categories", data),
-    update: (id, data) => API.put(`/categories/update-categories/${id}`, data),
-    delete: (id) => API.delete(`/categories/delete-categories/${id}`),
+    getAll: () => API.get("/categories"),
+    getById: (id) => API.get(`/categories/${id}`),
+    create: (data) => API.post("/categories/create", data),
+    update: (id, data) => API.put(`/categories/${id}`, data),
+    delete: (id) => API.delete(`/categories/${id}`),
 };
 
 export const userAPI = {
@@ -28,9 +26,9 @@ export const userAPI = {
 };
 
 export const orderAPI = {
-    create: (data) => API.post("/orders/create-orders", data),
-    getMyOrders: () => API.get("/orders/get-my-orders"),
-    getAll: (params) => API.get("/orders/get-all-orders", { params }),
+    create: (data) => API.post("/orders", data),
+    getMyOrders: () => API.get("/orders/me"),
+    getAll: (params) => API.get("/orders", { params }),
     getById: (id) => API.get(`/orders/${id}`),
     updateStatus: (id, status) => API.put(`/orders/${id}/status`, { status }),
     delete: (id) => API.delete(`/orders/${id}`),
@@ -47,11 +45,11 @@ export const uploadAPI = {
 };
 
 export const blogAPI = {
-    getAll: (params) => API.get("/blogs/get-all-blogs", { params }),
+    getAll: (params) => API.get("/blogs", { params }),
     getById: (id) => API.get(`/blogs/${id}`),
-    create: (data) => API.post("/blogs/create-blogs", data),
-    update: (id, data) => API.put("/blogs/update-blogs/${id}", data),
-    delete: (id) => API.delete("/blogs/delete-blogs/${id}"),
+    create: (data) => API.post("/blogs", data),
+    update: (id, data) => API.put(`/blogs/${id}`, data),
+    delete: (id) => API.delete(`/blogs/${id}`),
     uploadBanner: (blogId, formData) => API.post(`/blogs/${blogId}/banner`, formData, {
         headers: { "Content-Type": "multipart/form-data" }
     }),
