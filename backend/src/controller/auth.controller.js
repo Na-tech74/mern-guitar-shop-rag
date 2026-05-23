@@ -141,7 +141,6 @@ export const login = async (req, res) => {
 
     // Cập nhật refresh token mới vào database (revoke token cũ)
     existingUser.refreshToken = refreshToken;
-
     await existingUser.save();
 
     // Gửi refresh token qua cookie HttpOnly
