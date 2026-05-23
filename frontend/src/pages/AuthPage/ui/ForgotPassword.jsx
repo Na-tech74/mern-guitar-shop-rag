@@ -48,8 +48,8 @@ export default function ForgotPassword() {
                         />
                         <Input
                             type="password"
-                            name="newPassword"
-                            value={form.newPassword}
+                            name="password"
+                            value={form.password}
                             onChange={handleChange}
                             placeholder="Mật khẩu mới"
                             disabled={loading}

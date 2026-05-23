@@ -9,7 +9,7 @@ export default function useForgotPassword() {
     const [form, setForm] = useState({
         email: "",
         otp: "",
-        newPassword: ""
+        password: ""
     });
 
     const handleChange = (e) => {
@@ -45,11 +45,11 @@ export default function useForgotPassword() {
     const handleReset = async (e) => {
         e.preventDefault();
 
-        if (!form.otp || !form.newPassword) {
+        if (!form.otp || !form.password) {
             return alert("Nhập đầy đủ OTP và mật khẩu");
         }
 
-        if (form.newPassword.length < 8) {
+        if (form.password.length < 8) {
             return alert("Mật khẩu ít nhất 8 ký tự");
         }
 
@@ -58,8 +58,8 @@ export default function useForgotPassword() {
         try {
             await resetPasswordAPI({
                 email: form.email.trim().toLowerCase(),
-                otp: Number(form.otp),
-                password: form.newPassword
+                otp: form.otp,
+                password: form.password
             });
 
             alert("Đổi mật khẩu thành công");
