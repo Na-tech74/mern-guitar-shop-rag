@@ -86,6 +86,40 @@ export const useProducts = () => {
         }
     }, [fetchProducts]);
 
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+        const newFileList = [...(formData.fileList || []), ...files];
+        const previews = files.map((f) => URL.createObjectURL(f));
+        setFormData({
+            ...formData,
+            fileList: newFileList,
+            images: [...(formData.images || []), ...previews],
+        });
+    };
+
+    const removeImage = (index) => {
+        const newImages = [...formData.images];
+        const newFileList = [...(formData.fileList || [])];
+        const existingImages = [...(formData.existingImages || [])];
+        const removedUrl = newImages[index];
+
+        const inFileList = formData.fileList?.length
+            ? index >= (formData.images.length - formData.fileList.length)
+            : false;
+
+        if (inFileList) {
+            const fileIdx = index - (formData.images.length - formData.fileList.length);
+            newFileList.splice(fileIdx, 1);
+        } else {
+            const existingIdx = existingImages.indexOf(removedUrl);
+            if (existingIdx !== -1) existingImages.splice(existingIdx, 1);
+        }
+
+        newImages.splice(index, 1);
+        setFormData({ ...formData, images: newImages, fileList: newFileList, existingImages: existingImages });
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -179,5 +213,7 @@ export const useProducts = () => {
         formData,
         setFormData,
         fetchProducts,
+        handleFileChange,
+        removeImage,
     };
 };

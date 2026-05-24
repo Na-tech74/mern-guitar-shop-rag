@@ -1,38 +1,17 @@
-import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock, faBell } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../../components/Button";
 import Input from "../../../components/Input";
+import { useSettings } from "../hooks/useSettings";
+
+const iconMap = {
+    user: faUser,
+    lock: faLock,
+    bell: faBell,
+};
 
 export default function Settings() {
-    const [activeTab, setActiveTab] = useState("profile");
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-        notifications: {
-            email: true,
-            order: true,
-            promotion: false,
-        }
-    });
-
-    const userInfo = JSON.parse(sessionStorage.getItem("userInfo") || "{}");
-    const name = userInfo?.name || "";
-    const email = userInfo?.email || "";
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        alert("Cập nhật thành công!");
-    };
-
-    const tabs = [
-        { id: "profile", label: "Hồ sơ", icon: faUser },
-        { id: "security", label: "Bảo mật", icon: faLock },
-        { id: "notifications", label: "Thông báo", icon: faBell },
-    ];
+    const { activeTab, setActiveTab, formData, setFormData, name, email, handleSubmit, tabs } = useSettings();
 
     return (
         <div className="space-y-6">
@@ -54,7 +33,7 @@ export default function Settings() {
                                         : "text-gray-600 hover:bg-gray-50"
                                 }`}
                             >
-                                <FontAwesomeIcon icon={tab.icon} />
+                                <FontAwesomeIcon icon={iconMap[tab.icon]} />
                                 {tab.label}
                             </button>
                         ))}

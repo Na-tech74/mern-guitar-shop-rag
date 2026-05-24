@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faUsers,
@@ -8,99 +7,18 @@ import {
     faArrowUp,
     faArrowDown,
 } from "@fortawesome/free-solid-svg-icons";
-import { productAPI, categoryAPI, userAPI } from "../api/adminAPI";
+import { getStatusColor, formatCurrency } from "../../../helpers/format";
+import { useDashboard } from "../hooks/useDashboard";
 
-const fetchDashboardData = async (setStats, setRecentOrders, setLoading) => {
-    try {
-        const [productsRes, categoriesRes, usersRes] = await Promise.all([
-            productAPI.getAll(),
-            categoryAPI.getAll(),
-            userAPI.getAll(),
-        ]);
-
-        setStats({
-            totalProducts: productsRes.data?.data?.length || 0,
-            totalUsers: usersRes.data?.length || 0,
-            totalCategories: categoriesRes.data?.data?.length || 0,
-            totalOrders: 0,
-        });
-    } catch (error) {
-        // error
-    } finally {
-        setLoading(false);
-    }
-
-    setRecentOrders([
-        // { id: "1", customer: "Nguyễn Văn A", total: 2500000, status: "pending", date: "2024-01-15" },
-        // { id: "2", customer: "Trần Thị B", total: 1800000, status: "completed", date: "2024-01-14" },
-        // { id: "3", customer: "Lê Văn C", total: 3200000, status: "processing", date: "2024-01-13" },
-        // { id: "4", customer: "Phạm Thị D", total: 1500000, status: "completed", date: "2024-01-12" },
-        // { id: "5", customer: "Hoàng Văn E", total: 4500000, status: "pending", date: "2024-01-11" },
-    ]);
+const iconMap = {
+    box: faBox,
+    users: faUsers,
+    cart: faCartShopping,
+    dollar: faDollarSign,
 };
 
 export default function Dashboard() {
-    const [stats, setStats] = useState({
-        totalProducts: 0,
-        totalUsers: 0,
-        totalCategories: 0,
-        totalOrders: 0,
-    });
-    const [recentOrders, setRecentOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetchDashboardData(setStats, setRecentOrders, setLoading);
-    }, []);
-
-    const statCards = [
-        {
-            title: "Tổng sản phẩm",
-            value: stats.totalProducts,
-            icon: faBox,
-            color: "bg-blue-500",
-            change: "+12%",
-            isPositive: true,
-        },
-        {
-            title: "Tổng người dùng",
-            value: stats.totalUsers,
-            icon: faUsers,
-            color: "bg-green-500",
-            change: "+8%",
-            isPositive: true,
-        },
-        {
-            title: "Danh mục",
-            value: stats.totalCategories,
-            icon: faCartShopping,
-            color: "bg-purple-500",
-            change: "+5%",
-            isPositive: true,
-        },
-        {
-            title: "Đơn hàng",
-            value: stats.totalOrders,
-            icon: faDollarSign,
-            color: "bg-orange-500",
-            change: "-3%",
-            isPositive: false,
-        },
-    ];
-
-    const getStatusColor = (status) => {
-        switch (status) {
-            case "pending": return "bg-yellow-100 text-yellow-700";
-            case "completed": return "bg-green-100 text-green-700";
-            case "processing": return "bg-blue-100 text-blue-700";
-            case "cancelled": return "bg-red-100 text-red-700";
-            default: return "bg-gray-100 text-gray-700";
-        }
-    };
-
-    const formatCurrency = (value) => {
-        return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(value);
-    };
+    const { loading, statCards, recentOrders } = useDashboard();
 
     if (loading) {
         return (
@@ -122,7 +40,7 @@ export default function Dashboard() {
                     <div key={index} className="rounded-xl bg-white p-6 shadow-sm">
                         <div className="flex items-center justify-between">
                             <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${stat.color} text-white`}>
-                                <FontAwesomeIcon icon={stat.icon} className="text-xl" />
+                                <FontAwesomeIcon icon={iconMap[stat.icon]} className="text-xl" />
                             </div>
                             <div className={`flex items-center gap-1 text-sm ${stat.isPositive ? "text-green-500" : "text-red-500"}`}>
                                 <FontAwesomeIcon icon={stat.isPositive ? faArrowUp : faArrowDown} />

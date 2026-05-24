@@ -1,12 +1,11 @@
-import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faCheck, faXmark, faTruck } from "@fortawesome/free-solid-svg-icons";
 import { useOrders } from "../hooks/useOrders";
+import { getStatusColor, getStatusLabel, formatCurrency, formatDateTime } from "../../../helpers/format";
 import Button from "../../../components/Button";
 
 export default function Orders() {
-    const { orders, loading, error, updateStatus } = useOrders();
-    const [selectedOrder, setSelectedOrder] = useState(null);
+    const { orders, loading, error, updateStatus, selectedOrder, setSelectedOrder } = useOrders();
 
     if (error) {
         return (
@@ -27,42 +26,6 @@ export default function Orders() {
         );
     }
 
-    const getStatusColor = (status) => {
-        switch (status) {
-            case "pending": return "bg-yellow-100 text-yellow-700";
-            case "processing": return "bg-blue-100 text-blue-700";
-            case "shipped": return "bg-purple-100 text-purple-700";
-            case "delivered": return "bg-green-100 text-green-700";
-            case "cancelled": return "bg-red-100 text-red-700";
-            default: return "bg-gray-100 text-gray-700";
-        }
-    };
-
-    const getStatusLabel = (status) => {
-        switch (status) {
-            case "pending": return "Chờ xử lý";
-            case "processing": return "Đang xử lý";
-            case "shipped": return "Đang giao";
-            case "delivered": return "Đã giao";
-            case "cancelled": return "Đã hủy";
-            default: return status;
-        }
-    };
-
-    const formatCurrency = (value) => {
-        return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(value);
-    };
-
-    const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString("vi-VN", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
-        });
-    };
-
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
@@ -75,7 +38,7 @@ export default function Orders() {
         <div className="space-y-6">
             <div>
                 <h1 className="text-2xl font-bold text-gray-800">Quản lý đơn hàng</h1>
-                <p className="text-gray-500">Quản lý danh sách đơn hàng</p>
+                <p className="text-gray-500">Quản lý danh sách đơn hàng ({orders.length})</p>
             </div>
 
             <div className="rounded-xl bg-white p-4 shadow-sm">
@@ -111,7 +74,7 @@ export default function Orders() {
                                             {getStatusLabel(order.status)}
                                         </span>
                                     </td>
-                                    <td className="py-3 text-sm text-gray-500">{formatDate(order.createdAt)}</td>
+                                    <td className="py-3 text-sm text-gray-500">{formatDateTime(order.createdAt)}</td>
                                     <td className="py-3 text-right">
                                         <div className="flex items-center justify-end gap-2">
                                             <Button variant="ghost" size="sm" onClick={() => setSelectedOrder(order)}>

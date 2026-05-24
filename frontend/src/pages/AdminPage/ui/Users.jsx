@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrash, faSearch, faUserShield } from "@fortawesome/free-solid-svg-icons";
 import { useUsers } from "../hooks/useUsers";
@@ -7,10 +6,7 @@ import Button from "../../../components/Button";
 import Input from "../../../components/Input";
 
 export default function Users() {
-    const { users, loading, fetchUsers, updateUser, deleteUser, filteredUsers, searchTerm, setSearchTerm } = useUsers();
-    const [showModal, setShowModal] = useState(false);
-    const [editingUser, setEditingUser] = useState(null);
-    const [formData, setFormData] = useState({ name: "", email: "", role: "user" });
+    const { users, loading, fetchUsers, updateUser, handleDelete, filteredUsers, searchTerm, setSearchTerm, showModal, editingUser, formData, setFormData, openModal, closeModal } = useUsers();
 
     if (loading) {
         return (
@@ -25,7 +21,7 @@ export default function Users() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-800">Quản lý người dùng</h1>
-                    <p className="text-gray-500">Quản lý danh sách người dùng</p>
+                    <p className="text-gray-500">Quản lý danh sách người dùng ({users.length})</p>
                 </div>
             </div>
 
@@ -85,18 +81,10 @@ export default function Users() {
                                     </td>
                                     <td className="py-3 text-right">
                                         <div className="flex items-center justify-end gap-2">
-                                            <Button variant="ghost" size="sm" onClick={() => {
-                                                setEditingUser(user);
-                                                setFormData({ name: user.name, email: user.email, role: user.role || "user" });
-                                                setShowModal(true);
-                                            }}>
+                                            <Button variant="ghost" size="sm" onClick={() => openModal(user)}>
                                                 <FontAwesomeIcon icon={faPen} />
                                             </Button>
-                                            <Button variant="ghost" size="sm" onClick={() => {
-                                                if (window.confirm("Bạn có chắc muốn xóa người dùng này?")) {
-                                                    deleteUser(user._id);
-                                                }
-                                            }}>
+                                            <Button variant="ghost" size="sm" onClick={() => handleDelete(user._id)}>
                                                 <FontAwesomeIcon icon={faTrash} className="text-red-600" />
                                             </Button>
                                         </div>
@@ -124,7 +112,6 @@ export default function Users() {
                         <form onSubmit={(e) => {
                             e.preventDefault();
                             updateUser(editingUser._id, formData);
-                            setShowModal(false);
                         }} className="space-y-4">
                             <Input
                                 label="Tên"
@@ -151,7 +138,7 @@ export default function Users() {
                                 </select>
                             </div>
                             <div className="flex justify-end gap-3 pt-4">
-                                <Button variant="secondary" type="button" onClick={() => { setShowModal(false); setEditingUser(null); }}>
+                                <Button variant="secondary" type="button" onClick={closeModal}>
                                     Hủy
                                 </Button>
                                 <Button type="submit" variant="primary">

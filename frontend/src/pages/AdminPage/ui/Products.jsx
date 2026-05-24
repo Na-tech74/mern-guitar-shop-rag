@@ -10,42 +10,8 @@ export default function Products() {
         loading, filteredProducts, searchTerm, setSearchTerm,
         handleSubmit, handleDelete, handleEdit, resetForm, openModal,
         showModal, setShowModal, editingProduct, formData, setFormData,
-        fetchProducts, categories
+        fetchProducts, products, categories, handleFileChange, removeImage
     } = useProducts();
-
-    const handleFileChange = (e) => {
-        const files = Array.from(e.target.files);
-        if (files.length === 0) return;
-        const newFileList = [...(formData.fileList || []), ...files];
-        const previews = files.map((f) => URL.createObjectURL(f));
-        setFormData({
-            ...formData,
-            fileList: newFileList,
-            images: [...(formData.images || []), ...previews],
-        });
-    };
-
-    const removeImage = (index) => {
-        const newImages = [...formData.images];
-        const newFileList = [...(formData.fileList || [])];
-        const existingImages = [...(formData.existingImages || [])];
-        const removedUrl = newImages[index];
-
-        const inFileList = formData.fileList?.length
-            ? index >= (formData.images.length - formData.fileList.length)
-            : false;
-
-        if (inFileList) {
-            const fileIdx = index - (formData.images.length - formData.fileList.length);
-            newFileList.splice(fileIdx, 1);
-        } else {
-            const existingIdx = existingImages.indexOf(removedUrl);
-            if (existingIdx !== -1) existingImages.splice(existingIdx, 1);
-        }
-
-        newImages.splice(index, 1);
-        setFormData({ ...formData, images: newImages, fileList: newFileList, existingImages: existingImages });
-    };
 
     if (loading) {
         return (
@@ -60,7 +26,7 @@ export default function Products() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-800">Quản lý sản phẩm</h1>
-                    <p className="text-gray-500">Quản lý danh sách sản phẩm</p>
+                    <p className="text-gray-500">Quản lý danh sách sản phẩm ({products.length})</p>
                 </div>
                 <Button onClick={openModal} variant="primary">
                     <FontAwesomeIcon icon={faPlus} />

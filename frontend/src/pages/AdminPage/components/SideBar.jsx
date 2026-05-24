@@ -104,20 +104,6 @@ export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }) {
                                         />
 
                                         <span>{item.name}</span>
-
-                                        {item.badge && (
-                                            <span
-                                                className={`
-                                                    ml-auto rounded-full px-2 py-0.5 text-[10px]
-                                                    ${item.badge === "New"
-                                                        ? "bg-gray-100 text-gray-600"
-                                                        : "bg-amber-600 text-white"
-                                                    }
-                                                `}
-                                            >
-                                                {item.badge}
-                                            </span>
-                                        )}
                                     </NavLink>
                                 ))}
                             </div>

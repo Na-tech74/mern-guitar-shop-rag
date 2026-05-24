@@ -6,6 +6,7 @@ export const useOrders = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 });
+    const [selectedOrder, setSelectedOrder] = useState(null);
 
     const fetchOrders = useCallback(async (page = 1, status = "") => {
         try {
@@ -68,5 +69,7 @@ export const useOrders = () => {
         fetchOrders,
         updateStatus,
         deleteOrder,
+        selectedOrder,
+        setSelectedOrder,
     };
 };

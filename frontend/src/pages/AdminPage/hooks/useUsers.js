@@ -66,6 +66,11 @@ export const useUsers = () => {
         }
     };
 
+    const handleDelete = async (id) => {
+        if (!window.confirm("Bạn có chắc muốn xóa người dùng này?")) return;
+        await deleteUser(id);
+    };
+
     return {
         users,
         loading,
@@ -75,6 +80,7 @@ export const useUsers = () => {
         setSearchTerm,
         updateUser,
         deleteUser,
+        handleDelete,
         showModal,
         setShowModal,
         editingUser,

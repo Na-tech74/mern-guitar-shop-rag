@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faPen, faTrash, faSearch, faImage } from "@fortawesome/free-solid-svg-icons";
 import { formatDate } from "../../../helpers/format";
@@ -11,7 +10,7 @@ export default function Categories() {
         loading, filteredCategories, searchTerm, setSearchTerm,
         handleSubmit, handleDelete, handleEdit, resetForm, openModal,
         showModal, setShowModal, editingCategory, setEditingCategory, 
-        formData, setFormData, imagePreview, handleImageChange
+        formData, setFormData, imagePreview, handleImageChange, categories
     } = useCategories();
 
     if (loading) {
@@ -27,7 +26,7 @@ export default function Categories() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-800">Quản lý danh mục</h1>
-                    <p className="text-gray-500">Quản lý danh sách danh mục sản phẩm</p>
+                    <p className="text-gray-500">Quản lý danh sách danh mục sản phẩm ({categories.length})</p>
                 </div>
                 <Button onClick={openModal} variant="primary">
                     <FontAwesomeIcon icon={faPlus} />

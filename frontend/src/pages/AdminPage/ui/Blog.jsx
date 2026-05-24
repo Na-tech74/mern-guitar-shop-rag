@@ -1,71 +1,10 @@
-import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faTrash, faEdit, faImage, faTimes, faCalendar, faUser } from "@fortawesome/free-solid-svg-icons";
+import { formatDateTime } from "../../../helpers/format";
 import useBlog from "../hooks/useBlog";
 
-const formatDate = (date) =>
-    new Date(date).toLocaleDateString("vi-VN", {
-        day: "2-digit", month: "2-digit", year: "numeric",
-        hour: "2-digit", minute: "2-digit"
-    });
-
 export default function Blog() {
-    const { blogs, loading, error, setError, createBlog, updateBlog, deleteBlog } = useBlog();
-    const [showForm, setShowForm] = useState(false);
-    const [editingBlog, setEditingBlog] = useState(null);
-    const [formData, setFormData] = useState({ title: "", content: "", excerpt: "" });
-    const [bannerFile, setBannerFile] = useState(null);
-    const [bannerPreview, setBannerPreview] = useState("");
-
-    const resetForm = () => {
-        setShowForm(false);
-        setEditingBlog(null);
-        setFormData({ title: "", content: "", excerpt: "" });
-        setBannerFile(null);
-        setBannerPreview("");
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const fd = new FormData();
-            fd.append("title", formData.title);
-            fd.append("content", formData.content);
-            fd.append("excerpt", formData.excerpt);
-            if (bannerFile) fd.append("banner", bannerFile);
-            if (editingBlog) {
-                await updateBlog(editingBlog._id, fd);
-            } else {
-                await createBlog(fd);
-            }
-            resetForm();
-        } catch (error) {
-            const msg = error.response?.data?.message || error.message || "Có lỗi xảy ra!";
-            setError(msg);
-            alert(msg);
-        }
-    };
-
-    const handleEdit = (blog) => {
-        setEditingBlog(blog);
-        setFormData({ title: blog.title, content: blog.content, excerpt: blog.excerpt || "" });
-        setBannerPreview(blog.images || "");
-        setBannerFile(null);
-        setShowForm(true);
-    };
-
-    const handleDelete = async (id) => {
-        if (window.confirm("Bạn có chắc muốn xóa bài viết này?")) {
-            await deleteBlog(id);
-        }
-    };
-
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        setBannerFile(file);
-        setBannerPreview(URL.createObjectURL(file));
-    };
+    const { blogs, loading, error, setError, showForm, editingBlog, formData, setFormData, bannerPreview, setBannerFile, setBannerPreview, handleSubmit, handleEdit, handleDelete, handleFileChange, resetForm, openForm } = useBlog();
 
     if (loading) {
         return <div className="p-6 text-center text-gray-500">Đang tải...</div>;
@@ -76,9 +15,9 @@ export default function Blog() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-800">Quản lý Blog</h1>
-                    <p className="text-gray-500 text-sm">Quản lý bài viết ({blogs.length})</p>
+                    <p className="text-gray-500 text-sm">Quản lý bài viết</p>
                 </div>
-                <button onClick={() => { resetForm(); setShowForm(true); }} className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition">
+                <button onClick={openForm} className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition">
                     <FontAwesomeIcon icon={faPlus} />
                     Thêm bài viết
                 </button>
@@ -193,7 +132,7 @@ export default function Blog() {
                                     <td className="px-4 py-3 hidden lg:table-cell">
                                         <div className="flex items-center gap-2 text-sm text-gray-500">
                                             <FontAwesomeIcon icon={faCalendar} className="text-gray-400 text-xs" />
-                                            {blog.createdAt ? formatDate(blog.createdAt) : "-"}
+                                            {blog.createdAt ? formatDateTime(blog.createdAt) : "-"}
                                         </div>
                                     </td>
                                     <td className="px-4 py-3 text-right">

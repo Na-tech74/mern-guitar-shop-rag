@@ -6,6 +6,11 @@ export default function useBlog() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [selectedBlog, setSelectedBlog] = useState(null);
+    const [showForm, setShowForm] = useState(false);
+    const [editingBlog, setEditingBlog] = useState(null);
+    const [formData, setFormData] = useState({ title: "", content: "", excerpt: "" });
+    const [bannerFile, setBannerFile] = useState(null);
+    const [bannerPreview, setBannerPreview] = useState("");
 
     const fetchBlogs = useCallback(async () => {
         setLoading(true);
@@ -82,6 +87,61 @@ export default function useBlog() {
         }
     };
 
+    const resetForm = () => {
+        setShowForm(false);
+        setEditingBlog(null);
+        setFormData({ title: "", content: "", excerpt: "" });
+        setBannerFile(null);
+        setBannerPreview("");
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const fd = new FormData();
+            fd.append("title", formData.title);
+            fd.append("content", formData.content);
+            fd.append("excerpt", formData.excerpt);
+            if (bannerFile) fd.append("banner", bannerFile);
+            if (editingBlog) {
+                await updateBlog(editingBlog._id, fd);
+            } else {
+                await createBlog(fd);
+            }
+            resetForm();
+        } catch (error) {
+            const msg = error.response?.data?.message || error.message || "Có lỗi xảy ra!";
+            setError(msg);
+            alert(msg);
+        }
+    };
+
+    const handleEdit = (blog) => {
+        setEditingBlog(blog);
+        setFormData({ title: blog.title, content: blog.content, excerpt: blog.excerpt || "" });
+        setBannerPreview(blog.images || "");
+        setBannerFile(null);
+        setShowForm(true);
+    };
+
+    const handleDelete = async (id) => {
+        if (window.confirm("Bạn có chắc muốn xóa bài viết này?")) {
+            await deleteBlog(id);
+        }
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setBannerFile(file);
+        setBannerPreview(URL.createObjectURL(file));
+    };
+
+    const openForm = () => {
+        resetForm();
+        setShowForm(true);
+    };
+
     return {
         blogs,
         loading,
@@ -93,6 +153,20 @@ export default function useBlog() {
         createBlog,
         updateBlog,
         deleteBlog,
-        uploadBanner
+        uploadBanner,
+        showForm,
+        editingBlog,
+        formData,
+        setFormData,
+        bannerPreview,
+        setBannerPreview,
+        bannerFile,
+        setBannerFile,
+        handleSubmit,
+        handleEdit,
+        handleDelete,
+        handleFileChange,
+        resetForm,
+        openForm,
     };
 }
