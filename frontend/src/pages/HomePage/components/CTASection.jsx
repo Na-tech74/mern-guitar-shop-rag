@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faHeadset } from "@fortawesome/free-solid-svg-icons";
+import ctaVideo from "../../../assets/images/CTA.mp4";
 
 export default function CTASection() {
     return (
@@ -12,7 +13,7 @@ export default function CTASection() {
                 playsInline
                 className="absolute inset-0 w-full h-full object-cover"
             >
-                <source src="/CTA.mp4" type="video/mp4" />
+                <source src={ctaVideo} type="video/mp4" />
             </video>
             <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
             <div className="absolute top-10 -left-20 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl" />

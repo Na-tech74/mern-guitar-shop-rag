@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import guitarVideo from "../../../assets/images/guitar.mp4";
 
 export default function Clip() {
     return (
@@ -10,7 +11,7 @@ export default function Clip() {
                 playsInline
                 className="absolute inset-0 w-full h-full object-cover"
             >
-                <source src="/guitar.mp4" type="video/mp4" />
+                <source src={guitarVideo} type="video/mp4" />
             </video>
             <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40" />
             <div className="relative z-10 max-w-7xl mx-auto px-4 py-20 md:py-28">

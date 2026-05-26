@@ -6,7 +6,7 @@ import {
   faChevronDown, faEnvelope, faTimes, faRightFromBracket, faPhone,
 } from '@fortawesome/free-solid-svg-icons';
 import { faFacebook, faYoutube, faTiktok, faInstagram } from '@fortawesome/free-brands-svg-icons';
-import Logo from '../components/Logo.jsx';
+import Logo from './Logo.jsx';
 
 const menuItems = [
   { name: 'TRANG CHỦ', path: '/', hasDropdown: false },
