@@ -1,5 +1,16 @@
+/**
+ * order.model.js
+ * Schema cho đơn hàng với danh sách sản phẩm embedded.
+ * Mỗi đơn hàng thuộc về một user và có workflow trạng thái.
+ */
+
 import mongoose from "mongoose";
 
+/**
+ * Schema cho từng sản phẩm trong đơn hàng
+ * Lưu snapshot thông tin sản phẩm tại thời điểm đặt hàng
+ * (không tham chiếu trực tiếp để tránh thay đổi sau này)
+ */
 const orderItemSchema = new mongoose.Schema({
     product: {
         type: String,
@@ -25,6 +36,9 @@ const orderItemSchema = new mongoose.Schema({
     }
 }, { _id: false });
 
+/**
+ * Schema đơn hàng
+ */
 const orderSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,

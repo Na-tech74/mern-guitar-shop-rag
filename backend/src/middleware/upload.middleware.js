@@ -1,3 +1,11 @@
+/**
+ * upload.middleware.js
+ * Cấu hình Multer cho upload file ảnh.
+ * - Lưu file tạm thời trên disk (diskStorage)
+ * - Chỉ chấp nhận file ảnh (theo mimetype)
+ * - Giới hạn kích thước 10MB
+ */
+
 import multer from "multer";
 
 const storage = multer.diskStorage({});

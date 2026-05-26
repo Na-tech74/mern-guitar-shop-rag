@@ -1,9 +1,20 @@
+/**
+ * course.controller.js
+ * Xử lý các API liên quan đến khóa học: tạo, lấy danh sách
+ * (tất cả / đã xuất bản), chi tiết (ID / slug), cập nhật, xóa.
+ * Hỗ trợ quản lý danh sách bài học (lessons) động.
+ */
+
 import Course from "../models/course.model.js";
 import { appError, appSuccess } from "../utils/appResponse.js";
 import { uploadImages } from "../services/uploadImages.js";
 import { isValidObjectId } from "../utils/vaildate.js";
 import { sanitizeText } from "../utils/format.js";
 
+/**
+ * Tạo khóa học mới (admin). Hỗ trợ upload thumbnail và thêm lessons.
+ * Lessons được parse từ JSON string (nếu gửi từ form-data).
+ */
 export const createCourse = async (req, res) => {
     const { title, description, price, instructor, category, lessons, isPublished } = req.body;
     const thumbnailFile = req.file;
@@ -43,6 +54,9 @@ export const createCourse = async (req, res) => {
     });
 };
 
+/**
+ * Lấy tất cả khóa học (admin). Bao gồm cả chưa xuất bản.
+ */
 export const getAllCourses = async (req, res) => {
     const { page = 1, limit = 10, category, search } = req.query;
 
@@ -72,6 +86,10 @@ export const getAllCourses = async (req, res) => {
     });
 };
 
+/**
+ * Lấy danh sách khóa học đã xuất bản (công khai).
+ * Chỉ trả về các khóa học có isPublished: true.
+ */
 export const getPublishedCourses = async (req, res) => {
     const { page = 1, limit = 10, category, search } = req.query;
 
@@ -101,6 +119,9 @@ export const getPublishedCourses = async (req, res) => {
     });
 };
 
+/**
+ * Lấy chi tiết khóa học đã xuất bản theo slug (công khai).
+ */
 export const getCourseBySlug = async (req, res) => {
     const { slug } = req.params;
 
@@ -116,6 +137,10 @@ export const getCourseBySlug = async (req, res) => {
     });
 };
 
+/**
+ * Lấy chi tiết khóa học theo ID (admin).
+ * Bao gồm cả khóa học chưa xuất bản.
+ */
 export const getCourseById = async (req, res) => {
     const { id } = req.params;
 
@@ -135,6 +160,9 @@ export const getCourseById = async (req, res) => {
     });
 };
 
+/**
+ * Cập nhật khóa học (admin). Cho phép thay đổi thumbnail và lessons.
+ */
 export const updateCourse = async (req, res) => {
     const { id } = req.params;
     const { title, description, price, instructor, category, lessons, isPublished } = req.body;
@@ -175,6 +203,9 @@ export const updateCourse = async (req, res) => {
     });
 };
 
+/**
+ * Xóa khóa học (admin).
+ */
 export const deleteCourse = async (req, res) => {
     const { id } = req.params;
 

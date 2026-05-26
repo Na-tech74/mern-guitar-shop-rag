@@ -1,6 +1,18 @@
+/**
+ * uploadImages.js
+ * Service upload file ảnh lên Cloudinary.
+ * Tự động xóa file tạm trên disk sau khi upload thành công hoặc thất bại.
+ */
+
 import cloudinary from "../config/cloudinay.config.js";
 import fs from "fs";
 
+/**
+ * Upload danh sách file lên Cloudinary
+ * @param {File[]} files - Mảng file từ Multer
+ * @param {string} folder - Thư mục trên Cloudinary (mặc định: "default")
+ * @returns {Promise<string[]>} Mảng URL ảnh đã upload
+ */
 export const uploadImages = async (files, folder = "default") => {
   return Promise.all(
     files.map(async (file) => {

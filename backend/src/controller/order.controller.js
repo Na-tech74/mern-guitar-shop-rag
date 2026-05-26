@@ -1,3 +1,9 @@
+/**
+ * order.controller.js
+ * Xử lý các API liên quan đến đơn hàng: tạo đơn, lấy danh sách,
+ * thống kê dashboard, cập nhật trạng thái, xóa đơn hàng.
+ */
+
 import Order from "../models/order.model.js";
 import Product from "../models/products.models.js";
 import User from "../models/users.model.js";
@@ -5,6 +11,10 @@ import Category from "../models/categories.model.js";
 import { appError, appSuccess } from "../utils/appResponse.js";
 import { isValidObjectId } from "../utils/vaildate.js";
 
+/**
+ * Tạo đơn hàng mới từ giỏ hàng
+ * Kiểm tra tồn kho, cập nhật stock và sold của từng sản phẩm
+ */
 export const createOrder = async (req, res) => {
     const { items, shippingAddress, paymentMethod, note } = req.body;
 
@@ -76,6 +86,9 @@ export const createOrder = async (req, res) => {
     });
 };
 
+/**
+ * Lấy danh sách đơn hàng của người dùng hiện tại (có phân trang)
+ */
 export const getMyOrders = async (req, res) => {
     const { page = 1, limit = 10 } = req.query;
 
@@ -100,6 +113,9 @@ export const getMyOrders = async (req, res) => {
     });
 };
 
+/**
+ * Lấy tất cả đơn hàng (admin). Có phân trang và lọc theo trạng thái.
+ */
 export const getAllOrders = async (req, res) => {
     const { page = 1, limit = 10, status } = req.query;
 
@@ -127,6 +143,11 @@ export const getAllOrders = async (req, res) => {
     });
 };
 
+/**
+ * Lấy thống kê cho admin dashboard.
+ * Chạy đồng thời nhiều truy vấn bằng Promise.all:
+ * tổng sản phẩm/user/category/order, phân bố trạng thái, doanh thu, 5 đơn gần nhất.
+ */
 export const getDashboardStats = async (req, res) => {
     const [
         totalProducts,
@@ -183,6 +204,10 @@ export const getDashboardStats = async (req, res) => {
     });
 };
 
+/**
+ * Lấy chi tiết đơn hàng.
+ * Admin xem được tất cả, user chỉ xem được đơn của mình.
+ */
 export const getOrderById = async (req, res) => {
     const { id } = req.params;
 
@@ -207,6 +232,11 @@ export const getOrderById = async (req, res) => {
     });
 };
 
+/**
+ * Cập nhật trạng thái đơn hàng (admin).
+ * Kiểm tra workflow hợp lệ: pending→processing→shipped→delivered,
+ * chỉ hủy được từ pending, không thay đổi đơn đã kết thúc.
+ */
 export const updateOrderStatus = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
@@ -243,6 +273,9 @@ export const updateOrderStatus = async (req, res) => {
     });
 };
 
+/**
+ * Xóa đơn hàng (admin).
+ */
 export const deleteOrder = async (req, res) => {
     const { id } = req.params;
 

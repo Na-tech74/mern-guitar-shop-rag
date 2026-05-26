@@ -8,6 +8,8 @@ frontend/.env
 
 # chung
 node_modules/
+.gitignore
 .env
 dist/
 build/
+docs/

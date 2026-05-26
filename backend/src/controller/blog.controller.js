@@ -1,9 +1,18 @@
+/**
+ * blog.controller.js
+ * Xử lý các API liên quan đến bài viết blog: tạo, lấy danh sách,
+ * chi tiết, cập nhật, xóa.
+ */
+
 import Blog from "../models/blogs.model.js"
 import { appError, appSuccess } from "../utils/appResponse.js";
 import { sanitizeText } from "../utils/format.js";
 import { uploadImages } from "../services/uploadImages.js";
 import { isValidObjectId } from "../utils/vaildate.js";
 
+/**
+ * Tạo bài viết mới (admin). Hỗ trợ upload banner image.
+ */
 export const createBlog = async (req, res) => {
     const { title, excerpt, content } = req.body;
 
@@ -43,6 +52,9 @@ export const createBlog = async (req, res) => {
     })
 }
 
+/**
+ * Lấy danh sách tất cả bài viết (công khai).
+ */
 export const getAllBlogs = async (req, res) => {
     const blogs = await Blog.find()
         .populate("author", "name email")
@@ -54,6 +66,9 @@ export const getAllBlogs = async (req, res) => {
     })
 }
 
+/**
+ * Lấy chi tiết bài viết theo ID.
+ */
 export const getBlogsById = async (req, res) => {
     const { id } = req.params;
     if (!isValidObjectId(id)) {
@@ -73,6 +88,9 @@ export const getBlogsById = async (req, res) => {
     })
 }
 
+/**
+ * Cập nhật bài viết (admin). Hỗ trợ thay đổi banner image.
+ */
 export const updateBlog = async (req, res) => {
     const { id } = req.params;
     const { title, excerpt, content } = req.body;
@@ -109,7 +127,9 @@ export const updateBlog = async (req, res) => {
     })
 }
 
-// Xóa bài viết
+/**
+ * Xóa bài viết (admin).
+ */
 export const deleteBlog = async (req, res) => {
     const { id } = req.params;
 

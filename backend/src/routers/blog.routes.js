@@ -1,3 +1,9 @@
+/**
+ * blog.routes.js
+ * Định nghĩa các API routes cho bài viết blog.
+ * Base path: /api/blogs
+ */
+
 import express from "express";
 import {
     createBlog,
@@ -12,16 +18,25 @@ import { upload } from "../middleware/upload.middleware.js";
 
 const router = express.Router();
 
-// @route   GET /api/blogs
-// @desc    Lấy danh sách tất cả bài viết
-// @access  Public
+/**
+ * GET /api/blogs
+ * Lấy danh sách tất cả bài viết
+ * Public
+ */
 router.get("/", asyncHandler(getAllBlogs));
 
-// @route   GET /api/blogs/:id
-// @desc    Lấy chi tiết bài viết theo ID
-// @access  Public
+/**
+ * GET /api/blogs/:id
+ * Lấy chi tiết bài viết theo ID
+ * Public
+ */
 router.get("/:id", asyncHandler(getBlogsById));
 
+/**
+ * POST /api/blogs
+ * Tạo bài viết mới
+ * Admin only - multipart/form-data (field: "banner")
+ */
 router.post(
     "/",
     protect,
@@ -30,6 +45,11 @@ router.post(
     asyncHandler(createBlog)
 );
 
+/**
+ * PUT /api/blogs/:id
+ * Cập nhật bài viết
+ * Admin only - multipart/form-data (field: "banner")
+ */
 router.put(
     "/:id",
     protect,
@@ -38,6 +58,11 @@ router.put(
     asyncHandler(updateBlog)
 );
 
+/**
+ * DELETE /api/blogs/:id
+ * Xóa bài viết
+ * Admin only
+ */
 router.delete(
     "/:id",
     protect,
