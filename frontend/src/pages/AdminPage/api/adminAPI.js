@@ -32,6 +32,17 @@ export const orderAPI = {
     getById: (id) => API.get(`/orders/${id}`),
     updateStatus: (id, status) => API.put(`/orders/${id}/status`, { status }),
     delete: (id) => API.delete(`/orders/${id}`),
+    getStats: () => API.get("/orders/stats"),
+};
+
+export const courseAPI = {
+    getAll: (params) => API.get("/courses", { params }),
+    getPublished: (params) => API.get("/courses/published", { params }),
+    getBySlug: (slug) => API.get(`/courses/slug/${slug}`),
+    getById: (id) => API.get(`/courses/${id}`),
+    create: (formData) => API.post("/courses", formData),
+    update: (id, formData) => API.put(`/courses/${id}`, formData),
+    delete: (id) => API.delete(`/courses/${id}`),
 };
 
 export const uploadAPI = {

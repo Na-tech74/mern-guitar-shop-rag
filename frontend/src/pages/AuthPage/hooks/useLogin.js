@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { loginAPI } from "../api/authAPI";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function useLogin() {
     const [form, setForm] = useState({
@@ -11,6 +11,7 @@ export default function useLogin() {
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
     const validate = () => {
         const newErrors = {};
@@ -50,11 +51,8 @@ export default function useLogin() {
                 accessToken: data.accessToken
             }));
 
-            if (data.user.role === "admin") {
-                navigate("/admin");
-            } else {
-                navigate("/");
-            }
+            const redirect = searchParams.get("redirect") || "/";
+            navigate(redirect);
 
             setForm({ email: "", password: "" });
         } catch (err) {

@@ -18,7 +18,7 @@ const menuItems = [
       { name: 'Ukulele', path: '/products?category=ukulele' },
     ]
   },
-  { name: 'KHÓA HỌC ', path: '/contact', hasDropdown: false },
+  { name: 'KHÓA HỌC', path: '/courses', hasDropdown: false },
   { name: 'GIỚI THIỆU', path: '/about', hasDropdown: false },
    { name: 'BÀI VIẾT', path: '/blog', hasDropdown: false },
   { name: 'LIÊN HỆ', path: '/contact', hasDropdown: false },

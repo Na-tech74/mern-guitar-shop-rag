@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileInvoice, faImage } from "@fortawesome/free-solid-svg-icons";
 import { orderAPI } from "../AdminPage/api/adminAPI";
-import { getOptimizedImage } from "../../helpers/format";
+import { getOptimizedImage, getStatusColor, getStatusLabel, formatCurrency, formatDate } from "../../helpers/format";
 
 export default function OrdersPage() {
     const navigate = useNavigate();
@@ -17,20 +17,10 @@ export default function OrdersPage() {
             return;
         }
         orderAPI.getMyOrders()
-            .then((res) => setOrders(res.data?.data?.orders || res.data?.orders || []))
+            .then((res) => setOrders(res.data?.data?.orders || []))
             .catch(() => setOrders([]))
             .finally(() => setLoading(false));
     }, [navigate]);
-
-    const getStatusLabel = (status) => {
-        const map = { pending: "Chờ xử lý", processing: "Đang xử lý", shipped: "Đang giao", delivered: "Đã giao", cancelled: "Đã hủy" };
-        return map[status] || status;
-    };
-
-    const getStatusColor = (status) => {
-        const map = { pending: "bg-yellow-100 text-yellow-700", processing: "bg-blue-100 text-blue-700", shipped: "bg-purple-100 text-purple-700", delivered: "bg-green-100 text-green-700", cancelled: "bg-red-100 text-red-700" };
-        return map[status] || "bg-gray-100 text-gray-700";
-    };
 
     return (
         <div className="min-h-screen">
@@ -62,19 +52,22 @@ export default function OrdersPage() {
                 ) : (
                     <div className="space-y-4">
                         {orders.map((order) => (
-                            <div key={order._id} className="bg-white rounded-xl border border-gray-200 p-4">
+                            <div key={order._id} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 hover:shadow-sm transition">
                                 <div className="flex items-center justify-between mb-3">
                                     <div>
-                                        <p className="text-sm text-gray-500">Mã đơn: <span className="font-medium text-gray-800">#{order._id.slice(-8).toUpperCase()}</span></p>
-                                        <p className="text-xs text-gray-400">{new Date(order.createdAt).toLocaleDateString("vi-VN")}</p>
+                                        <p className="text-sm text-gray-500">
+                                            Mã đơn: <span className="font-medium text-gray-800">#{order._id.slice(-8).toUpperCase()}</span>
+                                        </p>
+                                        <p className="text-xs text-gray-400">{formatDate(order.createdAt)}</p>
                                     </div>
                                     <span className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusColor(order.status)}`}>
                                         {getStatusLabel(order.status)}
                                     </span>
                                 </div>
+
                                 <div className="space-y-2">
                                     {order.items?.map((item, i) => (
-                                        <div key={item._id || `${item.product}-${i}`} className="flex items-center gap-3">
+                                        <div key={item._id || `${item.productId || item.product}-${i}`} className="flex items-center gap-3">
                                             <div className="w-12 h-12 rounded-lg bg-gray-100 overflow-hidden shrink-0">
                                                 {item.image ? (
                                                     <img src={getOptimizedImage(item.image, 100)} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover" />
@@ -88,13 +81,19 @@ export default function OrdersPage() {
                                                 <p className="text-sm font-medium text-gray-800 truncate">{item.product}</p>
                                                 <p className="text-xs text-gray-500">x{item.quantity}</p>
                                             </div>
-                                            <p className="text-sm font-medium text-gray-800">{new Intl.NumberFormat("vi-VN").format(item.price * item.quantity)} ₫</p>
+                                            <p className="text-sm font-medium text-gray-800">{formatCurrency(item.price * item.quantity)}</p>
                                         </div>
                                     ))}
                                 </div>
-                                <div className="flex justify-end mt-3 pt-3 border-t border-gray-100">
-                                    <span className="font-semibold text-gray-900">Tổng: </span>
-                                    <span className="font-bold text-amber-600 ml-2">{new Intl.NumberFormat("vi-VN").format(order.total)} ₫</span>
+
+                                <div className="flex justify-between items-center mt-3 pt-3 border-t border-gray-100">
+                                    <Link to={`/contact`} className="text-xs text-amber-600 hover:text-amber-500 font-medium">
+                                        Liên hệ hỗ trợ
+                                    </Link>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-sm text-gray-600">Tổng:</span>
+                                        <span className="font-bold text-amber-600">{formatCurrency(order.total)}</span>
+                                    </div>
                                 </div>
                             </div>
                         ))}

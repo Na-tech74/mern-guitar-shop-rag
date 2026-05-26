@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart, faMinus, faPlus, faShoppingCart, faStar, faTruck, faShieldAlt, faUndo, faImage } from "@fortawesome/free-solid-svg-icons";
+import { faHeart, faMinus, faPlus, faShoppingCart, faStar, faTruck, faShieldAlt, faUndo, faImage, faCheckCircle, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { productAPI } from "../api/productAPI";
 import { getOptimizedImage } from "../../../helpers/format";
 
@@ -13,6 +13,52 @@ export default function ProductDetailPage() {
     const [loading, setLoading] = useState(true);
     const [selectedImage, setSelectedImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
+    const [addedToCart, setAddedToCart] = useState(false);
+    const [inWishlist, setInWishlist] = useState(false);
+
+    useEffect(() => {
+        const wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
+        setInWishlist(wishlist.some(item => item._id === id));
+    }, [id]);
+
+    const addToCart = () => {
+        const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+        const existing = cart.find(item => item._id === id);
+        if (existing) {
+            existing.quantity += quantity;
+        } else {
+            cart.push({
+                _id: product._id,
+                name: product.name,
+                price: product.price,
+                images: product.images,
+                quantity,
+            });
+        }
+        localStorage.setItem("cart", JSON.stringify(cart));
+        window.dispatchEvent(new Event("cart-updated"));
+        setAddedToCart(true);
+        setTimeout(() => setAddedToCart(false), 2000);
+    };
+
+    const toggleWishlist = () => {
+        const wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
+        if (inWishlist) {
+            const updated = wishlist.filter(item => item._id !== id);
+            localStorage.setItem("wishlist", JSON.stringify(updated));
+            setInWishlist(false);
+        } else {
+            wishlist.push({
+                _id: product._id,
+                name: product.name,
+                price: product.price,
+                images: product.images,
+            });
+            localStorage.setItem("wishlist", JSON.stringify(wishlist));
+            setInWishlist(true);
+        }
+        window.dispatchEvent(new Event("wishlist-updated"));
+    };
 
     useEffect(() => {
         productAPI.getById(id)
@@ -104,6 +150,25 @@ export default function ProductDetailPage() {
                         </div>
                     </div>
 
+                    <div className="flex items-center gap-3">
+                        {product.stock > 0 ? (
+                            <>
+                                <span className="flex items-center gap-1.5 text-sm text-green-600 bg-green-50 rounded-lg px-3 py-1.5">
+                                    <FontAwesomeIcon icon={faCheck} className="text-xs" />
+                                    Còn hàng
+                                </span>
+                                <span className="text-sm text-gray-500">
+                                    ({product.stock} sản phẩm)
+                                </span>
+                            </>
+                        ) : (
+                            <span className="flex items-center gap-1.5 text-sm text-red-600 bg-red-50 rounded-lg px-3 py-1.5">
+                                <FontAwesomeIcon icon={faXmark} className="text-xs" />
+                                Hết hàng
+                            </span>
+                        )}
+                    </div>
+
                     <div>
                         <h3 className="font-semibold text-gray-900 mb-3">Mô tả</h3>
                         <p className="text-gray-600 leading-relaxed">{product.description}</p>
@@ -115,15 +180,25 @@ export default function ProductDetailPage() {
                                 <FontAwesomeIcon icon={faMinus} />
                             </button>
                             <span className="px-4 font-medium">{quantity}</span>
-                            <button onClick={() => setQuantity(quantity + 1)} className="p-3 hover:bg-gray-50">
+                            <button onClick={() => setQuantity(Math.min(product.stock || 1, quantity + 1))} className="p-3 hover:bg-gray-50">
                                 <FontAwesomeIcon icon={faPlus} />
                             </button>
                         </div>
-                        <button className="flex-1 py-3 bg-amber-600 hover:bg-amber-500 text-white rounded-lg font-medium transition flex items-center justify-center gap-2">
-                            <FontAwesomeIcon icon={faShoppingCart} />
-                            Thêm vào giỏ
+                        <button onClick={addToCart} disabled={product.stock === 0} className={`flex-1 py-3 rounded-lg font-medium transition flex items-center justify-center gap-2 ${
+                            product.stock === 0
+                                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                : addedToCart
+                                    ? "bg-green-600 text-white"
+                                    : "bg-amber-600 hover:bg-amber-500 text-white"
+                        }`}>
+                            <FontAwesomeIcon icon={addedToCart ? faCheckCircle : faShoppingCart} />
+                            {product.stock === 0 ? "Hết hàng" : addedToCart ? "Đã thêm" : "Thêm vào giỏ"}
                         </button>
-                        <button className="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 hover:text-red-500 transition">
+                        <button onClick={toggleWishlist} className={`p-3 border rounded-lg transition ${
+                            inWishlist
+                                ? "bg-red-50 border-red-200 text-red-500"
+                                : "border-gray-200 hover:bg-gray-50 text-gray-600 hover:text-red-500"
+                        }`}>
                             <FontAwesomeIcon icon={faHeart} />
                         </button>
                     </div>

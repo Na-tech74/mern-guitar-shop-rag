@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faThLarge, faList, faShoppingCart, faImage } from "@fortawesome/free-solid-svg-icons";
+import { faThLarge, faList, faShoppingCart, faImage, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import useProducts from "../hooks/useProducts";
 import { API } from "../../../api/axiosClient";
 import { getOptimizedImage } from "../../../helpers/format";
@@ -152,6 +152,16 @@ export default function ProductsPage() {
                                                 ) : (
                                                     <div className="w-full h-full flex items-center justify-center text-gray-400">
                                                         <FontAwesomeIcon icon={faImage} className="text-3xl" />
+                                                    </div>
+                                                )}
+                                                {product.stock !== undefined && (
+                                                    <div className={`absolute top-2 left-2 rounded-full px-2.5 py-0.5 text-[11px] font-medium flex items-center gap-1 ${
+                                                        product.stock > 0
+                                                            ? "bg-green-500 text-white"
+                                                            : "bg-red-500 text-white"
+                                                    }`}>
+                                                        <FontAwesomeIcon icon={product.stock > 0 ? faCheck : faXmark} className="text-[9px]" />
+                                                        {product.stock > 0 ? "Còn hàng" : "Hết hàng"}
                                                     </div>
                                                 )}
                                             </div>

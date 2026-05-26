@@ -20,6 +20,7 @@ import Logo from "./Logo";
 const navLinks = [
   { to: "/", label: "Trang chủ" },
   { to: "/products", label: "Sản phẩm" },
+  { to: "/courses", label: "Khóa học" },
   { to: "/about", label: "Giới thiệu" },
   { to: "/contact", label: "Liên hệ" },
 ];

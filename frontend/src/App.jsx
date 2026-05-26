@@ -15,14 +15,19 @@ const BlogPage = lazy(() => import("./pages/BlogPage/BlogPage"));
 const BlogDetailPage = lazy(() => import("./pages/BlogPage/BlogDetailPage"));
 const ContactPage = lazy(() => import("./pages/ContactPage/ContactPage"));
 const CartPage = lazy(() => import("./pages/CartPage/CartPage"));
+const CheckoutPage = lazy(() => import("./pages/CartPage/CheckoutPage"));
+const OrderSuccessPage = lazy(() => import("./pages/CartPage/OrderSuccessPage"));
 const SearchPage = lazy(() => import("./pages/SearchPage/SearchPage"));
 const WishlistPage = lazy(() => import("./pages/WishlistPage/WishlistPage"));
 const AccountPage = lazy(() => import("./pages/AccountPage/AccountPage"));
 const OrdersPage = lazy(() => import("./pages/OrdersPage/OrdersPage"));
+const CoursesPage = lazy(() => import("./pages/CoursesPage/CoursesPage"));
+const CourseDetailPage = lazy(() => import("./pages/CoursesPage/CourseDetailPage"));
 const NotFound = lazy(() => import("./pages/NotFoundPage/NotFound"));
 const Dashboard = lazy(() => import("./pages/AdminPage/ui/Dashboard"));
 const AdminProducts = lazy(() => import("./pages/AdminPage/ui/Products"));
 const AdminOrders = lazy(() => import("./pages/AdminPage/ui/Orders"));
+const AdminCourses = lazy(() => import("./pages/AdminPage/ui/Courses"));
 const Users = lazy(() => import("./pages/AdminPage/ui/Users"));
 const Categories = lazy(() => import("./pages/AdminPage/ui/Categories"));
 const Settings = lazy(() => import("./pages/AdminPage/ui/Settings"));
@@ -50,7 +55,11 @@ function App() {
             <Route path="blog/:id" element={<BlogDetailPage />} />
             <Route path="contact" element={<ContactPage />} />
             <Route path="cart" element={<CartPage />} />
+            <Route path="checkout" element={<CheckoutPage />} />
+            <Route path="order-success" element={<OrderSuccessPage />} />
             <Route path="tim-kiem" element={<SearchPage />} />
+            <Route path="courses" element={<CoursesPage />} />
+            <Route path="courses/:slug" element={<CourseDetailPage />} />
             <Route path="wishlist" element={<WishlistPage />} />
             <Route path="account" element={<AccountPage />} />
             <Route path="orders" element={<OrdersPage />} />
@@ -71,6 +80,7 @@ function App() {
               <Route path="users" element={<Users />} />
               <Route path="categories" element={<Categories />} />
               <Route path="settings" element={<Settings />} />
+              <Route path="courses" element={<AdminCourses />} />
               <Route path="blog" element={<Blog />} />
           </Route>
 

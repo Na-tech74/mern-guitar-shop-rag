@@ -1,36 +1,48 @@
 import { useState, useEffect } from "react";
-import { productAPI, categoryAPI, userAPI } from "../api/adminAPI";
+import { orderAPI } from "../api/adminAPI";
 
 export const useDashboard = () => {
-    const [stats, setStats] = useState({
+    const [data, setData] = useState({
         totalProducts: 0,
         totalUsers: 0,
         totalCategories: 0,
         totalOrders: 0,
+        totalRevenue: 0,
+        orderStats: {
+            pending: 0,
+            processing: 0,
+            shipped: 0,
+            delivered: 0,
+            cancelled: 0
+        },
+        recentOrders: []
     });
-    const [recentOrders, setRecentOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [productsRes, categoriesRes, usersRes] = await Promise.all([
-                    productAPI.getAll(),
-                    categoryAPI.getAll(),
-                    userAPI.getAll(),
-                ]);
-                setStats({
-                    totalProducts: productsRes.data?.data?.length || 0,
-                    totalUsers: usersRes.data?.length || 0,
-                    totalCategories: categoriesRes.data?.data?.length || 0,
-                    totalOrders: 0,
-                });
-            } catch (error) {
-                // error
+                setLoading(true);
+                setError(null);
+                const res = await orderAPI.getStats();
+                const stats = res.data?.data;
+                if (stats) {
+                    setData({
+                        totalProducts: stats.totalProducts || 0,
+                        totalUsers: stats.totalUsers || 0,
+                        totalCategories: stats.totalCategories || 0,
+                        totalOrders: stats.totalOrders || 0,
+                        totalRevenue: stats.totalRevenue || 0,
+                        orderStats: stats.orderStats || {},
+                        recentOrders: stats.recentOrders || []
+                    });
+                }
+            } catch (err) {
+                setError(err.response?.data?.message || "Không thể tải dữ liệu");
             } finally {
                 setLoading(false);
             }
-            setRecentOrders([]);
         };
         fetchData();
     }, []);
@@ -38,41 +50,37 @@ export const useDashboard = () => {
     const statCards = [
         {
             title: "Tổng sản phẩm",
-            value: stats.totalProducts,
+            value: data.totalProducts,
             icon: "box",
             color: "bg-blue-500",
-            change: "+12%",
-            isPositive: true,
         },
         {
-            title: "Tổng người dùng",
-            value: stats.totalUsers,
+            title: "Người dùng",
+            value: data.totalUsers,
             icon: "users",
             color: "bg-green-500",
-            change: "+8%",
-            isPositive: true,
         },
         {
             title: "Danh mục",
-            value: stats.totalCategories,
+            value: data.totalCategories,
             icon: "cart",
             color: "bg-purple-500",
-            change: "+5%",
-            isPositive: true,
         },
         {
             title: "Đơn hàng",
-            value: stats.totalOrders,
+            value: data.totalOrders,
             icon: "dollar",
             color: "bg-orange-500",
-            change: "-3%",
-            isPositive: false,
         },
     ];
 
     return {
         loading,
+        error,
         statCards,
-        recentOrders,
+        recentOrders: data.recentOrders,
+        orderStats: data.orderStats,
+        totalOrders: data.totalOrders,
+        totalRevenue: data.totalRevenue,
     };
 };
