@@ -8,7 +8,7 @@
 import Course from "../models/course.model.js";
 import { appError, appSuccess } from "../utils/appResponse.js";
 import { uploadImages } from "../services/uploadImages.js";
-import { isValidObjectId } from "../utils/vaildate.js";
+import { isValidObjectId } from "../utils/valid.js";
 import { sanitizeText } from "../utils/format.js";
 
 /**

@@ -26,10 +26,10 @@ const blogSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Users",
     },
-    // URL ảnh banner của bài viết
+    // Danh sách URL ảnh của bài viết
     images: {
-        type:String,
-        default:""
+        type: [String],
+        default: []
     },
 }, {
     // Tự động quản lý createdAt / updatedAt

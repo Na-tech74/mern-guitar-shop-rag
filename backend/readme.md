@@ -63,7 +63,7 @@ backend/
 │   │   └── uploadImages.js        # Upload Cloudinary
 │   └── utils/
 │       ├── appResponse.js         # Response/Error helpers
-│       ├── vaildate.js            # Validation helpers
+│       ├── valid.js               # Validation helpers
 │       ├── format.js              # Format dữ liệu
 │       └── cookier.js             # Cookie helpers
 └── .env                           # Biến môi trường
@@ -195,7 +195,7 @@ Xem thêm trong thư mục `docs/backend/`:
 | `middleware.md` | Auth (protect, adminOnly, rate limit), error handler, upload, asyncHandler |
 | `models.md` | 6 Mongoose models (Users, Product, Category, Blog, Order, Course) |
 | `services.md` | generateToken, sendEmail, uploadImages |
-| `utils.md` | appResponse, vaildate, format, cookier |
+| `utils.md` | appResponse, valid, format, cookier |
 | `config.md` | Kết nối DB, cấu hình Cloudinary |
 | `controllers.md` | Chi tiết 7 controllers (logic, validation, errors) |
 

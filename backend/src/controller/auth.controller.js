@@ -13,7 +13,7 @@ import { generateAccessToken, generateRefreshToken } from "../services/generateT
 import { sendEmail } from "../services/sendEmail.js"; // Service gửi email
 
 import { appError, appSuccess } from "../utils/appResponse.js"; // Utility xử lý response và lỗi
-import { isValidateEmail, isValidatePassword, isValidObjectId } from "../utils/vaildate.js"; // Utility validate input
+import {  isValidEmail,  isValidPassword, isValidObjectId } from "../utils/valid.js"; // Utility validate input
 import { refreshTokenCookie, clearCookie } from "../utils/cookier.js"; // Utility xử lý cookie
 import { sanitizeEmail, sanitizeText, formatDateTime } from "../utils/format.js";
 import { create } from "domain";
@@ -35,11 +35,11 @@ export const register = async (req, res) => {
         throw appError("Vui lòng nhập đầy đủ thông tin!", 400);
     }
 
-    if (!isValidateEmail(email)) {
+    if (!isValidEmail(email)) {
         throw appError("Email không hợp lệ!", 400);
     }
 
-    if (!isValidatePassword(password)) {
+    if (!isValidPassword(password)) {
         throw appError(
             "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường và số!",
             400
@@ -113,7 +113,7 @@ export const login = async (req, res) => {
         throw appError("Vui lòng nhập đầy đủ thông tin!", 400);
     }
 
-    if (!isValidateEmail(email)) {
+    if (!isValidEmail(email)) {
         throw appError("Email không hợp lệ!", 400);
     }
 
@@ -204,7 +204,7 @@ export const forgotPassword = async (req, res) => {
         throw appError("Vui lòng nhập email!", 400);
     }
 
-    if (!isValidateEmail(email)) {
+    if (!isValidEmail(email)) {
         throw appError("Email không hợp lệ!", 400);
     }
 
@@ -264,11 +264,11 @@ export const resetPassword = async (req, res) => {
         throw appError("Thiếu dữ liệu!", 400);
     }
 
-    if (!isValidateEmail(email)) {
+    if (!isValidEmail(email)) {
         throw appError("Email không hợp lệ!", 400);
     }
 
-    if (!isValidatePassword(password)) {
+    if (!isValidPassword(password)) {
         throw appError(
             "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường và số!",
             400
@@ -355,7 +355,7 @@ export const refreshAccessToken = async (req, res) => {
     }
 
     // Tìm user và lấy refresh token trong database
-    const existingUser = await User.findById(decodedToken.id)
+    const existingUser = await User.findById(decodedToken._id)
         .select("+refreshToken");
 
     if (!existingUser) {

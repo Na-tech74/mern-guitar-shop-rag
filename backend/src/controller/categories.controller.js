@@ -7,7 +7,7 @@ import Category from "../models/categories.model.js";
 import { appError, appSuccess } from "../utils/appResponse.js";
 import { formatDateTime, sanitizeText } from "../utils/format.js";
 import { uploadImages } from "../services/uploadImages.js";
-import { isValidObjectId } from "../utils/vaildate.js";
+import { isValidObjectId } from "../utils/valid.js";
 /**
  * Tạo danh mục mới (Admin only)
  * @param {string} name - Tên danh mục (bắt buộc)

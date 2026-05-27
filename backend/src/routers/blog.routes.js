@@ -35,26 +35,26 @@ router.get("/:id", asyncHandler(getBlogsById));
 /**
  * POST /api/blogs
  * Tạo bài viết mới
- * Admin only - multipart/form-data (field: "banner")
+ * Admin only - multipart/form-data (field: "images")
  */
 router.post(
     "/",
     protect,
     adminOnly,
-    upload.single("banner"),
+    upload.array("images", 5),
     asyncHandler(createBlog)
 );
 
 /**
  * PUT /api/blogs/:id
  * Cập nhật bài viết
- * Admin only - multipart/form-data (field: "banner")
+ * Admin only - multipart/form-data (field: "images")
  */
 router.put(
     "/:id",
     protect,
     adminOnly,
-    upload.single("banner"),
+    upload.array("images", 5),
     asyncHandler(updateBlog)
 );
 

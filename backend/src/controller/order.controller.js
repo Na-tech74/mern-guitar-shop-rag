@@ -9,7 +9,7 @@ import Product from "../models/products.models.js";
 import User from "../models/users.model.js";
 import Category from "../models/categories.model.js";
 import { appError, appSuccess } from "../utils/appResponse.js";
-import { isValidObjectId } from "../utils/vaildate.js";
+import { isValidObjectId } from "../utils/valid.js";
 
 /**
  * Tạo đơn hàng mới từ giỏ hàng

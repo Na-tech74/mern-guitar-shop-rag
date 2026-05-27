@@ -55,9 +55,9 @@ export default function BlogPage() {
                                 className="group bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-lg transition-shadow"
                             >
                                 <div className="h-48 bg-gray-100 overflow-hidden">
-                                    {blog.images ? (
+                                    {blog.images?.length > 0 ? (
                                         <img
-                                            src={getOptimizedImage(blog.images, 600)}
+                                            src={getOptimizedImage(blog.images[0], 600)}
                                             alt={blog.title}
                                             loading="lazy"
                                             decoding="async"

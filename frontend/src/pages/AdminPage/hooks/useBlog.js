@@ -102,7 +102,11 @@ export default function useBlog() {
             fd.append("title", formData.title);
             fd.append("content", formData.content);
             fd.append("excerpt", formData.excerpt);
-            if (bannerFile) fd.append("banner", bannerFile);
+            if (bannerFile) {
+                for (const file of bannerFile) {
+                    fd.append("images", file);
+                }
+            }
             if (editingBlog) {
                 await updateBlog(editingBlog._id, fd);
             } else {
@@ -119,7 +123,7 @@ export default function useBlog() {
     const handleEdit = (blog) => {
         setEditingBlog(blog);
         setFormData({ title: blog.title, content: blog.content, excerpt: blog.excerpt || "" });
-        setBannerPreview(blog.images || "");
+        setBannerPreview(blog.images?.[0] || "");
         setBannerFile(null);
         setShowForm(true);
     };
@@ -131,10 +135,10 @@ export default function useBlog() {
     };
 
     const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        setBannerFile(file);
-        setBannerPreview(URL.createObjectURL(file));
+        const files = e.target.files;
+        if (!files || files.length === 0) return;
+        setBannerFile(files);
+        setBannerPreview(URL.createObjectURL(files[0]));
     };
 
     const openForm = () => {

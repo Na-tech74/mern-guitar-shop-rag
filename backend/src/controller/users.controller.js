@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { appError, appSuccess } from "../utils/appResponse.js";
-import { isValidateEmail, isValidatePassword, isValidObjectId } from '../utils/vaildate.js';
+import { isValidEmail, isValidPassword, isValidObjectId } from '../utils/valid.js';
 import usersModel from '../models/users.model.js';
 import { formatDateTime } from '../utils/format.js';
 
@@ -97,7 +97,7 @@ export const updateUser = async (req, res) => {
     // Cập nhật email nếu được cung cấp
     if (email) {
         // Kiểm tra định dạng email
-        if (!isValidateEmail(email)) {
+        if (!isValidEmail(email)) {
             throw appError("Email không hợp lệ!", 400);
         }
 
@@ -117,7 +117,7 @@ export const updateUser = async (req, res) => {
     // Cập nhật mật khẩu nếu được cung cấp
     if (password) {
         // Kiểm tra định dạng mật khẩu
-        if (!isValidatePassword(password)) {
+        if (!isValidPassword(password)) {
             throw appError(
                 "Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường và số!",
                 400
@@ -239,7 +239,7 @@ export const changePassword = async (req, res) => {
     }
 
     // Kiểm tra định dạng mật khẩu mới
-    if (newPassword && !isValidatePassword(newPassword)) {
+    if (newPassword && !isValidPassword(newPassword)) {
         throw appError("Mật khẩu mới phải có ít nhất 8 ký tự!", 400);
     }
 

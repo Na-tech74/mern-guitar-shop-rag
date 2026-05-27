@@ -8,13 +8,14 @@ import Blog from "../models/blogs.model.js"
 import { appError, appSuccess } from "../utils/appResponse.js";
 import { sanitizeText } from "../utils/format.js";
 import { uploadImages } from "../services/uploadImages.js";
-import { isValidObjectId } from "../utils/vaildate.js";
+import { isValidObjectId } from "../utils/valid.js";
 
 /**
  * Tạo bài viết mới (admin). Hỗ trợ upload banner image.
  */
 export const createBlog = async (req, res) => {
     const { title, excerpt, content } = req.body;
+    const imageFiles = req.files;
 
     if (req.user.role !== 'admin') {
         throw appError("Chỉ admin mới có quyền!", 403)
@@ -24,25 +25,27 @@ export const createBlog = async (req, res) => {
         throw appError("Nhập đầy đủ thông tin bài viết!", 400)
     }
 
+    if (!imageFiles || imageFiles.length === 0) {
+        throw appError("Vui lòng tải lên hình ảnh sản phẩm!", 400);
+    }
+
     const blogExists = await Blog.findOne({ title: sanitizeText(title) });
     if (blogExists) {
         throw appError("Bài viết này đã tồn tại!", 400)
     }
 
-    let bannerUrl = "";
-    if (req.file) {
-        const [urls] = await uploadImages([req.file], "guitar-shop/blogs");
-        bannerUrl = urls;
-    }
+    // Upload ảnh lên Cloudinary (thư mục: guitar-shop/blogs)
+    const imageUrls = await uploadImages(imageFiles, "guitar-shop/blogs");
 
     const newBlog = await Blog.create({
         title: sanitizeText(title),
         excerpt: sanitizeText(excerpt || ""),
         content: sanitizeText(content),
         author: req.user._id,
-        images: bannerUrl
+        images: imageUrls
     })
 
+    // Populate author để trả về thông tin tên, email thay vì ObjectId
     const populatedBlog = await Blog.findById(newBlog._id).populate("author", "name email")
 
     return appSuccess(res, {
@@ -76,13 +79,13 @@ export const getBlogsById = async (req, res) => {
     }
 
     const blog = await Blog.findById(id).populate("author", "name email")
-    if(!blog){
-      throw appError("Bài viết không tồn tại ", 404)
+    if (!blog) {
+        throw appError("Bài viết không tồn tại ", 404)
     }
     return appSuccess(res, {
-        statusCode:200,
-        message:"Lấy bài viết thành công",
-        data:{
+        statusCode: 200,
+        message: "Lấy bài viết thành công",
+        data: {
             blog
         }
     })

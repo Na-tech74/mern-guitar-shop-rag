@@ -2,7 +2,7 @@ import Product from "../models/products.models.js";
 import { appError, appSuccess } from "../utils/appResponse.js";
 import { uploadImages } from "../services/uploadImages.js";
 import { formatSuccessResponse, formatDate, formatDateTime, sanitizeText, formatPrice } from "../utils/format.js";
-import { isValidObjectId } from "../utils/vaildate.js";
+import { isValidObjectId } from "../utils/valid.js";
 
 /**
  * Tạo sản phẩm mới (Admin only)
@@ -50,7 +50,6 @@ export const createProduct = async (req, res) => {
 
     // Upload ảnh lên Cloudinary (thư mục: guitar-shop/products)
     const [imageUrls] = await uploadImages(imageFiles, "guitar-shop/products");
-
     const newProduct = await Product.create({
         name: sanitizeText(name),
         description: sanitizeText(description),
@@ -198,8 +197,8 @@ export const updateProducts = async (req, res) => {
     product.stock = parseInt(stock);
 
     if (imageFiles && imageFiles.length > 0) {
-        const [imageUrls] = await uploadImages(imageFiles, "guitar-shop/products");
-        product.images = imageUrls;
+        const imageUrls = await uploadImages(imageFiles, "guitar-shop/products");
+        product.images = imageUrls[0];
     } else if (images) {
         product.images = images;
     }

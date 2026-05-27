@@ -61,10 +61,10 @@ export default function BlogDetailPage() {
                     Quay lại
                 </Link>
 
-                {blog.images && (
+                {blog.images?.length > 0 && (
                     <div className="rounded-xl overflow-hidden mb-8">
                         <img
-                            src={getOptimizedImage(blog.images, 800)}
+                            src={getOptimizedImage(blog.images[0], 800)}
                             alt={blog.title}
                             loading="eager"
                             decoding="async"

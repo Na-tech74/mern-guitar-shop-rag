@@ -1,5 +1,5 @@
 /**
- * vaildate.js
+ * valid.js
  * Các hàm kiểm tra và xác thực dữ liệu đầu vào.
  */
 
@@ -8,7 +8,7 @@
  * @param {string} email
  * @returns {boolean}
  */
-export const isValidateEmail = (email) => {
+export const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 };
@@ -18,7 +18,7 @@ export const isValidateEmail = (email) => {
  * @param {string} password
  * @returns {boolean}
  */
-export const isValidatePassword = (password) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(password);
+export const isValidPassword = (password) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(password);
 
 /**
  * Kiểm tra ID có phải MongoDB ObjectId hợp lệ không (24 ký tự hex)

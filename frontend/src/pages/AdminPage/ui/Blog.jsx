@@ -57,7 +57,7 @@ export default function Blog() {
                                 <textarea value={formData.content} onChange={(e) => setFormData({ ...formData, content: e.target.value })} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none" rows={8} required />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Banner</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Hình ảnh</label>
                                 {bannerPreview ? (
                                     <div className="relative w-full">
                                         <img src={bannerPreview} alt="Banner" className="w-full h-40 object-cover rounded-lg" />
@@ -67,9 +67,9 @@ export default function Blog() {
                                     </div>
                                 ) : (
                                     <label className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-amber-400 block transition">
-                                        <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                                        <input type="file" accept="image/*" multiple onChange={handleFileChange} className="hidden" />
                                         <FontAwesomeIcon icon={faImage} className="text-3xl text-gray-400 mb-2" />
-                                        <p className="text-gray-500">Click để chọn banner</p>
+                                        <p className="text-gray-500">Click để chọn hình ảnh</p>
                                     </label>
                                 )}
                             </div>
@@ -107,8 +107,8 @@ export default function Blog() {
                                 <tr key={blog._id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition">
                                     <td className="px-4 py-3">
                                         <div className="w-14 h-10 rounded-lg bg-gray-100 overflow-hidden">
-                                            {blog.images ? (
-                                                <img src={blog.images} alt={blog.title} className="w-full h-full object-cover" loading="lazy" />
+                                            {blog.images?.length > 0 ? (
+                                                <img src={blog.images[0]} alt={blog.title} className="w-full h-full object-cover" loading="lazy" />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center text-gray-400">
                                                     <FontAwesomeIcon icon={faImage} />
