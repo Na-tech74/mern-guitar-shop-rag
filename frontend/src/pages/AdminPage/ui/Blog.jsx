@@ -17,7 +17,7 @@ export default function Blog() {
                     <h1 className="text-2xl font-bold text-gray-800">Quản lý Blog</h1>
                     <p className="text-gray-500 text-sm">Quản lý bài viết</p>
                 </div>
-                <button onClick={openForm} className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition">
+                <button type="button" onClick={openForm} className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition">
                     <FontAwesomeIcon icon={faPlus} />
                     Thêm bài viết
                 </button>
@@ -26,7 +26,7 @@ export default function Blog() {
             {error && (
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
                     {error}
-                    <button onClick={() => setError(null)} className="float-right text-red-500 hover:text-red-700">
+                    <button type="button" onClick={() => setError(null)} className="float-right text-red-500 hover:text-red-700">
                         <FontAwesomeIcon icon={faTimes} />
                     </button>
                 </div>
@@ -39,7 +39,7 @@ export default function Blog() {
                             <h2 className="text-xl font-bold text-gray-800">
                                 {editingBlog ? "Sửa bài viết" : "Thêm bài viết mới"}
                             </h2>
-                            <button onClick={resetForm} className="text-gray-500 hover:text-gray-700 p-1">
+                            <button type="button" onClick={resetForm} className="text-gray-500 hover:text-gray-700 p-1">
                                 <FontAwesomeIcon icon={faTimes} />
                             </button>
                         </div>
@@ -137,10 +137,10 @@ export default function Blog() {
                                     </td>
                                     <td className="px-4 py-3 text-right">
                                         <div className="flex items-center justify-end gap-1">
-                                            <button onClick={() => handleEdit(blog)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition" title="Sửa">
+                                            <button type="button" onClick={() => handleEdit(blog)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition" title="Sửa">
                                                 <FontAwesomeIcon icon={faEdit} />
                                             </button>
-                                            <button onClick={() => handleDelete(blog._id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition" title="Xóa">
+                                            <button type="button" onClick={() => handleDelete(blog._id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition" title="Xóa">
                                                 <FontAwesomeIcon icon={faTrash} />
                                             </button>
                                         </div>

@@ -70,12 +70,14 @@ export default function ProductsPage() {
                         {/* View Mode */}
                         <div className="flex border border-gray-200 rounded-lg overflow-hidden">
                             <button
+                                type="button"
                                 onClick={() => setViewMode("grid")}
                                 className={`p-2 ${viewMode === "grid" ? "bg-amber-500 text-white" : "bg-white text-gray-600 hover:bg-gray-50"}`}
                             >
                                 <FontAwesomeIcon icon={faThLarge} />
                             </button>
                             <button
+                                type="button"
                                 onClick={() => setViewMode("list")}
                                 className={`p-2 ${viewMode === "list" ? "bg-amber-500 text-white" : "bg-white text-gray-600 hover:bg-gray-50"}`}
                             >
@@ -94,6 +96,7 @@ export default function ProductsPage() {
                             <ul className="space-y-2">
                                 <li>
                                     <button
+                                        type="button"
                                         onClick={() => setSelectedCategory("")}
                                         className={`w-full text-left px-3 py-2 rounded-lg transition ${!selectedCategory
                                                 ? "bg-amber-50 text-amber-600"
@@ -106,6 +109,7 @@ export default function ProductsPage() {
                                 {categories.map((cat) => (
                                     <li key={cat._id}>
                                         <button
+                                            type="button"
                                             onClick={() => setSelectedCategory(cat._id)}
                                             className={`w-full text-left px-3 py-2 rounded-lg transition ${selectedCategory === cat._id
                                                     ? "bg-amber-50 text-amber-600"
@@ -124,7 +128,7 @@ export default function ProductsPage() {
                     <div className="flex-1">
                         {loading ? (
                             <div className="flex items-center justify-center min-h-[400px]">
-                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
+                                <div className="animate-spin rounded-full size-12 border-b-2 border-amber-600"></div>
                             </div>
                         ) : products.length === 0 ? (
                             <div className="text-center py-16 text-gray-500">
@@ -177,6 +181,7 @@ export default function ProductsPage() {
                                                     <span className="text-xl font-bold text-amber-600">{formatPrice(product.price)}</span>
                                                 </div>
                                                 <button
+                                                    type="button"
                                                     onClick={(e) => { e.preventDefault(); /* add to cart */ }}
                                                     className="w-full py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-sm font-medium transition flex items-center justify-center gap-2"
                                                 >
@@ -196,6 +201,7 @@ export default function ProductsPage() {
                                 {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((page) => (
                                     <button
                                         key={page}
+                                        type="button"
                                         onClick={() => fetchProducts({ page, ...(selectedCategory ? { category: selectedCategory } : {}), ...(sortBy !== "default" ? { sortBy } : {}) })}
                                         className={`px-4 py-2 rounded-lg text-sm ${page === pagination.page
                                                 ? "bg-amber-600 text-white"

@@ -81,7 +81,7 @@ export default function CartPage() {
                 <div className="flex items-center justify-between mb-6">
                     <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Giỏ hàng</h1>
                     {cartItems.length > 0 && (
-                        <button onClick={clearCart} className="text-sm text-red-500 hover:text-red-700 flex items-center gap-1">
+                        <button type="button" onClick={clearCart} className="text-sm text-red-500 hover:text-red-700 flex items-center gap-1">
                             <FontAwesomeIcon icon={faTrash} />
                             Xóa tất cả
                         </button>
@@ -90,7 +90,7 @@ export default function CartPage() {
 
                 {cartItems.length === 0 ? (
                     <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
-                        <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+                        <div className="size-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
                             <FontAwesomeIcon icon={faShoppingCart} className="text-4xl text-gray-300" />
                         </div>
                         <p className="text-gray-500 text-lg mb-2">Giỏ hàng của bạn đang trống</p>
@@ -123,7 +123,7 @@ export default function CartPage() {
                                                     <Link to={`/products/${item._id}`} className="font-semibold text-gray-800 hover:text-amber-600 line-clamp-2">
                                                         {item.name}
                                                     </Link>
-                                                    <button onClick={() => removeItem(item._id)} className="text-gray-400 hover:text-red-500 p-1 shrink-0 transition">
+                                                    <button type="button" onClick={() => removeItem(item._id)} className="text-gray-400 hover:text-red-500 p-1 shrink-0 transition">
                                                         <FontAwesomeIcon icon={faTrash} className="text-sm" />
                                                     </button>
                                                 </div>
@@ -134,11 +134,11 @@ export default function CartPage() {
 
                                             <div className="flex items-center justify-between mt-3">
                                                 <div className="flex items-center border border-gray-200 rounded-lg">
-                                                    <button onClick={() => updateQuantity(item._id, -1)} className="p-2 hover:bg-gray-50 text-gray-500">
+                                                    <button type="button" onClick={() => updateQuantity(item._id, -1)} className="p-2 hover:bg-gray-50 text-gray-500">
                                                         <FontAwesomeIcon icon={faMinus} className="text-xs" />
                                                     </button>
                                                     <span className="px-4 text-sm font-medium min-w-[2rem] text-center">{item.quantity || 1}</span>
-                                                    <button onClick={() => updateQuantity(item._id, 1)} className="p-2 hover:bg-gray-50 text-gray-500">
+                                                    <button type="button" onClick={() => updateQuantity(item._id, 1)} className="p-2 hover:bg-gray-50 text-gray-500">
                                                         <FontAwesomeIcon icon={faPlus} className="text-xs" />
                                                     </button>
                                                 </div>

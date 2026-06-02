@@ -39,7 +39,7 @@ export default function OrdersPage() {
 
                 {loading ? (
                     <div className="flex justify-center py-16">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600" />
+                        <div className="animate-spin rounded-full size-12 border-b-2 border-amber-600" />
                     </div>
                 ) : orders.length === 0 ? (
                     <div className="text-center py-16">
@@ -68,7 +68,7 @@ export default function OrdersPage() {
                                 <div className="space-y-2">
                                     {order.items?.map((item, i) => (
                                         <div key={item._id || `${item.productId || item.product}-${i}`} className="flex items-center gap-3">
-                                            <div className="w-12 h-12 rounded-lg bg-gray-100 overflow-hidden shrink-0">
+                                            <div className="size-12 rounded-lg bg-gray-100 overflow-hidden shrink-0">
                                                 {item.image ? (
                                                     <img src={getOptimizedImage(item.image, 100)} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover" />
                                                 ) : (

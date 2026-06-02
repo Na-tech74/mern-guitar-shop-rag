@@ -38,7 +38,7 @@ export default function SearchPage() {
 
                 {loading ? (
                     <div className="flex justify-center py-16">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600" />
+                        <div className="animate-spin rounded-full size-12 border-b-2 border-amber-600" />
                     </div>
                 ) : results.length === 0 && query ? (
                     <div className="text-center py-16">

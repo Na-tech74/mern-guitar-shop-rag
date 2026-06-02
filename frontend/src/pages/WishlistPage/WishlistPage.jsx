@@ -112,7 +112,7 @@ export default function WishlistPage() {
                                 <FontAwesomeIcon icon={faShoppingBag} />
                                 Thêm tất cả vào giỏ
                             </Button>
-                            <button onClick={clearAll} className="text-sm text-red-500 hover:text-red-700 flex items-center gap-1 px-3 py-2">
+                            <button type="button" onClick={clearAll} className="text-sm text-red-500 hover:text-red-700 flex items-center gap-1 px-3 py-2">
                                 <FontAwesomeIcon icon={faTrash} />
                                 Xóa tất cả
                             </button>
@@ -122,7 +122,7 @@ export default function WishlistPage() {
 
                 {wishlist.length === 0 ? (
                     <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
-                        <div className="w-24 h-24 mx-auto mb-6 bg-red-50 rounded-full flex items-center justify-center">
+                        <div className="size-24 mx-auto mb-6 bg-red-50 rounded-full flex items-center justify-center">
                             <FontAwesomeIcon icon={faHeartBroken} className="text-4xl text-red-300" />
                         </div>
                         <p className="text-gray-500 text-lg mb-2">Chưa có sản phẩm yêu thích</p>
@@ -147,8 +147,9 @@ export default function WishlistPage() {
                                             </div>
                                         )}
                                         <button
+                                            type="button"
                                             onClick={(e) => { e.preventDefault(); removeFromWishlist(item._id); }}
-                                            className="absolute top-2 right-2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition shadow-sm"
+                                            className="absolute top-2 right-2 size-8 bg-white/90 rounded-full flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition shadow-sm"
                                         >
                                             <FontAwesomeIcon icon={faTrash} className="text-xs" />
                                         </button>
@@ -161,6 +162,7 @@ export default function WishlistPage() {
                                             {new Intl.NumberFormat("vi-VN").format(item.price)} ₫
                                         </p>
                                         <button
+                                            type="button"
                                             onClick={() => addToCart(item)}
                                             disabled={isAdded}
                                             className={`w-full mt-3 py-2 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2 ${

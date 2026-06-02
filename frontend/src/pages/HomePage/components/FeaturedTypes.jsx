@@ -55,7 +55,7 @@ export default function FeaturedTypes() {
                                     <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
                                 </span>
                             </div>
-                            <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <div className="absolute top-4 right-4 size-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <FontAwesomeIcon icon={faArrowRight} className="text-white text-xs" />
                             </div>
                         </Link>

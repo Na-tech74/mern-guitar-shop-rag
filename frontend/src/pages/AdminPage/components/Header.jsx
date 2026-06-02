@@ -34,8 +34,9 @@ export default function AdminHeader({ toggleSidebar }) {
                 <div className="flex items-center gap-3">
 
                     <button
+                        type="button"
                         onClick={toggleSidebar}
-                        className="flex h-10 w-10 items-center justify-center rounded-xl hover:bg-gray-100 lg:hidden"
+                        className="flex size-10 items-center justify-center rounded-xl hover:bg-gray-100 lg:hidden"
                     >
                         <FontAwesomeIcon icon={faBars} />
                     </button>
@@ -87,13 +88,13 @@ export default function AdminHeader({ toggleSidebar }) {
                 {/* RIGHT */}
                 <div className="ml-auto flex items-center gap-2">
 
-                    <button className="relative flex h-10 w-10 items-center justify-center rounded-xl hover:bg-gray-100">
+                    <button type="button" className="relative flex size-10 items-center justify-center rounded-xl hover:bg-gray-100">
                         <FontAwesomeIcon icon={faBell} />
 
-                        <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-orange-500" />
+                        <span className="absolute right-2 top-2 size-2 rounded-full bg-orange-500" />
                     </button>
 
-                    <button className="flex h-10 w-10 items-center justify-center rounded-xl hover:bg-gray-100">
+                    <button type="button" className="flex size-10 items-center justify-center rounded-xl hover:bg-gray-100">
                         <FontAwesomeIcon icon={faMessage} />
                     </button>
 
@@ -102,8 +103,9 @@ export default function AdminHeader({ toggleSidebar }) {
                     <div className="flex items-center gap-2">
 
                         <button
+                            type="button"
                             onClick={handleLogout}
-                            className="flex h-9 w-9 items-center justify-center rounded-xl hover:bg-red-50 text-gray-500 hover:text-red-600 transition-colors"
+                            className="flex size-9 items-center justify-center rounded-xl hover:bg-red-50 text-gray-500 hover:text-red-600 transition-colors"
                             title="Đăng xuất"
                         >
                             <FontAwesomeIcon icon={faRightFromBracket} />

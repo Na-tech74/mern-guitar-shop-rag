@@ -30,11 +30,11 @@ export default function CoursesPage() {
 
                 {loading ? (
                     <div className="flex justify-center py-16">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600" />
+                        <div className="animate-spin rounded-full size-12 border-b-2 border-amber-600" />
                     </div>
                 ) : courses.length === 0 ? (
                     <div className="text-center py-16 bg-white rounded-2xl border border-gray-200">
-                        <div className="w-20 h-20 mx-auto mb-4 bg-amber-50 rounded-full flex items-center justify-center">
+                        <div className="size-20 mx-auto mb-4 bg-amber-50 rounded-full flex items-center justify-center">
                             <FontAwesomeIcon icon={faVideo} className="text-3xl text-amber-300" />
                         </div>
                         <p className="text-gray-500 text-lg mb-2">Chưa có khóa học nào</p>

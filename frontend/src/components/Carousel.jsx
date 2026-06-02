@@ -147,6 +147,7 @@ export default function Carousel() {
             </div>
 
             <button
+                type="button"
                 onClick={prev}
                 className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 bg-black/30 hover:bg-black/50 text-white rounded-full flex items-center justify-center transition-[opacity,transform] duration-200 hover:scale-110 opacity-0 group-hover:opacity-100 will-change-transform"
                 aria-label="Previous slide"
@@ -154,6 +155,7 @@ export default function Carousel() {
                 <FontAwesomeIcon icon={faChevronLeft} />
             </button>
             <button
+                type="button"
                 onClick={next}
                 className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 bg-black/30 hover:bg-black/50 text-white rounded-full flex items-center justify-center transition-[opacity,transform] duration-200 hover:scale-110 opacity-0 group-hover:opacity-100 will-change-transform"
                 aria-label="Next slide"
@@ -165,6 +167,7 @@ export default function Carousel() {
                 {slides.map((_, index) => (
                     <button
                         key={index}
+                        type="button"
                         onClick={() => goTo(index)}
                         className={`rounded-full transition-all duration-300 ${
                             index === currentSlide

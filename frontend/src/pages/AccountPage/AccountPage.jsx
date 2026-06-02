@@ -37,7 +37,7 @@ export default function AccountPage() {
 
                 <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
                     <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 rounded-full bg-amber-600 flex items-center justify-center text-white text-2xl font-bold">
+                        <div className="size-16 rounded-full bg-amber-600 flex items-center justify-center text-white text-2xl font-bold">
                             {userInfo.name?.charAt(0).toUpperCase()}
                         </div>
                         <div>
@@ -51,12 +51,27 @@ export default function AccountPage() {
                     {[
                         { icon: faUser, title: "Thông tin tài khoản", desc: "Xem và chỉnh sửa thông tin cá nhân", link: "/account" },
                         { icon: faFileInvoice, title: "Đơn hàng của tôi", desc: "Theo dõi lịch sử đơn hàng", link: "/orders" },
-                        { icon: faSignOutAlt, title: "Đăng xuất", desc: "Đăng xuất khỏi tài khoản", link: "#", onClick: handleLogout, danger: true },
-                    ].map((item) => (
-                        <div key={item.title} onClick={item.onClick} className="cursor-pointer bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition">
-                            <div className={`w-12 h-12 rounded-lg ${item.danger ? "bg-red-100" : "bg-amber-100"} flex items-center justify-center mb-4`}>
-                                <FontAwesomeIcon icon={item.icon} className={`text-xl ${item.danger ? "text-red-600" : "text-amber-600"}`} />
-                            </div>
+                        { icon: faSignOutAlt, title: "Đăng xuất", desc: "Đăng xuất khỏi tài khoản", onClick: handleLogout, danger: true },
+                    ].map((item) =>
+                        item.link ? (
+                            <Link key={item.title} to={item.link} className="block bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition">
+                                <div className="size-12 rounded-lg bg-amber-100 flex items-center justify-center mb-4">
+                                    <FontAwesomeIcon icon={item.icon} className="text-xl text-amber-600" />
+                                </div>
+                                <h3 className="font-semibold text-gray-900 mb-1">{item.title}</h3>
+                                <p className="text-sm text-gray-500">{item.desc}</p>
+                            </Link>
+                        ) : (
+                            <button key={item.title} type="button" onClick={item.onClick} className="text-left bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition">
+                                <div className="size-12 rounded-lg bg-red-100 flex items-center justify-center mb-4">
+                                    <FontAwesomeIcon icon={item.icon} className="text-xl text-red-600" />
+                                </div>
+                                <h3 className="font-semibold text-gray-900 mb-1">{item.title}</h3>
+                                <p className="text-sm text-gray-500">{item.desc}</p>
+                            </button>
+                        )
+                    )}
+                </div>
                             <h3 className="font-semibold text-gray-900 mb-1">{item.title}</h3>
                             <p className="text-sm text-gray-500">{item.desc}</p>
                         </div>

@@ -11,7 +11,7 @@ export default function Users() {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
+                <div className="animate-spin rounded-full size-12 border-b-2 border-amber-600"></div>
             </div>
         );
     }
@@ -57,7 +57,7 @@ export default function Users() {
                                     <td className="py-3 text-sm text-gray-600">{index + 1}</td>
                                     <td className="py-3">
                                         <div className="flex items-center gap-3">
-                                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-100 text-xs font-semibold text-amber-700">
+                                            <div className="flex size-8 items-center justify-center rounded-full bg-amber-100 text-xs font-semibold text-amber-700">
                                                 {user.name?.charAt(0).toUpperCase()}
                                             </div>
                                             <span className="font-medium text-gray-800">{user.name}</span>

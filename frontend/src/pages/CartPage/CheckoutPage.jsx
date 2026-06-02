@@ -132,7 +132,7 @@ export default function CheckoutPage() {
                         <div className="lg:col-span-2 space-y-6">
                             <div className="bg-white rounded-xl border border-gray-200 p-6">
                                 <div className="flex items-center gap-3 mb-5">
-                                    <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                                    <div className="size-10 bg-amber-100 rounded-full flex items-center justify-center">
                                         <FontAwesomeIcon icon={faMapMarkerAlt} className="text-amber-600" />
                                     </div>
                                     <h2 className="text-lg font-semibold text-gray-900">Thông tin giao hàng</h2>
@@ -182,7 +182,7 @@ export default function CheckoutPage() {
 
                             <div className="bg-white rounded-xl border border-gray-200 p-6">
                                 <div className="flex items-center gap-3 mb-5">
-                                    <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                                    <div className="size-10 bg-amber-100 rounded-full flex items-center justify-center">
                                         <FontAwesomeIcon icon={faCreditCard} className="text-amber-600" />
                                     </div>
                                     <h2 className="text-lg font-semibold text-gray-900">Phương thức thanh toán</h2>
@@ -247,7 +247,7 @@ export default function CheckoutPage() {
                                 <div className="space-y-3 max-h-64 overflow-y-auto">
                                     {cartItems.map((item) => (
                                         <div key={item._id} className="flex gap-3">
-                                            <div className="w-14 h-14 rounded-lg bg-gray-100 overflow-hidden shrink-0">
+                                            <div className="size-14 rounded-lg bg-gray-100 overflow-hidden shrink-0">
                                                 <img
                                                     src={getOptimizedImage(item.images?.[0], 100) || ""}
                                                     alt={item.name}

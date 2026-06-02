@@ -148,7 +148,7 @@ const Header = memo(function Header() {
               <Link to="/wishlist" className="relative group">
                 <FontAwesomeIcon icon={faHeart} className="text-xl text-gray-600 group-hover:text-amber-600 transition" />
                 {wishlistCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] size-4 flex items-center justify-center rounded-full">
                     {wishlistCount}
                   </span>
                 )}
@@ -157,6 +157,7 @@ const Header = memo(function Header() {
               {/* Account Dropdown */}
               <div className="relative" ref={dropdownRef}>
                 <button
+                  type="button"
                   onClick={() => setIsAccountOpen(!isAccountOpen)}
                   className="flex items-center gap-2 text-gray-600 hover:text-amber-600 transition"
                 >
@@ -192,7 +193,7 @@ const Header = memo(function Header() {
                         <Link to="/orders" className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-amber-50 border-t" onClick={() => setIsAccountOpen(false)}>
                           Đơn hàng
                         </Link>
-                        <button onClick={handleLogout} className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-red-600 hover:bg-red-50 border-t">
+                        <button type="button" onClick={handleLogout} className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-red-600 hover:bg-red-50 border-t">
                           Đăng xuất
                           <FontAwesomeIcon icon={faRightFromBracket} />
                         </button>
@@ -206,7 +207,7 @@ const Header = memo(function Header() {
               <Link to="/cart" className="relative group">
                 <FontAwesomeIcon icon={faCartShopping} className="text-xl text-gray-600 group-hover:text-amber-600 transition" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-amber-600 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">
+                  <span className="absolute -top-2 -right-2 bg-amber-600 text-white text-[10px] size-4 flex items-center justify-center rounded-full font-bold">
                     {cartCount}
                   </span>
                 )}
@@ -215,18 +216,18 @@ const Header = memo(function Header() {
 
             {/* Mobile Buttons */}
             <div className="flex lg:hidden items-center gap-3">
-              <button onClick={() => setIsSearchOpen(!isSearchOpen)}>
+              <button type="button" onClick={() => setIsSearchOpen(!isSearchOpen)}>
                 <FontAwesomeIcon icon={faSearch} className="text-xl text-amber-600" />
               </button>
               <Link to="/cart" className="relative">
                 <FontAwesomeIcon icon={faCartShopping} className="text-xl text-gray-700" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-amber-600 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
+                  <span className="absolute -top-2 -right-2 bg-amber-600 text-white text-[10px] size-4 flex items-center justify-center rounded-full">
                     {cartCount}
                   </span>
                 )}
               </Link>
-              <button onClick={() => setIsMobileMenuOpen(true)} className="text-gray-700 text-2xl">
+              <button type="button" onClick={() => setIsMobileMenuOpen(true)} className="text-gray-700 text-2xl">
                 <FontAwesomeIcon icon={faBars} />
               </button>
             </div>
@@ -290,13 +291,13 @@ const Header = memo(function Header() {
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <>
-          <div className="fixed inset-0 bg-black/50 z-[1000]" onClick={() => setIsMobileMenuOpen(false)} />
+          <div className="fixed inset-0 bg-black/50 z-[1000]" onClick={() => setIsMobileMenuOpen(false)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsMobileMenuOpen(false); } }} role="button" tabIndex={0} />
           <div className="fixed top-0 left-0 w-72 h-full bg-white z-[1001] shadow-xl overflow-y-auto">
             <div className="bg-white p-4 flex justify-between items-center">
               <Link to="/" className="shrink-0">
                 <Logo />
               </Link>
-              <button onClick={() => setIsMobileMenuOpen(false)} className="text-white text-xl">
+              <button type="button" onClick={() => setIsMobileMenuOpen(false)} className="text-white text-xl">
                 <FontAwesomeIcon icon={faTimes} />
               </button>
             </div>
@@ -308,7 +309,7 @@ const Header = memo(function Header() {
                 </div>
               ) : (
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-amber-600 rounded-full flex items-center justify-center text-white font-bold">
+                  <div className="size-10 bg-amber-600 rounded-full flex items-center justify-center text-white font-bold">
                     {userInfo?.name?.charAt(0)}
                   </div>
                   <div>
@@ -323,7 +324,7 @@ const Header = memo(function Header() {
                 <div key={item.name}>
                   {item.hasDropdown ? (
                     <>
-                      <button onClick={() => setOpenDropdown(openDropdown === item.name ? null : item.name)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-gray-50">
+                      <button type="button" onClick={() => setOpenDropdown(openDropdown === item.name ? null : item.name)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-gray-50">
                         <span>{item.name}</span>
                         <FontAwesomeIcon icon={faChevronDown} className={`text-xs transition-transform ${openDropdown === item.name ? 'rotate-180' : ''}`} />
                       </button>

@@ -27,7 +27,7 @@ export default function CourseDetailPage() {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600" />
+                <div className="animate-spin rounded-full size-12 border-b-2 border-amber-600" />
             </div>
         );
     }
@@ -132,6 +132,7 @@ export default function CourseDetailPage() {
 
                     <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
                         <button
+                            type="button"
                             onClick={() => setShowLessons(!showLessons)}
                             className="w-full flex items-center justify-between p-4 border-b border-gray-100 lg:cursor-default"
                         >
@@ -151,6 +152,7 @@ export default function CourseDetailPage() {
                                         {lessons.map((l, idx) => (
                                             <button
                                                 key={l._id || idx}
+                                                type="button"
                                                 onClick={() => setCurrentLesson(idx)}
                                                 className={`w-full text-left p-3 rounded-xl transition flex items-start gap-3 ${
                                                     currentLesson === idx

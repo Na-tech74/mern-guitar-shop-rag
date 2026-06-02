@@ -85,6 +85,7 @@ export default function Orders() {
                 {statCards.map((card) => (
                     <button
                         key={card.key}
+                        type="button"
                         onClick={() => handleStatusFilterChange(card.key)}
                         className={`rounded-xl p-4 text-center transition border-2 ${
                             statusFilter === card.key
@@ -118,6 +119,7 @@ export default function Orders() {
                             {STATUS_LIST.map((status) => (
                                 <button
                                     key={status}
+                                    type="button"
                                     onClick={() => handleStatusFilterChange(status)}
                                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
                                         statusFilter === status
@@ -134,11 +136,11 @@ export default function Orders() {
 
                 {loading ? (
                     <div className="flex items-center justify-center h-64">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
+                        <div className="animate-spin rounded-full size-12 border-b-2 border-amber-600"></div>
                     </div>
                 ) : orders.length === 0 ? (
                     <div className="text-center py-16">
-                        <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                        <div className="size-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
                             <FontAwesomeIcon icon={faBox} className="text-2xl text-gray-400" />
                         </div>
                         <p className="text-gray-500 mb-1">Không có đơn hàng nào</p>
@@ -180,7 +182,7 @@ export default function Orders() {
                                                     {order.items?.slice(0, 3).map((item, idx) => (
                                                         <div key={idx} className="flex items-center gap-1.5 bg-gray-50 rounded-lg px-2 py-1">
                                                             {item.image ? (
-                                                                <img src={item.image} alt="" className="w-5 h-5 rounded object-cover" />
+                                                                <img src={item.image} alt="" className="size-5 rounded object-cover" />
                                                             ) : (
                                                                 <FontAwesomeIcon icon={faImage} className="text-gray-400 text-xs" />
                                                             )}
@@ -284,13 +286,13 @@ export default function Orders() {
             </div>
 
             {selectedOrder && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setSelectedOrder(null)}>
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setSelectedOrder(null)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedOrder(null); } }} role="button" tabIndex={0}>
                     <div className="w-full max-w-2xl rounded-xl bg-white shadow-xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
                         <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
                             <h2 className="text-lg font-semibold text-gray-800">
                                 Chi tiết đơn hàng #{selectedOrder._id.slice(-8).toUpperCase()}
                             </h2>
-                            <button onClick={() => setSelectedOrder(null)} className="text-gray-400 hover:text-gray-600">
+                            <button type="button" onClick={() => setSelectedOrder(null)} className="text-gray-400 hover:text-gray-600">
                                 <FontAwesomeIcon icon={faTimes} />
                             </button>
                         </div>
@@ -356,7 +358,7 @@ export default function Orders() {
                                 <div className="space-y-2">
                                     {selectedOrder.items?.map((item, idx) => (
                                         <div key={idx} className="flex items-center gap-3 bg-gray-50 rounded-xl p-3">
-                                            <div className="w-12 h-12 rounded-lg bg-gray-200 overflow-hidden shrink-0 flex items-center justify-center">
+                                            <div className="size-12 rounded-lg bg-gray-200 overflow-hidden shrink-0 flex items-center justify-center">
                                                 {item.image ? (
                                                     <img src={item.image} alt={item.product} className="w-full h-full object-cover" loading="lazy" />
                                                 ) : (
@@ -415,7 +417,7 @@ export default function Orders() {
             )}
 
             {confirmDelete && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setConfirmDelete(null)}>
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setConfirmDelete(null)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setConfirmDelete(null); } }} role="button" tabIndex={0}>
                     <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl" onClick={e => e.stopPropagation()}>
                         <h3 className="text-lg font-semibold text-gray-800 mb-2">Xóa đơn hàng</h3>
                         <p className="text-sm text-gray-500 mb-6">Bạn có chắc muốn xóa đơn hàng này? Hành động này không thể hoàn tác.</p>

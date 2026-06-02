@@ -42,7 +42,7 @@ export default function FeaturesBanner() {
                         >
 
                             {/* Icon */}
-                            <div className="w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <div className="size-14 rounded-xl flex items-center justify-center flex-shrink-0">
                                 <FontAwesomeIcon
                                     icon={item.icon}
                                     className="text-xl"

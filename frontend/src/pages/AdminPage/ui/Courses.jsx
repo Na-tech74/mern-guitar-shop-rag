@@ -20,7 +20,7 @@ export default function Courses() {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
+                <div className="animate-spin rounded-full size-12 border-b-2 border-amber-600"></div>
             </div>
         );
     }
@@ -70,7 +70,7 @@ export default function Courses() {
                                     <tr key={course._id} className="border-b border-gray-50 hover:bg-gray-50/50">
                                         <td className="py-3 px-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-12 h-12 rounded-lg bg-gray-100 overflow-hidden shrink-0 flex items-center justify-center">
+                                                <div className="size-12 rounded-lg bg-gray-100 overflow-hidden shrink-0 flex items-center justify-center">
                                                     {course.thumbnail ? (
                                                         <img src={course.thumbnail} alt="" className="w-full h-full object-cover" loading="lazy" />
                                                     ) : (
@@ -111,13 +111,13 @@ export default function Courses() {
             )}
 
             {showForm && (
-                <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 p-4 overflow-y-auto" onClick={() => resetForm()}>
+                <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 p-4 overflow-y-auto" onClick={() => resetForm()} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); resetForm(); } }} role="button" tabIndex={0}>
                     <div className="w-full max-w-3xl rounded-xl bg-white shadow-xl my-8" onClick={e => e.stopPropagation()}>
                         <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between rounded-t-xl">
                             <h2 className="text-lg font-semibold text-gray-800">
                                 {editingCourse ? "Cập nhật khóa học" : "Thêm khóa học mới"}
                             </h2>
-                            <button onClick={resetForm} className="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+                            <button type="button" onClick={resetForm} className="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
                         </div>
 
                         <form onSubmit={handleSubmit} className="p-6 space-y-6">
@@ -156,7 +156,7 @@ export default function Courses() {
                                             type="checkbox"
                                             checked={formData.isPublished}
                                             onChange={e => setFormData(prev => ({ ...prev, isPublished: e.target.checked }))}
-                                            className="w-4 h-4 text-amber-600 focus:ring-amber-500 rounded"
+                                            className="size-4 text-amber-600 focus:ring-amber-500 rounded"
                                         />
                                         <span className="text-sm text-gray-700">Xuất bản</span>
                                     </label>

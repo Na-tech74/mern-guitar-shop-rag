@@ -16,7 +16,7 @@ export default function Products() {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
+                <div className="animate-spin rounded-full size-12 border-b-2 border-amber-600"></div>
             </div>
         );
     }
@@ -65,7 +65,7 @@ export default function Products() {
                             {filteredProducts.map((product) => (
                                 <tr key={product._id} className="border-b border-gray-100 last:border-0">
                                     <td className="py-3">
-                                        <div className="h-10 w-10 rounded-lg bg-gray-100 overflow-hidden">
+                                        <div className="size-10 rounded-lg bg-gray-100 overflow-hidden">
                                             {product.images?.[0] ? (
                                                 <img src={product.images[0]} alt={product.name} className="h-full w-full object-cover" />
                                             ) : (
@@ -188,14 +188,14 @@ export default function Products() {
                                 {formData.images.length > 0 && (
                                     <div className="mt-2 flex gap-2 flex-wrap">
                                         {formData.images.map((img, idx) => (
-                                            <div key={idx} className="relative w-20 h-20 rounded-lg overflow-hidden border">
+                                            <div key={idx} className="relative size-20 rounded-lg overflow-hidden border">
                                                 <img src={img} alt="" className="w-full h-full object-cover" />
                                                 <Button 
                                                     variant="danger" 
                                                     size="sm"
                                                     type="button"
                                                     onClick={() => removeImage(idx)}
-                                                    className="absolute top-0 right-0 w-5 h-5 !p-0 flex items-center justify-center"
+                                                    className="absolute top-0 right-0 size-5 !p-0 flex items-center justify-center"
                                                 >
                                                     ×
                                                 </Button>

@@ -16,7 +16,7 @@ export default function Categories() {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
+                <div className="animate-spin rounded-full size-12 border-b-2 border-amber-600"></div>
             </div>
         );
     }
@@ -52,7 +52,7 @@ export default function Categories() {
                     {filteredCategories.map((category) => (
                         <div key={category._id} className="rounded-xl border border-gray-200 p-4 transition-shadow hover:shadow-md">
                             <div className="flex gap-4">
-                                <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                                <div className="size-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
                                     {category.image ? (
                                         <img src={category.image} alt={category.name} className="w-full h-full object-cover" />
                                     ) : (
@@ -107,7 +107,7 @@ export default function Categories() {
                             <div>
                                 <label className="mb-1 block text-sm font-medium text-gray-700">Hình ảnh</label>
                                 <div className="flex items-center gap-4">
-                                    <div className="w-20 h-20 rounded-lg border-2 border-dashed border-gray-300 overflow-hidden bg-gray-50 flex items-center justify-center">
+                                    <div className="size-20 rounded-lg border-2 border-dashed border-gray-300 overflow-hidden bg-gray-50 flex items-center justify-center">
                                         {imagePreview ? (
                                             <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                                         ) : (

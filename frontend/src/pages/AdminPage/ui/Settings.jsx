@@ -26,6 +26,7 @@ export default function Settings() {
                         {tabs.map((tab) => (
                             <button
                                 key={tab.id}
+                                type="button"
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all ${
                                     activeTab === tab.id
@@ -97,7 +98,7 @@ export default function Settings() {
                                             ...formData,
                                             notifications: { ...formData.notifications, email: e.target.checked }
                                         })}
-                                        className="h-4 w-4 rounded border-gray-300 text-amber-600"
+                                        className="size-4 rounded border-gray-300 text-amber-600"
                                     />
                                     <span className="text-sm text-gray-700">Thông báo qua email</span>
                                 </label>
@@ -109,7 +110,7 @@ export default function Settings() {
                                             ...formData,
                                             notifications: { ...formData.notifications, order: e.target.checked }
                                         })}
-                                        className="h-4 w-4 rounded border-gray-300 text-amber-600"
+                                        className="size-4 rounded border-gray-300 text-amber-600"
                                     />
                                     <span className="text-sm text-gray-700">Thông báo đơn hàng mới</span>
                                 </label>
@@ -121,7 +122,7 @@ export default function Settings() {
                                             ...formData,
                                             notifications: { ...formData.notifications, promotion: e.target.checked }
                                         })}
-                                        className="h-4 w-4 rounded border-gray-300 text-amber-600"
+                                        className="size-4 rounded border-gray-300 text-amber-600"
                                     />
                                     <span className="text-sm text-gray-700">Khuyến mãi</span>
                                 </label>

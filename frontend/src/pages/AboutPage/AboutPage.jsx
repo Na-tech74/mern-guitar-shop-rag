@@ -52,7 +52,7 @@ export default function AboutPage() {
                         { icon: faUsers, title: "Đội ngũ chuyên nghiệp", desc: "Tư vấn viên giàu kinh nghiệm, sẵn sàng hỗ trợ 24/7" },
                     ].map((item) => (
                         <div key={item.title} className="text-center p-8 rounded-xl bg-white border border-gray-200 shadow-sm">
-                            <div className="w-16 h-16 mx-auto mb-4 rounded-full  flex items-center justify-center">
+                            <div className="size-16 mx-auto mb-4 rounded-full  flex items-center justify-center">
                                 <FontAwesomeIcon icon={item.icon} className="text-2xl text-black" />
                             </div>
                             <h3 className="text-lg font-semibold text-gray-900 mb-2">{item.title}</h3>

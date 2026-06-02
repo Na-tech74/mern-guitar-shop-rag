@@ -73,7 +73,7 @@ export default function ProductDetailPage() {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
+                <div className="animate-spin rounded-full size-12 border-b-2 border-amber-600"></div>
             </div>
         );
     }
@@ -124,6 +124,7 @@ export default function ProductDetailPage() {
                             {images.map((img, idx) => (
                                 <button
                                     key={idx}
+                                    type="button"
                                     onClick={() => setSelectedImage(idx)}
                                     className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition ${
                                         selectedImage === idx ? "border-amber-500" : "border-transparent hover:border-gray-300"
@@ -176,15 +177,15 @@ export default function ProductDetailPage() {
 
                     <div className="flex items-center gap-4">
                         <div className="flex items-center border border-gray-200 rounded-lg">
-                            <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-3 hover:bg-gray-50">
+                            <button type="button" onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-3 hover:bg-gray-50">
                                 <FontAwesomeIcon icon={faMinus} />
                             </button>
                             <span className="px-4 font-medium">{quantity}</span>
-                            <button onClick={() => setQuantity(Math.min(product.stock || 1, quantity + 1))} className="p-3 hover:bg-gray-50">
+                            <button type="button" onClick={() => setQuantity(Math.min(product.stock || 1, quantity + 1))} className="p-3 hover:bg-gray-50">
                                 <FontAwesomeIcon icon={faPlus} />
                             </button>
                         </div>
-                        <button onClick={addToCart} disabled={product.stock === 0} className={`flex-1 py-3 rounded-lg font-medium transition flex items-center justify-center gap-2 ${
+                        <button type="button" onClick={addToCart} disabled={product.stock === 0} className={`flex-1 py-3 rounded-lg font-medium transition flex items-center justify-center gap-2 ${
                             product.stock === 0
                                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                                 : addedToCart
@@ -194,7 +195,7 @@ export default function ProductDetailPage() {
                             <FontAwesomeIcon icon={addedToCart ? faCheckCircle : faShoppingCart} />
                             {product.stock === 0 ? "Hết hàng" : addedToCart ? "Đã thêm" : "Thêm vào giỏ"}
                         </button>
-                        <button onClick={toggleWishlist} className={`p-3 border rounded-lg transition ${
+                        <button type="button" onClick={toggleWishlist} className={`p-3 border rounded-lg transition ${
                             inWishlist
                                 ? "bg-red-50 border-red-200 text-red-500"
                                 : "border-gray-200 hover:bg-gray-50 text-gray-600 hover:text-red-500"

@@ -160,7 +160,7 @@ const Footer = memo(function Footer() {
             <ul className="space-y-3">
               {contactInfo.map(({ icon, text }) => (
                 <li key={text} className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg  flex items-center justify-center text-black shrink-0">
+                  <div className="size-8 rounded-lg  flex items-center justify-center text-black shrink-0">
                     <FontAwesomeIcon icon={icon} className="text-sm" />
                   </div>
 

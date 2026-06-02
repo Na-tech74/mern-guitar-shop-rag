@@ -20,7 +20,7 @@ export default function OrderSuccessPage() {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12">
             <div className="max-w-lg mx-auto px-4 text-center">
                 <div className="bg-white rounded-2xl border border-gray-200 p-8 sm:p-12 shadow-sm">
-                    <div className="w-20 h-20 mx-auto mb-6 bg-green-100 rounded-full flex items-center justify-center">
+                    <div className="size-20 mx-auto mb-6 bg-green-100 rounded-full flex items-center justify-center">
                         <FontAwesomeIcon icon={faCheckCircle} className="text-4xl text-green-500" />
                     </div>
 

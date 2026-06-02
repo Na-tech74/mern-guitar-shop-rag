@@ -16,8 +16,8 @@ export default function CTASection() {
                 <source src={ctaVideo} type="video/mp4" />
             </video>
             <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
-            <div className="absolute top-10 -left-20 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl" />
-            <div className="absolute -bottom-10 -right-20 w-96 h-96 bg-amber-400/5 rounded-full blur-3xl" />
+            <div className="absolute top-10 -left-20 size-80 bg-amber-500/10 rounded-full blur-3xl" />
+            <div className="absolute -bottom-10 -right-20 size-96 bg-amber-400/5 rounded-full blur-3xl" />
             <div className="relative max-w-4xl mx-auto px-4 text-center">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full mb-6 ring-1 ring-white/10">
                     <FontAwesomeIcon icon={faHeadset} className="text-amber-400 text-sm" />

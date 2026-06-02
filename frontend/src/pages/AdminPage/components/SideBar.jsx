@@ -37,6 +37,9 @@ export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }) {
             {isSidebarOpen && (
                 <div
                     onClick={() => setIsSidebarOpen(false)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsSidebarOpen(false); } }}
+                    role="button"
+                    tabIndex={0}
                     className="fixed inset-0 z-40  lg:hidden"
                 />
             )}
@@ -66,6 +69,7 @@ export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }) {
                     </div>
 
                     <button
+                        type="button"
                         onClick={() => setIsSidebarOpen(false)}
                         className="lg:hidden"
                     >
@@ -118,7 +122,7 @@ export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }) {
 
                     <div className="flex items-center gap-3 rounded-xl p-2 hover:bg-gray-100">
 
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 text-sm font-semibold text-green-700">
+                        <div className="flex size-10 items-center justify-center rounded-full bg-green-100 text-sm font-semibold text-green-700">
                             {userInfo?.name?.charAt(0).toUpperCase()}
                         </div>
 
@@ -132,7 +136,7 @@ export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }) {
                             </p>
                         </div>
 
-                        <button>
+                        <button type="button">
                             <FontAwesomeIcon
                                 icon={faEllipsisVertical}
                                 className="text-gray-400"
