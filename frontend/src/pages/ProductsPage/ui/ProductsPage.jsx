@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThLarge, faList, faShoppingCart, faImage, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -6,10 +6,10 @@ import useProducts from "../hooks/useProducts";
 import { API } from "../../../api/axiosClient";
 import { getOptimizedImage } from "../../../helpers/format";
 import Carousel from "../../../components/Carousel";
-
-const formatPrice = (price) => {
-    return new Intl.NumberFormat("vi-VN").format(price) + " đ";
-};
+import Skeleton from "../../../components/Skeleton";
+import Pagination from "../../../components/Pagination";
+import useCart from "../hooks/useCart";
+import { formatCurrency } from "../../../helpers/format";
 
 export default function ProductsPage() {
     const { products, loading, pagination, fetchProducts } = useProducts();
@@ -17,6 +17,7 @@ export default function ProductsPage() {
     const [viewMode, setViewMode] = useState("grid");
     const [sortBy, setSortBy] = useState("default");
     const [selectedCategory, setSelectedCategory] = useState("");
+    const { addToCart, addedMap } = useCart();
 
     useEffect(() => {
         API.get("/categories").then((res) => {
@@ -25,13 +26,17 @@ export default function ProductsPage() {
         }).catch(() => {});
     }, []);
 
-    useEffect(() => {
-        const params = {};
+    const getParams = useCallback((page) => {
+        const params = { page };
         if (sortBy === "price-asc") params.sortBy = "priceAsc";
         else if (sortBy === "price-desc") params.sortBy = "priceDESC";
         else if (sortBy === "name") params.sortBy = "name";
         if (selectedCategory) params.category = selectedCategory;
-        fetchProducts(params);
+        return params;
+    }, [sortBy, selectedCategory]);
+
+    useEffect(() => {
+        fetchProducts(getParams(1));
     }, [sortBy, selectedCategory]);
 
     return (
@@ -126,15 +131,8 @@ export default function ProductsPage() {
 
                     {/* Products Grid */}
                     <div className="flex-1">
-                        {loading ? (
-                            <div className="flex items-center justify-center min-h-[400px]">
-                                <div className="animate-spin rounded-full size-12 border-b-2 border-amber-600"></div>
-                            </div>
-                        ) : products.length === 0 ? (
-                            <div className="text-center py-16 text-gray-500">
-                                <FontAwesomeIcon icon={faImage} className="text-4xl mb-4 text-gray-300" />
-                                <p>Không tìm thấy sản phẩm</p>
-                            </div>
+                        {loading || products.length === 0 ? (
+                            <Skeleton.ProductCard count={6} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" />
                         ) : (
                             <div className={viewMode === "grid" ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" : "space-y-4"}>
                                 {products.map((product) => (
@@ -178,15 +176,19 @@ export default function ProductsPage() {
                                             <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">{product.name}</h3>
                                             <div className="mt-auto">
                                                 <div className="flex items-center gap-2 mb-3">
-                                                    <span className="text-xl font-bold text-amber-600">{formatPrice(product.price)}</span>
+                                                    <span className="text-xl font-bold text-amber-600">{formatCurrency(product.price)}</span>
                                                 </div>
                                                 <button
                                                     type="button"
-                                                    onClick={(e) => { e.preventDefault(); /* add to cart */ }}
-                                                    className="w-full py-2 bg-amber-600 hover:bg-amber-600 text-white rounded-lg text-sm font-medium transition flex items-center justify-center gap-2"
+                                                    onClick={(e) => addToCart(product, e)}
+                                                    className={`w-full py-2 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2 ${
+                                                        addedMap[product._id]
+                                                            ? "bg-amber-700 text-white"
+                                                            : "bg-amber-600 hover:bg-amber-500 text-white"
+                                                    }`}
                                                 >
                                                     <FontAwesomeIcon icon={faShoppingCart} />
-                                                    Thêm vào giỏ
+                                                    {addedMap[product._id] ? "Đã thêm" : "Thêm vào giỏ"}
                                                 </button>
                                             </div>
                                         </div>
@@ -195,24 +197,7 @@ export default function ProductsPage() {
                             </div>
                         )}
 
-                        {/* Pagination */}
-                        {!loading && pagination.totalPages > 1 && (
-                            <div className="flex justify-center gap-2 mt-8">
-                                {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((page) => (
-                                    <button
-                                        key={page}
-                                        type="button"
-                                        onClick={() => fetchProducts({ page, ...(selectedCategory ? { category: selectedCategory } : {}), ...(sortBy !== "default" ? { sortBy } : {}) })}
-                                        className={`px-4 py-2 rounded-lg text-sm ${page === pagination.page
-                                                ? "bg-amber-600 text-white"
-                                                : "bg-white border border-gray-200 text-gray-600 hover:bg-amber-50"
-                                            }`}
-                                    >
-                                        {page}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
+                        <Pagination page={pagination.page} totalPages={pagination.totalPages} onChange={(p) => fetchProducts(getParams(p))} />
                     </div>
                 </div>
             </div>

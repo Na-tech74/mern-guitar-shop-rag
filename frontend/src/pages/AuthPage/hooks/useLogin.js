@@ -51,7 +51,7 @@ export default function useLogin() {
                 accessToken: data.accessToken
             }));
 
-            const redirect = searchParams.get("redirect") || "/";
+            const redirect = searchParams.get("redirect") || (data.user.role === "admin" ? "/admin" : "/");
             navigate(redirect);
 
             setForm({ email: "", password: "" });

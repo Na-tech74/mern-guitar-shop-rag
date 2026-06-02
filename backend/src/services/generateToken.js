@@ -8,7 +8,7 @@
 import jwt from "jsonwebtoken";
 
 /**
- * Tạo access token (thời hạn 15 phút)
+ * Tạo access token (thời hạn 24 giờ)
  * @param {string} id - User ID (MongoDB _id)
  * @returns {string} JWT access token
  */
@@ -17,7 +17,7 @@ export const generateAccessToken = (id) => {
         { id },
         process.env.JWT_ACCESS_SECRET,
         {
-            expiresIn: "15m"
+            expiresIn: "24h"
         }
     );
 };

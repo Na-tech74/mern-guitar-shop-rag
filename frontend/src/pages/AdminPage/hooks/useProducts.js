@@ -26,7 +26,7 @@ export const useProducts = () => {
             setLoading(true);
             setError(null);
             const [productsRes, categoriesRes] = await Promise.all([
-                productAPI.getAll(),
+                productAPI.getAll({ limit: 9999 }),
                 categoryAPI.getAll().catch(() => ({ data: { data: { categories: [] } } }))
             ]);
             setProducts(productsRes.data?.data?.products || []);

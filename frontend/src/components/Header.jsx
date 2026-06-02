@@ -1,4 +1,4 @@
-import { memo, useState, useEffect, useRef } from 'react';
+import { memo, useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -12,19 +12,21 @@ const menuItems = [
   { name: 'TRANG CHỦ', path: '/', hasDropdown: false },
   {
     name: 'SẢN PHẨM', path: '/products', hasDropdown: true, dropdownItems: [
-      { name: 'Guitar Acoustic', path: '/products?category=acoustic' },
-      { name: 'Guitar Classic', path: '/products?category=classic' },
-      { name: 'Piano', path: '/products?category=piano' },
-      { name: 'Ukulele', path: '/products?category=ukulele' },
+      { name: 'Guitar Acoustic', hash: 'guitar-acoustic' },
+      { name: 'Guitar Classic', hash: 'guitar-classic' },
+      { name: 'Piano', hash: 'piano' },
+      { name: 'Ukulele', hash: 'ukulele' },
+      { name: 'Tất cả sản phẩm', path: '/products' },
     ]
   },
   { name: 'KHÓA HỌC', path: '/courses', hasDropdown: false },
   { name: 'GIỚI THIỆU', path: '/about', hasDropdown: false },
-   { name: 'BÀI VIẾT', path: '/blog', hasDropdown: false },
+  { name: 'BÀI VIẾT', path: '/blog', hasDropdown: false },
   { name: 'LIÊN HỆ', path: '/contact', hasDropdown: false },
 ];
 
 const Header = memo(function Header() {
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -32,6 +34,7 @@ const Header = memo(function Header() {
   const [cartCount, setCartCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
   const [openDropdown, setOpenDropdown] = useState(null);
+  const closeTimeoutRef = useRef(null);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
@@ -84,6 +87,18 @@ const Header = memo(function Header() {
     setIsAccountOpen(false);
     navigate("/");
   };
+
+  const scrollToCategory = useCallback((slug) => {
+    navigate("/");
+    let retries = 10;
+    const interval = setInterval(() => {
+      const el = document.getElementById(`category-${slug}`);
+      if (el || --retries <= 0) {
+        clearInterval(interval);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 300);
+  }, [navigate]);
 
   return (
     <>
@@ -260,20 +275,43 @@ const Header = memo(function Header() {
               <ul className="flex">
                 {menuItems.map((item) => (
                   <li key={item.name} className="relative"
-                    onMouseEnter={() => item.hasDropdown && setOpenDropdown(item.name)}
-                    onMouseLeave={() => setOpenDropdown(null)}>
+                    onMouseEnter={() => {
+                      if (closeTimeoutRef.current) {
+                        clearTimeout(closeTimeoutRef.current);
+                        closeTimeoutRef.current = null;
+                      }
+                      setOpenDropdown(item.name);
+                    }}
+                    onMouseLeave={() => {
+                      closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 300);
+                    }}>
                     <Link to={item.path} className="flex items-center gap-1 text-gray-600 hover:text-amber-600 px-4 py-3 text-sm font-medium transition">
                       <span>{item.icon}</span>
                       {item.name}
                       {item.hasDropdown && <FontAwesomeIcon icon={faChevronDown} className="text-[10px]" />}
                     </Link>
                     {item.hasDropdown && openDropdown === item.name && (
-                      <div className="absolute top-full left-0 w-56 bg-white rounded-lg shadow-lg border border-gray-100 z-50 py-2">
-                        {item.dropdownItems.map((subItem) => (
-                          <Link key={subItem.name} to={subItem.path} className="block px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">
-                            {subItem.name}
-                          </Link>
-                        ))}
+                      <div className="absolute top-full left-0 w-56 bg-white rounded-lg shadow-lg border border-gray-100 z-50 py-2"
+                        onMouseEnter={() => {
+                          if (closeTimeoutRef.current) {
+                            clearTimeout(closeTimeoutRef.current);
+                            closeTimeoutRef.current = null;
+                          }
+                        }}
+                        onMouseLeave={() => {
+                          closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 300);
+                        }}>
+                        {item.dropdownItems.map((subItem) =>
+                          subItem.hash ? (
+                            <button key={subItem.name} type="button" onClick={() => { setOpenDropdown(null); scrollToCategory(subItem.hash); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">
+                              {subItem.name}
+                            </button>
+                          ) : (
+                            <Link key={subItem.name} to={subItem.path} className="block px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">
+                              {subItem.name}
+                            </Link>
+                          )
+                        )}
                       </div>
                     )}
                   </li>
@@ -330,11 +368,17 @@ const Header = memo(function Header() {
                       </button>
                       {openDropdown === item.name && (
                         <div className="bg-gray-50 pl-4">
-                          {item.dropdownItems.map((subItem) => (
-                            <Link key={subItem.name} to={subItem.path} className="block px-4 py-2 text-sm text-gray-600" onClick={() => setIsMobileMenuOpen(false)}>
-                              {subItem.name}
-                            </Link>
-                          ))}
+                          {item.dropdownItems.map((subItem) =>
+                            subItem.hash ? (
+                              <button key={subItem.name} type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory(subItem.hash); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-amber-600">
+                                {subItem.name}
+                              </button>
+                            ) : (
+                              <Link key={subItem.name} to={subItem.path} className="block px-4 py-2 text-sm text-gray-600 hover:text-amber-600" onClick={() => setIsMobileMenuOpen(false)}>
+                                {subItem.name}
+                              </Link>
+                            )
+                          )}
                         </div>
                       )}
                     </>

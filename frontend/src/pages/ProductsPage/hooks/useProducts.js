@@ -3,7 +3,7 @@ import { productAPI } from "../api/productAPI";
 
 export default function useProducts() {
     const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
 
     const fetchProducts = async (params = {}) => {

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGuitar } from "@fortawesome/free-solid-svg-icons";
+import Skeleton from "../../../components/Skeleton";
 const defaultImages = {
     "guitar-acoustic": "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=400&q=80",
     "guitar-classic": "https://images.unsplash.com/photo-1550291652-6ea9114a47b1?w=400&q=80",
@@ -20,17 +21,7 @@ export default function CategoriesSection({ categories }) {
                     <p className="text-gray-500">Lựa chọn danh mục phù hợp với nhu cầu của bạn</p>
                 </div>
                 {categories.length === 0 ? (
-                    <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-                        {[...Array(6)].map((_, i) => (
-                            <div key={i} className="bg-gray-100 rounded-xl animate-pulse overflow-hidden">
-                                <div className="h-40 bg-gray-200" />
-                                <div className="p-4 space-y-2">
-                                    <div className="h-4 bg-gray-200 rounded w-2/3 mx-auto" />
-                                    <div className="h-3 bg-gray-200 rounded w-1/2 mx-auto" />
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                    <Skeleton.CategoryCard count={6} />
                 ) : (
                     <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
                         {categories.slice(0,6).map((category) => {

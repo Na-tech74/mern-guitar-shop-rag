@@ -3,43 +3,23 @@ import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faMinus, faPlus, faShoppingCart, faStar, faTruck, faShieldAlt, faUndo, faImage, faCheckCircle, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { productAPI } from "../api/productAPI";
-import { getOptimizedImage } from "../../../helpers/format";
-
-const formatPrice = (price) => new Intl.NumberFormat("vi-VN").format(price) + " đ";
+import { getOptimizedImage, formatCurrency } from "../../../helpers/format";
+import Skeleton from "../../../components/Skeleton";
+import useCart from "../hooks/useCart";
 
 export default function ProductDetailPage() {
     const { id } = useParams();
     const [product, setProduct] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loaded, setLoaded] = useState(false);
     const [selectedImage, setSelectedImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
-    const [addedToCart, setAddedToCart] = useState(false);
+    const { addToCart, addedMap } = useCart();
     const [inWishlist, setInWishlist] = useState(false);
 
     useEffect(() => {
         const wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
         setInWishlist(wishlist.some(item => item._id === id));
     }, [id]);
-
-    const addToCart = () => {
-        const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-        const existing = cart.find(item => item._id === id);
-        if (existing) {
-            existing.quantity += quantity;
-        } else {
-            cart.push({
-                _id: product._id,
-                name: product.name,
-                price: product.price,
-                images: product.images,
-                quantity,
-            });
-        }
-        localStorage.setItem("cart", JSON.stringify(cart));
-        window.dispatchEvent(new Event("cart-updated"));
-        setAddedToCart(true);
-        setTimeout(() => setAddedToCart(false), 2000);
-    };
 
     const toggleWishlist = () => {
         const wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
@@ -63,19 +43,15 @@ export default function ProductDetailPage() {
     useEffect(() => {
         productAPI.getById(id)
             .then((res) => {
-                setProduct(res.data?.data?.product);
+                setProduct(res.data?.data?.product ?? null);
                 setSelectedImage(0);
             })
             .catch(() => {})
-            .finally(() => setLoading(false));
+            .finally(() => setLoaded(true));
     }, [id]);
 
-    if (loading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full size-12 border-b-2 border-amber-600"></div>
-            </div>
-        );
+    if (!loaded) {
+        return <Skeleton.ProductDetail />;
     }
 
     if (!product) {
@@ -146,8 +122,13 @@ export default function ProductDetailPage() {
                     </div>
 
                     <div className="bg-amber-50 rounded-xl p-6">
-                        <div className="flex items-baseline gap-3 mb-2">
-                            <span className="text-3xl font-bold text-amber-600">{formatPrice(product.price)}</span>
+                        <div className="flex items-baseline gap-3">
+                            <span className="text-3xl font-bold text-amber-600">{formatCurrency(product.price * quantity)}</span>
+                            {quantity > 1 && (
+                                <span className="text-sm text-gray-500">
+                                    ({formatCurrency(product.price)} × {quantity})
+                                </span>
+                            )}
                         </div>
                     </div>
 
@@ -185,15 +166,15 @@ export default function ProductDetailPage() {
                                 <FontAwesomeIcon icon={faPlus} />
                             </button>
                         </div>
-                        <button type="button" onClick={addToCart} disabled={product.stock === 0} className={`flex-1 py-3 rounded-lg font-medium transition flex items-center justify-center gap-2 ${
+                        <button type="button" onClick={() => addToCart(product, quantity)} disabled={product.stock === 0} className={`flex-1 py-3 rounded-lg font-medium transition flex items-center justify-center gap-2 ${
                             product.stock === 0
                                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                                : addedToCart
+                                : addedMap[product._id]
 ? "bg-amber-700 text-white"
                                 : "bg-amber-600 hover:bg-amber-500 text-white"
                         }`}>
-                            <FontAwesomeIcon icon={addedToCart ? faCheckCircle : faShoppingCart} />
-                            {product.stock === 0 ? "Hết hàng" : addedToCart ? "Đã thêm" : "Thêm vào giỏ"}
+                            <FontAwesomeIcon icon={addedMap[product._id] ? faCheckCircle : faShoppingCart} />
+                            {product.stock === 0 ? "Hết hàng" : addedMap[product._id] ? "Đã thêm" : "Thêm vào giỏ"}
                         </button>
                         <button type="button" onClick={toggleWishlist} className={`p-3 border rounded-lg transition ${
                             inWishlist

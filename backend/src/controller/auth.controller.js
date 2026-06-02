@@ -355,7 +355,7 @@ export const refreshAccessToken = async (req, res) => {
     }
 
     // Tìm user và lấy refresh token trong database
-    const existingUser = await User.findById(decodedToken._id)
+    const existingUser = await User.findById(decodedToken.id)
         .select("+refreshToken");
 
     if (!existingUser) {
