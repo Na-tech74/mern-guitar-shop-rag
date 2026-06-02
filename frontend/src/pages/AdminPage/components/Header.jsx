@@ -91,7 +91,7 @@ export default function AdminHeader({ toggleSidebar }) {
                     <button type="button" className="relative flex size-10 items-center justify-center rounded-xl hover:bg-gray-100">
                         <FontAwesomeIcon icon={faBell} />
 
-                        <span className="absolute right-2 top-2 size-2 rounded-full bg-orange-500" />
+                        <span className="absolute right-2 top-2 size-2 rounded-full bg-amber-500" />
                     </button>
 
                     <button type="button" className="flex size-10 items-center justify-center rounded-xl hover:bg-gray-100">
@@ -105,7 +105,7 @@ export default function AdminHeader({ toggleSidebar }) {
                         <button
                             type="button"
                             onClick={handleLogout}
-                            className="flex size-9 items-center justify-center rounded-xl hover:bg-red-50 text-gray-500 hover:text-red-600 transition-colors"
+                            className="flex size-9 items-center justify-center rounded-xl hover:bg-amber-50 text-gray-500 hover:text-amber-600 transition-colors"
                             title="Đăng xuất"
                         >
                             <FontAwesomeIcon icon={faRightFromBracket} />

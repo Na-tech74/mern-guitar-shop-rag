@@ -122,7 +122,7 @@ const Footer = memo(function Footer() {
                 <li key={to}>
                   <Link
                     to={to}
-                    className="text-sm text-gray-400 hover:text-amber-400 transition"
+                    className="text-sm text-gray-400 hover:text-amber-600 transition"
                   >
                     {label}
                   </Link>
@@ -142,7 +142,7 @@ const Footer = memo(function Footer() {
                 <li key={to}>
                   <Link
                     to={to}
-                    className="text-sm text-gray-400 hover:text-amber-400 transition"
+                    className="text-sm text-gray-400 hover:text-amber-600 transition"
                   >
                     {label}
                   </Link>
@@ -190,7 +190,7 @@ const Footer = memo(function Footer() {
 
                 <Link
                   to={to}
-                  className="hover:text-amber-400 transition"
+                  className="hover:text-amber-600 transition"
                 >
                   {label}
                 </Link>

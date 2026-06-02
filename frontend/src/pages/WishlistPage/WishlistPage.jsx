@@ -122,8 +122,8 @@ export default function WishlistPage() {
 
                 {wishlist.length === 0 ? (
                     <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
-                        <div className="size-24 mx-auto mb-6 bg-red-50 rounded-full flex items-center justify-center">
-                            <FontAwesomeIcon icon={faHeartBroken} className="text-4xl text-red-300" />
+                        <div className="size-24 mx-auto mb-6 bg-amber-50 rounded-full flex items-center justify-center">
+                            <FontAwesomeIcon icon={faHeartBroken} className="text-4xl text-amber-300" />
                         </div>
                         <p className="text-gray-500 text-lg mb-2">Chưa có sản phẩm yêu thích</p>
                         <p className="text-gray-400 text-sm mb-8">Hãy khám phá và thêm sản phẩm bạn yêu thích</p>
@@ -167,7 +167,7 @@ export default function WishlistPage() {
                                             disabled={isAdded}
                                             className={`w-full mt-3 py-2 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2 ${
                                                 isAdded
-                                                    ? "bg-green-600 text-white"
+                                                    ? "bg-amber-700 text-white"
                                                     : "bg-amber-600 hover:bg-amber-500 text-white"
                                             }`}
                                         >

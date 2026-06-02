@@ -89,7 +89,7 @@ export default function BlogDetailPage() {
                 </div>
 
                 {blog.excerpt && (
-                    <p className="text-lg text-gray-600 italic mb-6 border-l-4 border-amber-400 pl-4">
+                    <p className="text-lg text-gray-600 italic mb-6 border-l-4 border-amber-500 pl-4">
                         {blog.excerpt}
                     </p>
                 )}

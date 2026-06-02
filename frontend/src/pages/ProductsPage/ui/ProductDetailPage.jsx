@@ -189,8 +189,8 @@ export default function ProductDetailPage() {
                             product.stock === 0
                                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                                 : addedToCart
-                                    ? "bg-green-600 text-white"
-                                    : "bg-amber-600 hover:bg-amber-500 text-white"
+? "bg-amber-700 text-white"
+                                : "bg-amber-600 hover:bg-amber-500 text-white"
                         }`}>
                             <FontAwesomeIcon icon={addedToCart ? faCheckCircle : faShoppingCart} />
                             {product.stock === 0 ? "Hết hàng" : addedToCart ? "Đã thêm" : "Thêm vào giỏ"}

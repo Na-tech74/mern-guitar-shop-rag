@@ -72,14 +72,14 @@ export default function ProductsPage() {
                             <button
                                 type="button"
                                 onClick={() => setViewMode("grid")}
-                                className={`p-2 ${viewMode === "grid" ? "bg-amber-500 text-white" : "bg-white text-gray-600 hover:bg-gray-50"}`}
+                                className={`p-2 ${viewMode === "grid" ? "bg-amber-600 text-white" : "bg-white text-gray-600 hover:bg-gray-50"}`}
                             >
                                 <FontAwesomeIcon icon={faThLarge} />
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setViewMode("list")}
-                                className={`p-2 ${viewMode === "list" ? "bg-amber-500 text-white" : "bg-white text-gray-600 hover:bg-gray-50"}`}
+                                className={`p-2 ${viewMode === "list" ? "bg-amber-600 text-white" : "bg-white text-gray-600 hover:bg-gray-50"}`}
                             >
                                 <FontAwesomeIcon icon={faList} />
                             </button>
@@ -183,7 +183,7 @@ export default function ProductsPage() {
                                                 <button
                                                     type="button"
                                                     onClick={(e) => { e.preventDefault(); /* add to cart */ }}
-                                                    className="w-full py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-sm font-medium transition flex items-center justify-center gap-2"
+                                                    className="w-full py-2 bg-amber-600 hover:bg-amber-600 text-white rounded-lg text-sm font-medium transition flex items-center justify-center gap-2"
                                                 >
                                                     <FontAwesomeIcon icon={faShoppingCart} />
                                                     Thêm vào giỏ

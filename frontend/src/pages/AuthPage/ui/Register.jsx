@@ -66,7 +66,7 @@ export default function Register() {
                 <div className="mt-6 text-center">
                     <p className="text-sm text-gray-600">
                         Đã có tài khoản? 
-                        <Link to="/login" className=" hover:text-blue-600" >Đăng Nhập</Link>
+                        <Link to="/login" className=" hover:text-amber-600" >Đăng Nhập</Link>
                     </p>
                 </div>
             </div>

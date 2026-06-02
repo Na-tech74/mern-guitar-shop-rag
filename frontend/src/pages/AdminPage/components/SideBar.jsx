@@ -122,7 +122,7 @@ export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }) {
 
                     <div className="flex items-center gap-3 rounded-xl p-2 hover:bg-gray-100">
 
-                        <div className="flex size-10 items-center justify-center rounded-full bg-green-100 text-sm font-semibold text-green-700">
+                        <div className="flex size-10 items-center justify-center rounded-full bg-amber-100 text-sm font-semibold text-amber-700">
                             {userInfo?.name?.charAt(0).toUpperCase()}
                         </div>
 

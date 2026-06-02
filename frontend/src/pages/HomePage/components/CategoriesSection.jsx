@@ -52,7 +52,7 @@ export default function CategoriesSection({ categories }) {
                                             />
                                         ) : (
                                             <div className="w-full h-full bg-amber-100 flex items-center justify-center">
-                                                <FontAwesomeIcon icon={faGuitar} className="text-4xl text-amber-400" />
+                                                <FontAwesomeIcon icon={faGuitar} className="text-4xl text-amber-600" />
                                             </div>
                                         )}
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />

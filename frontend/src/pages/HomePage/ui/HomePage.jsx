@@ -19,7 +19,7 @@ export default function HomePage() {
     const fetchData = async () => {
       try {
         const [productsRes, categoriesRes] = await Promise.all([
-          API.get("/products?limit=8", { signal: abortController.signal }),
+          API.get("/products?limit=20", { signal: abortController.signal }),
           API.get("/categories", { signal: abortController.signal })
         ]);
         if (!abortController.signal.aborted) {
@@ -45,7 +45,7 @@ export default function HomePage() {
       <Carousel />
       <FeaturesBanner />
       <CategoriesSection categories={categories} />
-      <FeaturedProducts products={products} loading={loading} />
+      <FeaturedProducts products={products} categories={categories} loading={loading} />
       <Clip/>
       <FeaturedTypes />
       <CTASection />

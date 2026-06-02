@@ -2,10 +2,13 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faFileInvoice, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import { API } from "../../api/axiosClient.js";
 
 export default function AccountPage() {
     const navigate = useNavigate();
     const [userInfo, setUserInfo] = useState(null);
+    const [profile, setProfile] = useState(null);
+    const [showInfo, setShowInfo] = useState(false);
 
     useEffect(() => {
         const info = JSON.parse(sessionStorage.getItem("userInfo") || "null");
@@ -14,15 +17,19 @@ export default function AccountPage() {
             return;
         }
         setUserInfo(info);
+        fetchProfile();
     }, [navigate]);
 
-    if (!userInfo) return null;
-
-    const handleLogout = () => {
-        sessionStorage.removeItem("userInfo");
-        sessionStorage.removeItem("token");
-        navigate("/");
+    const fetchProfile = async () => {
+        try {
+            const res = await API.get("/users/me");
+            setProfile(res.data?.data);
+        } catch {
+            //
+        }
     };
+    
+    if (!userInfo) return null;
 
     return (
         <div className="min-h-screen">
@@ -35,48 +42,57 @@ export default function AccountPage() {
                     </ol>
                 </nav>
 
-                <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+                {/* <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
                     <div className="flex items-center gap-4">
                         <div className="size-16 rounded-full bg-amber-600 flex items-center justify-center text-white text-2xl font-bold">
-                            {userInfo.name?.charAt(0).toUpperCase()}
+                            {(profile?.name || userInfo.name)?.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-900">{userInfo.name}</h1>
-                            <p className="text-gray-500">{userInfo.email}</p>
+                            <h1 className="text-2xl font-bold text-gray-900">{profile?.name || userInfo.name}</h1>
+                            <p className="text-gray-500">{profile?.email || userInfo.email}</p>
+                            <p className="text-xs text-gray-400 mt-1">
+                                {profile?.role === "admin" ? "Quản trị viên" : "Người dùng"}
+                            </p>
                         </div>
                     </div>
-                </div>
+                </div> */}
 
                 <div className="grid md:grid-cols-3 gap-6">
-                    {[
-                        { icon: faUser, title: "Thông tin tài khoản", desc: "Xem và chỉnh sửa thông tin cá nhân", link: "/account" },
-                        { icon: faFileInvoice, title: "Đơn hàng của tôi", desc: "Theo dõi lịch sử đơn hàng", link: "/orders" },
-                        { icon: faSignOutAlt, title: "Đăng xuất", desc: "Đăng xuất khỏi tài khoản", onClick: handleLogout, danger: true },
-                    ].map((item) =>
-                        item.link ? (
-                            <Link key={item.title} to={item.link} className="block bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition">
-                                <div className="size-12 rounded-lg bg-amber-100 flex items-center justify-center mb-4">
-                                    <FontAwesomeIcon icon={item.icon} className="text-xl text-amber-600" />
-                                </div>
-                                <h3 className="font-semibold text-gray-900 mb-1">{item.title}</h3>
-                                <p className="text-sm text-gray-500">{item.desc}</p>
-                            </Link>
-                        ) : (
-                            <button key={item.title} type="button" onClick={item.onClick} className="text-left bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition">
-                                <div className="size-12 rounded-lg bg-red-100 flex items-center justify-center mb-4">
-                                    <FontAwesomeIcon icon={item.icon} className="text-xl text-red-600" />
-                                </div>
-                                <h3 className="font-semibold text-gray-900 mb-1">{item.title}</h3>
-                                <p className="text-sm text-gray-500">{item.desc}</p>
-                            </button>
-                        )
-                    )}
-                </div>
-                            <h3 className="font-semibold text-gray-900 mb-1">{item.title}</h3>
-                            <p className="text-sm text-gray-500">{item.desc}</p>
+                    <button type="button" onClick={() => setShowInfo(!showInfo)} className="text-left bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition">
+                        <div className="size-12 rounded-lg bg-amber-100 flex items-center justify-center mb-4">
+                            <FontAwesomeIcon icon={faUser} className="text-xl text-amber-600" />
                         </div>
-                    ))}
+                        <h3 className="font-semibold text-gray-900 mb-1">Thông tin tài khoản</h3>
+                        <p className="text-sm text-gray-500">Xem thông tin cá nhân</p>
+                    </button>
+                    <Link to="/orders" className="block bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition">
+                        <div className="size-12 rounded-lg bg-amber-100 flex items-center justify-center mb-4">
+                            <FontAwesomeIcon icon={faFileInvoice} className="text-xl text-amber-600" />
+                        </div>
+                        <h3 className="font-semibold text-gray-900 mb-1">Đơn hàng của tôi</h3>
+                        <p className="text-sm text-gray-500">Theo dõi lịch sử đơn hàng</p>
+                    </Link>
                 </div>
+
+                {showInfo && (
+                    <div className="bg-white rounded-xl border border-gray-200 p-6">
+                        <h2 className="text-lg font-semibold text-gray-900 mb-4">Thông tin cá nhân</h2>
+                        <div className="space-y-3 text-sm text-gray-600">
+                            <div className="flex gap-2">
+                                <span className="font-medium w-20">Họ tên:</span>
+                                <span>{profile?.name || userInfo.name}</span>
+                            </div>
+                            <div className="flex gap-2">
+                                <span className="font-medium w-20">Email:</span>
+                                <span>{profile?.email || userInfo.email}</span>
+                            </div>
+                            <div className="flex gap-2">
+                                <span className="font-medium w-20">Vai trò:</span>
+                                <span>{profile?.role === "admin" ? "Quản trị viên" : "Người dùng"}</span>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

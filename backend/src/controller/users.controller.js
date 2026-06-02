@@ -225,6 +225,53 @@ export const getMyProfile = async (req, res) => {
 };
 
 /**
+ * Cập nhật profile của người dùng hiện tại
+ * @param {Object} req - Request object chứa thông tin user từ token
+ * @param {string} req.body.name - Tên mới (tùy chọn)
+ * @param {string} req.body.email - Email mới (tùy chọn)
+ * @returns {200} Thông tin người dùng đã cập nhật
+ */
+export const updateMyProfile = async (req, res) => {
+    const userId = req.user._id;
+    const { name, email } = req.body;
+
+    const user = await usersModel.findById(userId).select("-password -refreshToken");
+    if (!user) {
+        throw appError("Không tìm thấy người dùng!", 404);
+    }
+
+    if (name) {
+        user.name = name;
+    }
+
+    if (email) {
+        if (!isValidEmail(email)) {
+            throw appError("Email không hợp lệ!", 400);
+        }
+        const existingUser = await usersModel.findOne({ email });
+        if (existingUser && existingUser._id.toString() !== userId.toString()) {
+            throw appError("Email đã tồn tại!", 400);
+        }
+        user.email = email;
+    }
+
+    await user.save();
+
+    return appSuccess(res, {
+        statusCode: 200,
+        message: "Cập nhật thông tin thành công!",
+        data: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            createdAt: formatDateTime(user.createdAt),
+            updatedAt: formatDateTime(user.updatedAt),
+        }
+    });
+};
+
+/**
  * Thay đổi mật khẩu của người dùng hiện tại
  * @param {Object} req - Request object chứa currentPassword và newPassword
  * @param {Object} res - Response object

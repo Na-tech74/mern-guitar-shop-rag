@@ -95,7 +95,7 @@ export default function Courses() {
                                         <td className="py-3 px-4 text-right">
                                             <div className="flex items-center justify-end gap-1">
                                                 <Button variant="ghost" size="sm" onClick={() => handleEdit(course)}>
-                                                    <FontAwesomeIcon icon={faPen} className="text-blue-500" />
+                                                    <FontAwesomeIcon icon={faPen} className="text-amber-600" />
                                                 </Button>
                                                 <Button variant="ghost" size="sm" onClick={() => handleDelete(course._id)}>
                                                     <FontAwesomeIcon icon={faTrash} className="text-red-500" />

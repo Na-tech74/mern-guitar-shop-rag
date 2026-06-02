@@ -9,7 +9,7 @@ export default function NotFound() {
                 <div className="relative inline-block">
                     <span className="text-[150px] font-bold text-amber-100 block leading-none">404</span>
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <FontAwesomeIcon icon={faHome} className="text-6xl text-amber-500" />
+                        <FontAwesomeIcon icon={faHome} className="text-6xl text-amber-600" />
                     </div>
                 </div>
 

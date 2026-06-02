@@ -200,7 +200,7 @@ export default function CheckoutPage() {
                                             onChange={() => setPaymentMethod("cod")}
                                             className="text-amber-600 focus:ring-amber-500"
                                         />
-                                        <FontAwesomeIcon icon={faMoneyBillWave} className="text-green-600 text-xl" />
+                                        <FontAwesomeIcon icon={faMoneyBillWave} className="text-amber-600 text-xl" />
                                         <div>
                                             <p className="font-medium text-gray-800">Thanh toán khi nhận hàng (COD)</p>
                                             <p className="text-xs text-gray-500">Thanh toán bằng tiền mặt khi nhận hàng</p>
@@ -218,7 +218,7 @@ export default function CheckoutPage() {
                                             onChange={() => setPaymentMethod("banking")}
                                             className="text-amber-600 focus:ring-amber-500"
                                         />
-                                        <FontAwesomeIcon icon={faCreditCard} className="text-blue-600 text-xl" />
+                                        <FontAwesomeIcon icon={faCreditCard} className="text-amber-600 text-xl" />
                                         <div>
                                             <p className="font-medium text-gray-800">Chuyển khoản ngân hàng</p>
                                             <p className="text-xs text-gray-500">Chuyển khoản qua tài khoản ngân hàng</p>

@@ -124,7 +124,7 @@ export default function Categories() {
                                         />
                                         <label
                                             htmlFor="category-image"
-                                            className="cursor-pointer px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 text-sm"
+                                            className="cursor-pointer px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-500 text-sm"
                                         >
                                             Chọn ảnh
                                         </label>

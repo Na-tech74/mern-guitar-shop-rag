@@ -17,7 +17,7 @@ export default function Blog() {
                     <h1 className="text-2xl font-bold text-gray-800">Quản lý Blog</h1>
                     <p className="text-gray-500 text-sm">Quản lý bài viết</p>
                 </div>
-                <button type="button" onClick={openForm} className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition">
+                <button type="button" onClick={openForm} className="flex items-center gap-2 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-500 transition">
                     <FontAwesomeIcon icon={faPlus} />
                     Thêm bài viết
                 </button>
@@ -66,7 +66,7 @@ export default function Blog() {
                                         </button>
                                     </div>
                                 ) : (
-                                    <label className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-amber-400 block transition">
+                                    <label className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-amber-500 block transition">
                                         <input type="file" accept="image/*" multiple onChange={handleFileChange} className="hidden" />
                                         <FontAwesomeIcon icon={faImage} className="text-3xl text-gray-400 mb-2" />
                                         <p className="text-gray-500">Click để chọn hình ảnh</p>
@@ -75,7 +75,7 @@ export default function Blog() {
                             </div>
                             <div className="flex gap-2 justify-end pt-2">
                                 <button type="button" onClick={resetForm} className="px-4 py-2 border rounded-lg hover:bg-gray-50 text-gray-700">Hủy</button>
-                                <button type="submit" className="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition">
+                                <button type="submit" className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-500 transition">
                                     {editingBlog ? "Lưu" : "Thêm"}
                                 </button>
                             </div>
@@ -137,7 +137,7 @@ export default function Blog() {
                                     </td>
                                     <td className="px-4 py-3 text-right">
                                         <div className="flex items-center justify-end gap-1">
-                                            <button type="button" onClick={() => handleEdit(blog)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition" title="Sửa">
+                                            <button type="button" onClick={() => handleEdit(blog)} className="p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition" title="Sửa">
                                                 <FontAwesomeIcon icon={faEdit} />
                                             </button>
                                             <button type="button" onClick={() => handleDelete(blog._id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition" title="Xóa">

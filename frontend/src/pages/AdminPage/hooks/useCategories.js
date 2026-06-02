@@ -11,6 +11,7 @@ export const useCategories = () => {
     const [editingCategory, setEditingCategory] = useState(null);
     const [formData, setFormData] = useState({ name: "", description: "", image: "" });
     const [imagePreview, setImagePreview] = useState("");
+    const [selectedFile, setSelectedFile] = useState(null);
 
     const fetchCategories = useCallback(async () => {
         try {
@@ -76,10 +77,19 @@ export const useCategories = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            const fd = new FormData();
+            fd.append("name", formData.name);
+            fd.append("description", formData.description);
+            if (selectedFile) {
+                fd.append("image", selectedFile);
+            } else if (editingCategory && formData.image) {
+                fd.append("image", formData.image);
+            }
+
             if (editingCategory) {
-                await updateCategory(editingCategory._id, formData);
+                await updateCategory(editingCategory._id, fd);
             } else {
-                await createCategory(formData);
+                await createCategory(fd);
             }
             setShowModal(false);
             resetForm();
@@ -105,6 +115,7 @@ export const useCategories = () => {
             image: category.image || "",
         });
         setImagePreview(category.image || "");
+        setSelectedFile(null);
         setShowModal(true);
     };
 
@@ -112,6 +123,7 @@ export const useCategories = () => {
         setEditingCategory(null);
         setFormData({ name: "", description: "", image: "" });
         setImagePreview("");
+        setSelectedFile(null);
     };
 
     const openModal = () => {
@@ -119,25 +131,12 @@ export const useCategories = () => {
         setShowModal(true);
     };
 
-    const handleImageChange = async (e) => {
+    const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
-        try {
-            const formDataUpload = new FormData();
-            formDataUpload.append("images", file);
-            const res = await fetch("http://localhost:5000/api/uploads", {
-                method: "POST",
-                body: formDataUpload
-            });
-            const data = await res.json();
-            if (data.images && data.images[0]) {
-                setFormData({ ...formData, image: data.images[0] });
-                setImagePreview(data.images[0]);
-            }
-        } catch (err) {
-            alert("Upload ảnh thất bại!");
-        }
+        setSelectedFile(file);
+        setImagePreview(URL.createObjectURL(file));
     };
 
     return {

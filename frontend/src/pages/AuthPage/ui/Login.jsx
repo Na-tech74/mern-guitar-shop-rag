@@ -45,7 +45,7 @@ export default function Login() {
                     />
 
                     <div className="text-right text-sm ">
-                        <Link to ="/forgot-password" className="text-gray-500 hover:text-blue-600" >
+                        <Link to ="/forgot-password" className="text-gray-500 hover:text-amber-600" >
                             Quên mật khẩu?
                         </Link>
                     </div>
@@ -58,7 +58,7 @@ export default function Login() {
                 <div className="mt-6 text-center">
                     <p className="text-sm text-gray-600">
                         Chưa có tài khoản? 
-                     <Link to="/register" className=" hover:text-blue-600" >
+                     <Link to="/register" className=" hover:text-amber-600" >
                            Đăng ký ngay
                      </Link>
                     </p>

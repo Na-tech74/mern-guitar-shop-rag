@@ -7,12 +7,9 @@ export default function ForgotPassword() {
     const { step, loading, form, handleChange, handleSendOTP, handleReset } = useForgotPassword();
 
     return (
-        <div className="min-h-screen flex items-center border border-[#e8dcc8] justify-center bg-white">
+        <div className="min-h-screen flex items-center justify-center bg-white">
             <div className="w-full max-w-sm border p-6 rounded-xl">
-                <Logo
-                    title={step === 1 ? "Quên mật khẩu" : "Nhập OTP để đặt lại mật khẩu"} 
-                />
-
+                <Logo />
                 {step === 1 && (
                     <form onSubmit={handleSendOTP} className="space-y-3">
                         <Input

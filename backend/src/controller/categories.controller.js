@@ -137,7 +137,12 @@ export const updateCategory = async (req, res) => {
     // Cập nhật các trường mới
     if (name) { category.name = sanitizeText(name); }
     if (description) { category.description = sanitizeText(description); }
-    if (image !== undefined) { category.image = image; }
+    if (req.file) {
+        const [imageUrl] = await uploadImages([req.file], "guitar-shop/categories");
+        category.image = imageUrl;
+    } else if (image !== undefined) {
+        category.image = image;
+    }
 
     await category.save();
 

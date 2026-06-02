@@ -38,7 +38,7 @@ router.post("/create", protect, adminOnly, upload.single("image"), asyncHandler(
  * PUT /api/v1/categories/:id - Cập nhật danh mục
  * @requires Authorization (Admin)
  */
-router.put("/:id", protect, adminOnly, asyncHandler(updateCategory));
+router.put("/:id", protect, adminOnly, upload.single("image"), asyncHandler(updateCategory));
 
 /**
  * DELETE /api/v1/categories/:id - Xóa danh mục

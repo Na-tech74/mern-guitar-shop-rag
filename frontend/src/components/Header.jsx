@@ -137,7 +137,7 @@ const Header = memo(function Header() {
                   placeholder="Tìm kiếm sản phẩm..."
                   className="flex-1 px-4 py-2 outline-none text-sm rounded-l-lg border border-gray-200 bg-gray-50 focus:border-amber-500 transition"
                 />
-                <button type="submit" className="bg-amber-500 hover:bg-amber-400 px-4 text-white rounded-r-lg">
+                <button type="submit" className="bg-amber-600 hover:bg-amber-500 px-4 text-white rounded-r-lg">
                   <FontAwesomeIcon icon={faSearch} />
                 </button>
               </form>
@@ -148,7 +148,7 @@ const Header = memo(function Header() {
               <Link to="/wishlist" className="relative group">
                 <FontAwesomeIcon icon={faHeart} className="text-xl text-gray-600 group-hover:text-amber-600 transition" />
                 {wishlistCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] size-4 flex items-center justify-center rounded-full">
+                  <span className="absolute -top-2 -right-2 bg-amber-600 text-white text-[10px] size-4 flex items-center justify-center rounded-full">
                     {wishlistCount}
                   </span>
                 )}
@@ -193,7 +193,7 @@ const Header = memo(function Header() {
                         <Link to="/orders" className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-amber-50 border-t" onClick={() => setIsAccountOpen(false)}>
                           Đơn hàng
                         </Link>
-                        <button type="button" onClick={handleLogout} className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-red-600 hover:bg-red-50 border-t">
+                        <button type="button" onClick={handleLogout} className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-red-600 hover:bg-amber-50 border-t">
                           Đăng xuất
                           <FontAwesomeIcon icon={faRightFromBracket} />
                         </button>
@@ -246,7 +246,7 @@ const Header = memo(function Header() {
                 className="flex-1 px-4 py-2 outline-none text-sm rounded-l-lg border border-gray-200 bg-gray-50"
                 autoFocus
               />
-              <button type="submit" className="bg-amber-600 px-5 text-white rounded-r-lg">
+              <button type="submit" className="bg-amber-600 hover:bg-amber-500 px-5 text-white rounded-r-lg">
                 <FontAwesomeIcon icon={faSearch} />
               </button>
             </form>
@@ -304,8 +304,8 @@ const Header = memo(function Header() {
             <div className="p-4 border-b">
               {!isLoggedIn ? (
                 <div className="flex gap-2">
-                  <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 text-center py-2 bg-amber-500 text-white rounded text-sm">Đăng nhập</Link>
-                  <Link to="/register" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 text-center py-2 border border-amber-500 text-amber-500 rounded text-sm">Đăng ký</Link>
+                  <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 text-center py-2 bg-amber-600 text-white rounded text-sm">Đăng nhập</Link>
+                  <Link to="/register" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 text-center py-2 border border-amber-600 text-amber-600 rounded text-sm">Đăng ký</Link>
                 </div>
               ) : (
                 <div className="flex items-center gap-3">

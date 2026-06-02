@@ -20,7 +20,7 @@ export default function Clip() {
                     <p className="text-lg mb-6 opacity-90">Dành cho khách hàng mua lần đầu. Áp dụng cho tất cả sản phẩm guitar acoustic và classic.</p>
                     <Link
                         to="/products"
-                        className="inline-block px-8 py-3 bg-amber-500 hover:bg-amber-400 text-white font-semibold rounded-lg transition-colors"
+                        className="inline-block px-8 py-3 bg-amber-600 hover:bg-amber-500 text-white font-semibold rounded-lg transition-colors"
                     >
                         Mua ngay
                     </Link>

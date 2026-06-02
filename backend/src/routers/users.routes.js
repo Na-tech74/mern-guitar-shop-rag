@@ -11,6 +11,7 @@ import {
     getAllUser,
     getUserById,
     getMyProfile,
+    updateMyProfile,
     changePassword,
     updateUser
 } from "../controller/users.controller.js";
@@ -23,6 +24,13 @@ const router = express.Router();
  * Protected - Cần authentication
  */
 router.get("/me", protect, asyncHandler(getMyProfile));
+
+/**
+ * PUT /api/users/me
+ * Cập nhật thông tin profile người dùng hiện tại
+ * Protected - Cần authentication
+ */
+router.put("/me", protect, asyncHandler(updateMyProfile));
 
 /**
  * PUT /api/users/password
