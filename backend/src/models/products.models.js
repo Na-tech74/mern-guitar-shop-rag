@@ -72,6 +72,10 @@ const productSchema = new mongoose.Schema({
      * Mảng các đường dẫn ảnh
      */
     images: [String],
+    isActive: {
+        type: Boolean,
+        default: true,
+    },
 }, {
     timestamps: true
 });

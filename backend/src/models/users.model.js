@@ -53,7 +53,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ["user", "admin"], // Chỉ chấp nhận 2 giá trị này
         default: "user"
-    }
+    },
+    isActive: {
+        type: Boolean,
+        default: true,
+    },
 
 }, { timestamps: true }); // Tự động thêm createdAt và updatedAt
 
