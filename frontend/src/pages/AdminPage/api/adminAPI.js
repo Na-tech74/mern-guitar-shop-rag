@@ -23,6 +23,8 @@ export const userAPI = {
     update: (id, data) => API.put(`/users/${id}`, data),
     delete: (id) => API.delete(`/users/${id}`),
     getProfile: () => API.get("/users/me"),
+    updateMyProfile: (data) => API.put("/users/me", data),
+    changePassword: (data) => API.put("/users/password", data),
 };
 
 export const orderAPI = {

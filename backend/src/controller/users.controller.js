@@ -10,11 +10,6 @@ import { formatDateTime } from '../utils/format.js';
  * @param {Object} res - Response object
  */
 export const getAllUser = async (req, res) => {
-    // Kiểm tra quyền admin
-    if (req.user.role !== 'admin') {
-        throw appError("Chỉ admin mới có quyền", 403);
-    }
-
     // Lấy tất cả người dùng, loại bỏ password và refreshToken
     const findAllUser = await usersModel.find().select("-password -refreshToken");
 
@@ -33,11 +28,6 @@ export const getAllUser = async (req, res) => {
  */
 export const getUserById = async (req, res) => {
     const { id } = req.params;
-
-    // Kiểm tra quyền admin
-    if (req.user.role !== 'admin') {
-        throw appError("Chỉ admin mới có quyền", 403);
-    }
 
     // Kiểm tra ID hợp lệ
     if (!isValidObjectId(id)) {
@@ -68,11 +58,6 @@ export const getUserById = async (req, res) => {
 export const updateUser = async (req, res) => {
     const { id } = req.params;
     const { name, email, password, role } = req.body;
-
-    // Kiểm tra quyền admin
-    if (req.user.role !== "admin") {
-        throw appError("Bạn không có quyền!", 403);
-    }
 
     // Kiểm tra ID hợp lệ
     if (!isValidObjectId(id)) {
@@ -165,11 +150,6 @@ export const updateUser = async (req, res) => {
  */
 export const deleteUser = async (req, res) => {
     const { id } = req.params;
-
-    // Kiểm tra quyền admin
-    if (req.user.role !== 'admin') {
-        throw appError("Chỉ admin mới có quyền!", 403);
-    }
 
     // Kiểm tra ID hợp lệ
     if (!isValidObjectId(id)) {

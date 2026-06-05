@@ -4,6 +4,7 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical, faXmark, faChartPie, faBox, faUsers, faCartShopping, faTag, faGear, faNewspaper, faVideo } from "@fortawesome/free-solid-svg-icons";
+import { useUserInfo } from "../../../hooks/useUserInfo.js";
 
 const adminSidebarMenuItems = [
     {
@@ -29,7 +30,7 @@ const adminSidebarMenuItems = [
 
 export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }) {
 
-    const [userInfo] = useState(() => JSON.parse(sessionStorage.getItem("userInfo")));
+    const userInfo = useUserInfo();
 
     return (
         <>

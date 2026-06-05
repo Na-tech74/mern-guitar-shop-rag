@@ -3,6 +3,7 @@ import { lazy, Suspense } from "react";
 import MainLayout from "./layouts/MainLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import useSessionRecovery from "./hooks/useSessionRecovery";
 
 const Login = lazy(() => import("./pages/AuthPage/ui/Login"));
 const Register = lazy(() => import("./pages/AuthPage/ui/Register"));
@@ -42,8 +43,9 @@ function LoadingFallback() {
 }
 
 function App() {
-  return (
-    <BrowserRouter>
+    useSessionRecovery();
+    return (
+        <BrowserRouter>
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
           <Route path="/" element={<MainLayout />}>

@@ -6,9 +6,7 @@
 import jwt from "jsonwebtoken";
 import rateLimit from "express-rate-limit";
 import User from "../models/users.model.js";
-import dotenv from 'dotenv';
 import { appError } from "../utils/appResponse.js";
-dotenv.config();
 
 /**
  * Middleware bảo vệ route - kiểm tra token xác thực

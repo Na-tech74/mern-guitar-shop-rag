@@ -1,5 +1,5 @@
 /**
- * products.models.js
+ * product.model.js
  * Schema cho sản phẩm trong cửa hàng guitar
  */
 
@@ -72,10 +72,6 @@ const productSchema = new mongoose.Schema({
      * Mảng các đường dẫn ảnh
      */
     images: [String],
-    isActive: {
-        type: Boolean,
-        default: true,
-    },
 }, {
     timestamps: true
 });

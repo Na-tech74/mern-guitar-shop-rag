@@ -1,14 +1,34 @@
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import guitarVideo from "../../../assets/images/guitar.mp4";
+import { useInView } from "../../../hooks/useInView";
 
 export default function Clip() {
+    const [ref, inView] = useInView({ rootMargin: "200px" });
+    const videoRef = useRef(null);
+
+    useEffect(() => {
+        const video = videoRef.current;
+        if (!video) return;
+        if (inView) {
+            video.play().catch(() => { /* autoplay có thể bị chặn, bỏ qua */ });
+        } else {
+            video.pause();
+        }
+    }, [inView]);
+
     return (
-        <section className="relative overflow-hidden" style={{ contentVisibility: 'auto' }}>
+        <section
+            ref={ref}
+            className="relative overflow-hidden bg-gray-900"
+            style={{ contentVisibility: 'auto' }}
+        >
             <video
-                autoPlay
+                ref={videoRef}
                 loop
                 muted
                 playsInline
+                preload="none"
                 className="absolute inset-0 w-full h-full object-cover"
             >
                 <source src={guitarVideo} type="video/mp4" />

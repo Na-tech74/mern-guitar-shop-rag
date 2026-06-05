@@ -7,7 +7,7 @@ export const useOrders = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 });
+    const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [statusFilter, setStatusFilter] = useState("all");
     const [searchTerm, setSearchTerm] = useState("");
@@ -23,7 +23,7 @@ export const useOrders = () => {
             setOrders(data?.orders || []);
             setPagination({
                 page: data?.page || 1,
-                pages: data?.pages || 1,
+                totalPages: data?.totalPages || 1,
                 total: data?.total || 0
             });
         } catch (err) {

@@ -1,7 +1,7 @@
-import Product from "../models/products.models.js";
+import Product from "../models/product.model.js";
 import { appError, appSuccess } from "../utils/appResponse.js";
 import { uploadImages } from "../services/uploadImages.js";
-import { formatSuccessResponse, formatDate, formatDateTime, sanitizeText, formatPrice } from "../utils/format.js";
+import { formatDateTime, sanitizeText } from "../utils/format.js";
 import { isValidObjectId } from "../utils/valid.js";
 
 /**
@@ -21,11 +21,6 @@ export const createProduct = async (req, res) => {
     // Lấy dữ liệu từ form-data
     const { name, description, price, category, stock } = req.body;
     const imageFiles = req.files;
-
-    // Kiểm tra quyền admin
-    if (req.user.role !== 'admin') {
-        throw appError("Chỉ admin mới có quyền!", 403);
-    }
 
     // Validate thông tin bắt buộc
     if (!name || !description || !price || !category || !stock) {
@@ -49,7 +44,7 @@ export const createProduct = async (req, res) => {
     }
 
     // Upload ảnh lên Cloudinary (thư mục: guitar-shop/products)
-    const [imageUrls] = await uploadImages(imageFiles, "guitar-shop/products");
+    const imageUrls = await uploadImages(imageFiles, "guitar-shop/products");
     const newProduct = await Product.create({
         name: sanitizeText(name),
         description: sanitizeText(description),
@@ -169,10 +164,6 @@ export const updateProducts = async (req, res) => {
     const { name, description, price, category, stock, images } = req.body;
     const imageFiles = req.files;
 
-    if (req.user.role !== 'admin') {
-        throw appError("Chỉ admin mới có quyền!", 403);
-    }
-
     if (!name || !description || !price || !category || !stock) {
         throw appError("Nhập đầy đủ thông tin sản phẩm!", 400);
     }
@@ -198,7 +189,7 @@ export const updateProducts = async (req, res) => {
 
     if (imageFiles && imageFiles.length > 0) {
         const imageUrls = await uploadImages(imageFiles, "guitar-shop/products");
-        product.images = imageUrls[0];
+        product.images = imageUrls;
     } else if (images) {
         product.images = images;
     }
@@ -225,10 +216,6 @@ export const updateProducts = async (req, res) => {
 export const deleteProducts = async (req, res) => {
     const { id } = req.params;
 
-    if (req.user.role !== "admin") {
-        throw appError("Chỉ admin mới có quyền!", 403);
-    }
-
     if (!isValidObjectId(id)) {
         throw appError("ID sản phẩm không hợp lệ!", 400);
     }
@@ -249,7 +236,7 @@ export const deleteProducts = async (req, res) => {
 /**
  * Lấy danh sách sản phẩm nổi bật (top products)
  * @query {number} limit -  phẩm lấy ra (default: 3)
- * @query {string} sortBy - Tiêu chí sắp xếp: 'sales' | 'views' | 'price' (default: 'sales')
+ * @query {string} sortBy - Tiêu chí sắp xếp: 'sales' | 'priceDESC' | 'priceAsc' (default: 'sales')
  * @returns {200} Danh sách sản phẩm nổi bật
  */
 export const searchProductsTop = async (req, res) => {
@@ -264,13 +251,13 @@ export const searchProductsTop = async (req, res) => {
         case 'priceAsc': // Gía từ thấp -> cao
             sortOption = { price: 1 };
             break;
-        case 'sale':
+        case 'sales':
         default:
             // Mặc định sản phẩm bán nhiều nhất
-            sortOption = { sales: -1 };
+            sortOption = { sold: -1 };
     }
 
-    const products = await productModel.find()
+    const products = await Product.find()
         .populate('category', 'name')
         .sort(sortOption)
         .limit(parseInt(limit));

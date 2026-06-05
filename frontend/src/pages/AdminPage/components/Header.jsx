@@ -8,10 +8,11 @@ import {
     faSearch,
     faRightFromBracket
 } from "@fortawesome/free-solid-svg-icons";
+import { useUserInfo } from "../../../hooks/useUserInfo.js";
 
 export default function AdminHeader({ toggleSidebar }) {
     const navigate = useNavigate();
-    const [userInfo] = useState(() => JSON.parse(sessionStorage.getItem("userInfo")));
+    const userInfo = useUserInfo();
 
     const handleLogout = async () => {
         try {
@@ -22,6 +23,7 @@ export default function AdminHeader({ toggleSidebar }) {
         }
         sessionStorage.removeItem("userInfo");
         sessionStorage.removeItem("token");
+        window.dispatchEvent(new Event("user-info-updated"));
         navigate("/");
     };
 

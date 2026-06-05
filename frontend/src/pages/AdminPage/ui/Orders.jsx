@@ -4,11 +4,12 @@ import {
     faEye, faCheck, faXmark, faTruck, faSearch, faTrash,
     faBox, faClock, faShippingFast, faCheckDouble, faBan,
     faPhone, faMapMarkerAlt, faCreditCard, faMoneyBillWave,
-    faImage, faChevronLeft, faChevronRight, faTimes
+    faImage, faTimes
 } from "@fortawesome/free-solid-svg-icons";
 import { useOrders } from "../hooks/useOrders";
 import { getStatusColor, getStatusLabel, formatCurrency, formatDateTime } from "../../../helpers/format";
 import Button from "../../../components/Button";
+import Pagination from "../../../components/Pagination";
 
 const STATUS_ICONS = {
     pending: faClock,
@@ -241,45 +242,12 @@ export default function Orders() {
                             </table>
                         </div>
 
-                        {pagination.pages > 1 && (
-                            <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100">
-                                <p className="text-sm text-gray-500">
-                                    Trang {pagination.page} / {pagination.pages} (tổng {pagination.total} đơn)
-                                </p>
-                                <div className="flex items-center gap-2">
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        disabled={pagination.page <= 1}
-                                        onClick={() => handlePageChange(pagination.page - 1)}
-                                    >
-                                        <FontAwesomeIcon icon={faChevronLeft} />
-                                    </Button>
-                                    {Array.from({ length: Math.min(pagination.pages, 5) }, (_, i) => {
-                                        const start = Math.max(1, pagination.page - 2);
-                                        const page = start + i;
-                                        if (page > pagination.pages) return null;
-                                        return (
-                                            <Button
-                                                key={page}
-                                                variant={page === pagination.page ? "primary" : "ghost"}
-                                                size="sm"
-                                                onClick={() => handlePageChange(page)}
-                                            >
-                                                {page}
-                                            </Button>
-                                        );
-                                    })}
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        disabled={pagination.page >= pagination.pages}
-                                        onClick={() => handlePageChange(pagination.page + 1)}
-                                    >
-                                        <FontAwesomeIcon icon={faChevronRight} />
-                                    </Button>
-                                </div>
-                            </div>
+                        {pagination.totalPages > 1 && (
+                            <Pagination
+                                page={pagination.page}
+                                totalPages={pagination.totalPages}
+                                onChange={handlePageChange}
+                            />
                         )}
                     </>
                 )}

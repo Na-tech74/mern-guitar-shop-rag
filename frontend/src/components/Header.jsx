@@ -7,6 +7,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { faFacebook, faYoutube, faTiktok, faInstagram } from '@fortawesome/free-brands-svg-icons';
 import Logo from './Logo.jsx';
+import { useUserInfo } from '../hooks/useUserInfo.js';
 
 const menuItems = [
   { name: 'TRANG CHỦ', path: '/', hasDropdown: false },
@@ -38,8 +39,8 @@ const Header = memo(function Header() {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  const [userInfo] = useState(() => JSON.parse(sessionStorage.getItem("userInfo")));
-  const isLoggedIn = !!userInfo;
+  const userInfo = useUserInfo();
+  const isLoggedIn = !!userInfo?.email;
 
   useEffect(() => {
     const updateCounts = () => {
@@ -84,6 +85,7 @@ const Header = memo(function Header() {
     }
     sessionStorage.removeItem("userInfo");
     sessionStorage.removeItem("token");
+    window.dispatchEvent(new Event("user-info-updated"));
     setIsAccountOpen(false);
     navigate("/");
   };

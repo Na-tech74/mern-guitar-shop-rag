@@ -17,10 +17,6 @@ export const createBlog = async (req, res) => {
     const { title, excerpt, content } = req.body;
     const imageFiles = req.files;
 
-    if (req.user.role !== 'admin') {
-        throw appError("Chỉ admin mới có quyền!", 403)
-    }
-
     if (!title || !content) {
         throw appError("Nhập đầy đủ thông tin bài viết!", 400)
     }
@@ -98,10 +94,6 @@ export const updateBlog = async (req, res) => {
     const { id } = req.params;
     const { title, excerpt, content } = req.body;
 
-    if (req.user.role !== 'admin') {
-        throw appError("Chỉ admin mới có quyền!", 403)
-    }
-
     if (!isValidObjectId(id)) {
         throw appError("ID bài viết không hợp lệ!", 400);
     }
@@ -135,10 +127,6 @@ export const updateBlog = async (req, res) => {
  */
 export const deleteBlog = async (req, res) => {
     const { id } = req.params;
-
-    if (req.user.role !== 'admin') {
-        throw appError("Chỉ admin mới có quyền!", 403)
-    }
 
     if (!isValidObjectId(id)) {
         throw appError("ID bài viết không hợp lệ!", 400);

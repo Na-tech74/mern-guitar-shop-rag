@@ -13,10 +13,9 @@ import { generateAccessToken, generateRefreshToken } from "../services/generateT
 import { sendEmail } from "../services/sendEmail.js"; // Service gửi email
 
 import { appError, appSuccess } from "../utils/appResponse.js"; // Utility xử lý response và lỗi
-import {  isValidEmail,  isValidPassword, isValidObjectId } from "../utils/valid.js"; // Utility validate input
+import { isValidEmail, isValidPassword } from "../utils/valid.js"; // Utility validate input
 import { refreshTokenCookie, clearCookie } from "../utils/cookier.js"; // Utility xử lý cookie
 import { sanitizeEmail, sanitizeText, formatDateTime } from "../utils/format.js";
-import { create } from "domain";
 
 /**
  * Đăng ký tài khoản mới

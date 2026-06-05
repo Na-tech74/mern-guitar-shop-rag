@@ -4,10 +4,7 @@
  */
 
 import nodemailer from "nodemailer"; // Thư viện gửi email
-import dotenv from 'dotenv';
 import { appError } from "../utils/appResponse.js"; // Utility xử lý lỗi
-
-dotenv.config();
 
 // Cấu hình transporter với Gmail SMTP
 const transporter = nodemailer.createTransport({

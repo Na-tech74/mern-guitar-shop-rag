@@ -70,10 +70,37 @@ export default function Carousel() {
         setTimeout(() => { setTransitioning(false); setPrevSlide(null); }, transitionDuration);
     }, [currentSlide, transitioning]);
 
+    // Dùng ref để luôn gọi bản `next` mới nhất mà không phải re-subscribe interval mỗi lần slide đổi
+    const nextRef = useRef(next);
+    useEffect(() => { nextRef.current = next; }, [next]);
+
     useEffect(() => {
-        timerRef.current = setInterval(next, 3000);
-        return () => clearInterval(timerRef.current);
-    }, [next]);
+        let intervalId = null;
+
+        const start = () => {
+            if (intervalId) return;
+            intervalId = setInterval(() => nextRef.current(), 3000);
+        };
+        const stop = () => {
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = null;
+            }
+        };
+
+        const onVisibilityChange = () => {
+            if (document.hidden) stop();
+            else start();
+        };
+
+        if (!document.hidden) start();
+        document.addEventListener("visibilitychange", onVisibilityChange);
+
+        return () => {
+            stop();
+            document.removeEventListener("visibilitychange", onVisibilityChange);
+        };
+    }, []);
 
     if (slides.length === 0) return null;
 

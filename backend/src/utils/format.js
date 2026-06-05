@@ -3,30 +3,6 @@
  */
 
 /**
- * Định dạng giá tiền theo tiền tệ Việt Nam (VND)
- * @param {number} price - Giá cần format
- * @returns {string} Giá đã format (ví dụ: 1.000.000)
- */
-export const formatPrice = (price) => {
-    if (!price) return 0;
-    return new Intl.NumberFormat('vi-VN').format(price);
-};
-
-/**
- * Định dạng ngày theo dd/mm/yyyy
- * @param {string|Date} date - Ngày cần format
- * @returns {string} Ngày đã format (ví dụ: 17/05/2026)
- */
-export const formatDate = (date) => {
-    if (!date) return '';
-    const d = new Date(date);
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
-};
-
-/**
  * Định dạng ngày giờ theo dd/mm/yyyy HH:mm
  * @param {string|Date} date - Ngày giờ cần format
  * @returns {string} Ngày giờ đã format (ví dụ: 17/05/2026 14:30)
@@ -60,33 +36,4 @@ export const sanitizeText = (text) => {
 export const sanitizeEmail = (email) => {
     if (!email) return '';
     return email.toLowerCase().trim();
-};
-
-/**
- * Format response thành công cho API
- * @param {string} message - Thông báo thành công
- * @param {*} data - Dữ liệu trả về (tùy chọn)
- * @param {object} pagination - Thông tin phân trang (tùy chọn)
- * @returns {object} Response đã format
- */
-export const formatSuccessResponse = (message, data = null, pagination = null) => {
-    const response = {
-        status: 'success',
-        message
-    };
-    if (data) response.data = data;
-    if (pagination) response.pagination = pagination;
-    return response;
-};
-
-/**
- * Format response lỗi cho API
- * @param {string} message - Thông báo lỗi
- * @returns {object} Response lỗi đã format
- */
-export const formatErrorResponse = (message) => {
-    return {
-        status: 'error',
-        message
-    };
 };

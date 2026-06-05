@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faThLarge, faList, faShoppingCart, faImage, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faThLarge, faList, faShoppingCart, faImage, faCheck, faXmark, faBoxOpen, faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import useProducts from "../hooks/useProducts";
 import { API } from "../../../api/axiosClient";
 import { getOptimizedImage } from "../../../helpers/format";
@@ -12,7 +12,7 @@ import useCart from "../hooks/useCart";
 import { formatCurrency } from "../../../helpers/format";
 
 export default function ProductsPage() {
-    const { products, loading, pagination, fetchProducts } = useProducts();
+    const { products, loading, error, pagination, fetchProducts } = useProducts();
     const [categories, setCategories] = useState([]);
     const [viewMode, setViewMode] = useState("grid");
     const [sortBy, setSortBy] = useState("default");
@@ -131,15 +131,40 @@ export default function ProductsPage() {
 
                     {/* Products Grid */}
                     <div className="flex-1">
-                        {loading || products.length === 0 ? (
+                        {loading ? (
                             <Skeleton.ProductCard count={6} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" />
+                        ) : error ? (
+                            <div className="flex flex-col items-center justify-center py-16 text-center">
+                                <FontAwesomeIcon icon={faTriangleExclamation} className="text-5xl text-red-400 mb-4" />
+                                <p className="text-gray-700 mb-4">{error}</p>
+                                <Button variant="primary" onClick={() => fetchProducts(getParams(pagination.page))}>
+                                    Thử lại
+                                </Button>
+                            </div>
+                        ) : products.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center py-16 text-center">
+                                <FontAwesomeIcon icon={faBoxOpen} className="text-6xl text-gray-300 mb-4" />
+                                <p className="text-gray-500 mb-4">Không tìm thấy sản phẩm nào</p>
+                                {(sortBy !== "default" || selectedCategory) && (
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => {
+                                            setSortBy("default");
+                                            setSelectedCategory("");
+                                        }}
+                                    >
+                                        Xoá bộ lọc
+                                    </Button>
+                                )}
+                            </div>
                         ) : (
                             <div className={viewMode === "grid" ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" : "space-y-4"}>
                                 {products.map((product) => (
                                     <Link
                                         key={product._id}
                                         to={`/products/${product._id}`}
-                                        className={`bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:shadow-amber-100 transition-shadow group ${viewMode === "list" ? "flex" : ""}`}
+                                        className={`bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:shadow-amber-100 transition-shadow group ${viewMode === "list" ? "flex" : "flex flex-col"}`}
                                     >
                                         <div className={`relative ${viewMode === "list" ? "w-48 shrink-0" : ""}`}>
                                             <div className={`w-full ${viewMode === "list" ? "h-full" : "h-56"} bg-gray-100 overflow-hidden`}>
@@ -169,11 +194,13 @@ export default function ProductsPage() {
                                             </div>
                                         </div>
 
-                                        <div className={`p-4 flex flex-col ${viewMode === "list" ? "flex-1" : ""}`}>
-                                            {product.category?.name && (
-                                                <p className="text-xs text-amber-600 mb-1">{product.category.name}</p>
-                                            )}
-                                            <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">{product.name}</h3>
+                                        <div className="p-4 flex flex-col flex-1">
+                                            <p className="text-xs text-amber-600 mb-1 min-h-[1.25rem]">
+                                                {product.category?.name}
+                                            </p>
+                                            <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 min-h-[3rem]">
+                                                {product.name}
+                                            </h3>
                                             <div className="mt-auto">
                                                 <div className="flex items-center gap-2 mb-3">
                                                     <span className="text-xl font-bold text-amber-600">{formatCurrency(product.price)}</span>
@@ -197,7 +224,13 @@ export default function ProductsPage() {
                             </div>
                         )}
 
-                        <Pagination page={pagination.page} totalPages={pagination.totalPages} onChange={(p) => fetchProducts(getParams(p))} />
+                        <Pagination
+                            page={pagination.page}
+                            totalPages={pagination.totalPages}
+                            total={pagination.total}
+                            label="sản phẩm"
+                            onChange={(p) => fetchProducts(getParams(p))}
+                        />
                     </div>
                 </div>
             </div>

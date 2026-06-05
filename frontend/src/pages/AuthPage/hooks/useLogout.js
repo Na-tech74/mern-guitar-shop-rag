@@ -3,7 +3,7 @@ import { logoutAPI } from "../api/authAPI";
 
 export default function useLogout() {
     const navigate = useNavigate();
-    const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+    const userInfo = JSON.parse(sessionStorage.getItem("userInfo") || "null");
     const handleLogout = async () => {
         try {
             await logoutAPI();
@@ -12,6 +12,7 @@ export default function useLogout() {
         }
         sessionStorage.removeItem("userInfo");
         sessionStorage.removeItem("token");
+        window.dispatchEvent(new Event("user-info-updated"));
         navigate("/");
     }
     return ({

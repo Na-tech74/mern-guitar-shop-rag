@@ -118,7 +118,14 @@ export default function FeaturedProducts({ products, categories }) {
                                     ))
                                 )}
                             </div>
-                            <Pagination page={page} totalPages={total} onChange={(p) => goToPage(category._id, p)} />
+                            <Pagination
+                                page={page}
+                                totalPages={total}
+                                total={category.items.length}
+                                label="sản phẩm"
+                                scrollToTop={false}
+                                onChange={(p) => goToPage(category._id, p)}
+                            />
                             <div className="text-center mt-4 md:hidden">
                                 <Link to={`/products?category=${category._id}`} className="inline-flex items-center gap-1 text-amber-600 font-medium text-sm">
                                     Xem tất cả {category.name.toLowerCase()} <FontAwesomeIcon icon={faChevronRight} className="text-xs" />

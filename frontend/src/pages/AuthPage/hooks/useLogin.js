@@ -47,11 +47,14 @@ export default function useLogin() {
             sessionStorage.setItem("userInfo", JSON.stringify({
                 name: data.user.name,
                 email: data.user.email,
-                role: data.user.role,
-                accessToken: data.accessToken
+                role: data.user.role
             }));
 
-            const redirect = searchParams.get("redirect") || (data.user.role === "admin" ? "/admin" : "/");
+            const isSafeRedirect = (url) =>
+                typeof url === "string" && url.startsWith("/") && !url.startsWith("//");
+            const redirectParam = searchParams.get("redirect");
+            const fallbackRedirect = data.user.role === "admin" ? "/admin" : "/";
+            const redirect = isSafeRedirect(redirectParam) ? redirectParam : fallbackRedirect;
             navigate(redirect);
 
             setForm({ email: "", password: "" });

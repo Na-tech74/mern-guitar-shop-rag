@@ -74,10 +74,6 @@ const courseSchema = new mongoose.Schema({
     isPublished: {
         type: Boolean,
         default: false
-    },
-    studentsCount: {
-        type: Number,
-        default: 0
     }
 }, { timestamps: true });
 

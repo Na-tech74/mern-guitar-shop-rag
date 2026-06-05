@@ -5,7 +5,7 @@
  */
 
 import Order from "../models/order.model.js";
-import Product from "../models/products.models.js";
+import Product from "../models/product.model.js";
 import User from "../models/users.model.js";
 import Category from "../models/categories.model.js";
 import { appError, appSuccess } from "../utils/appResponse.js";
@@ -137,7 +137,7 @@ export const getAllOrders = async (req, res) => {
         data: {
             orders,
             page: parseInt(page),
-            pages: totalPages,
+            totalPages,
             total
         }
     });

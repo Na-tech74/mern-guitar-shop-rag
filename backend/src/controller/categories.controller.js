@@ -24,10 +24,6 @@ export const createCategory = async (req, res) => {
     // vì hình ảnh là file nên phải req.file
     const imageFile = req.file;
 
-    if (req.user.role !== 'admin') {
-        throw appError("Chỉ admin mới có quyền!", 403);
-    }
-
     if (!name || !description) {
         throw appError("Thiếu trường bắt buộc!", 400);
     }
@@ -122,9 +118,6 @@ export const updateCategory = async (req, res) => {
     const { id } = req.params;
     const { name, description, image } = req.body;
 
-    if (req.user.role !== 'admin') {
-        throw appError("Chỉ admin mới có quyền!", 403);
-    }
     if (!isValidObjectId(id)) {
         throw appError("ID không hợp lệ!", 400);
     }
@@ -164,10 +157,6 @@ export const updateCategory = async (req, res) => {
 export const deleteCategory = async (req, res) => {
     const { id } = req.params;
 
-    if (req.user.role !== 'admin') {
-        throw appError("Chỉ admin mới có quyền!", 403);
-    }
-    
     if (!isValidObjectId(id)) {
         throw appError("ID không hợp lệ!", 400);
     }
