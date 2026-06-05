@@ -4,10 +4,11 @@ import {
     faEye, faCheck, faXmark, faTruck, faSearch, faTrash,
     faBox, faClock, faShippingFast, faCheckDouble, faBan,
     faPhone, faMapMarkerAlt, faCreditCard, faMoneyBillWave,
-    faImage, faTimes
+    faImage, faTimes, faSpinner
 } from "@fortawesome/free-solid-svg-icons";
 import { useOrders } from "../hooks/useOrders";
 import { getStatusColor, getStatusLabel, formatCurrency, formatDateTime } from "../../../helpers/format";
+import { useDialog } from "../../../components/ConfirmDialog";
 import Button from "../../../components/Button";
 import Pagination from "../../../components/Pagination";
 
@@ -21,10 +22,11 @@ const STATUS_ICONS = {
 
 export default function Orders() {
     const {
-        orders, loading, error, pagination, updateStatus, deleteOrder,
+        orders, loading, refetching, error, pagination, confirmUpdateStatus, deleteOrder,
         selectedOrder, setSelectedOrder, statusFilter, handleStatusFilterChange,
         searchTerm, setSearchTerm, handlePageChange, stats, statusCounts, STATUS_LIST
     } = useOrders();
+    const { alert } = useDialog();
 
     const [confirmDelete, setConfirmDelete] = useState(null);
 
@@ -33,22 +35,19 @@ export default function Orders() {
             await deleteOrder(id);
             setConfirmDelete(null);
         } catch {
-            alert("Xóa đơn hàng thất bại!");
+            alert({ title: "Lỗi", message: "Xóa đơn hàng thất bại!", variant: "error" });
         }
     };
 
     const handleStatusUpdate = async (id, status) => {
-        const labels = {
-            cancelled: "hủy",
-            processing: "xác nhận",
-            shipped: "chuyển sang giao hàng",
-            delivered: "xác nhận đã giao"
-        };
-        if (!window.confirm(`Bạn có chắc muốn ${labels[status] || status} đơn hàng này?`)) return;
         try {
-            await updateStatus(id, status);
+            await confirmUpdateStatus(id, status);
         } catch (err) {
-            alert(err.response?.data?.message || "Cập nhật thất bại!");
+            alert({
+                title: "Lỗi",
+                message: err.response?.data?.message || "Cập nhật thất bại!",
+                variant: "error",
+            });
         }
     };
 
@@ -113,8 +112,15 @@ export default function Orders() {
                                 placeholder="Tìm theo mã đơn, tên, email, SĐT..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full rounded-lg border border-gray-200 py-2 pl-10 pr-4 text-sm outline-none focus:border-amber-500"
+                                className="w-full rounded-lg border border-gray-200 py-2 pl-10 pr-10 text-sm outline-none focus:border-amber-500"
                             />
+                            {refetching && (
+                                <FontAwesomeIcon
+                                    icon={faSpinner}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-amber-500 animate-spin"
+                                    aria-label="Đang tải lại"
+                                />
+                            )}
                         </div>
                         <div className="flex gap-2">
                             {STATUS_LIST.map((status) => (

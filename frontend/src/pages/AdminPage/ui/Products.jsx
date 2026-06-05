@@ -1,16 +1,17 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faPen, faTrash, faSearch, faImage, faUpload } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faPen, faTrash, faSearch, faImage, faUpload, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { formatCurrency } from "../../../helpers/format";
 import { useProducts } from "../hooks/useProducts";
 import Button from "../../../components/Button";
 import Input from "../../../components/Input";
+import Pagination from "../../../components/Pagination";
 
 export default function Products() {
-    const { 
-        loading, filteredProducts, searchTerm, setSearchTerm,
+    const {
+        loading, refetching, filteredProducts, searchTerm, setSearchTerm,
         handleSubmit, handleDelete, handleEdit, resetForm, openModal,
         showModal, setShowModal, editingProduct, formData, setFormData,
-        fetchProducts, products, categories, handleFileChange, removeImage
+        pagination, handlePageChange, categories, handleFileChange, removeImage
     } = useProducts();
 
     if (loading) {
@@ -26,7 +27,7 @@ export default function Products() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-800">Quản lý sản phẩm</h1>
-                    <p className="text-gray-500">Quản lý danh sách sản phẩm ({products.length})</p>
+                    <p className="text-gray-500">Quản lý danh sách sản phẩm ({pagination.total})</p>
                 </div>
                 <Button onClick={openModal} variant="primary">
                     <FontAwesomeIcon icon={faPlus} />
@@ -43,8 +44,15 @@ export default function Products() {
                             placeholder="Tìm kiếm sản phẩm..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full rounded-lg border border-gray-200 py-2 pl-10 pr-4 text-sm outline-none focus:border-amber-500"
+                            className="w-full rounded-lg border border-gray-200 py-2 pl-10 pr-10 text-sm outline-none focus:border-amber-500"
                         />
+                        {refetching && (
+                            <FontAwesomeIcon
+                                icon={faSpinner}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-amber-500 animate-spin"
+                                aria-label="Đang tải lại"
+                            />
+                        )}
                     </div>
                 </div>
 
@@ -67,7 +75,7 @@ export default function Products() {
                                     <td className="py-3">
                                         <div className="size-10 rounded-lg bg-gray-100 overflow-hidden">
                                             {product.images?.[0] ? (
-                                                <img src={product.images[0]} alt={product.name} className="h-full w-full object-cover" />
+                                                <img src={product.images[0]} alt={product.name} className="h-full w-full object-cover" loading="lazy" />
                                             ) : (
                                                 <div className="flex h-full w-full items-center justify-center text-gray-400">
                                                     <FontAwesomeIcon icon={faImage} />
@@ -112,6 +120,16 @@ export default function Products() {
                         </tbody>
                     </table>
                 </div>
+
+                {pagination.totalPages > 1 && (
+                    <Pagination
+                        page={pagination.page}
+                        totalPages={pagination.totalPages}
+                        onChange={handlePageChange}
+                        total={pagination.total}
+                        label="sản phẩm"
+                    />
+                )}
             </div>
 
             {showModal && (

@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faPen, faTrash, faSearch, faImage } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faPen, faTrash, faSearch, faImage, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { formatDate } from "../../../helpers/format";
 import { useCategories } from "../hooks/useCategories";
 import Button from "../../../components/Button";
@@ -7,9 +7,9 @@ import Input from "../../../components/Input";
 
 export default function Categories() {
     const { 
-        loading, filteredCategories, searchTerm, setSearchTerm,
+        loading, refetching, filteredCategories, searchTerm, setSearchTerm,
         handleSubmit, handleDelete, handleEdit, resetForm, openModal,
-        showModal, setShowModal, editingCategory, setEditingCategory, 
+        showModal, setShowModal, editingCategory,
         formData, setFormData, imagePreview, handleImageChange, categories
     } = useCategories();
 
@@ -43,8 +43,15 @@ export default function Categories() {
                             placeholder="Tìm kiếm danh mục..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full rounded-lg border border-gray-200 py-2 pl-10 pr-4 text-sm outline-none focus:border-amber-500"
+                            className="w-full rounded-lg border border-gray-200 py-2 pl-10 pr-10 text-sm outline-none focus:border-amber-500"
                         />
+                        {refetching && (
+                            <FontAwesomeIcon
+                                icon={faSpinner}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-amber-500 animate-spin"
+                                aria-label="Đang tải lại"
+                            />
+                        )}
                     </div>
                 </div>
 

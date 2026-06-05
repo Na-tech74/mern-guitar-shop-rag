@@ -8,7 +8,7 @@ import Pagination from "../../../components/Pagination";
 
 const ITEMS_PER_PAGE = 4;
 
-export default function FeaturedProducts({ products, categories }) {
+export default function FeaturedProducts({ products, categories, title, subtitle }) {
     const [pages, setPages] = useState({});
 
     const grouped = useMemo(() => {
@@ -45,8 +45,8 @@ export default function FeaturedProducts({ products, categories }) {
             <section className="py-16 bg-white">
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold text-gray-800 mb-2">Sản Phẩm Nổi Bật</h2>
-                        <p className="text-gray-500">Mang đến cho khách hàng những cây đàn chất lượng nhất</p>
+                        <h2 className="text-3xl font-bold text-gray-800 mb-2">{title || "Sản Phẩm Nổi Bật"}</h2>
+                        <p className="text-gray-500">{subtitle || "Mang đến cho khách hàng những cây đàn chất lượng nhất"}</p>
                     </div>
                     <Skeleton.ProductCard count={8} />
                 </div>
@@ -71,8 +71,8 @@ export default function FeaturedProducts({ products, categories }) {
         <section className="py-16 bg-white">
             <div className="max-w-7xl mx-auto px-4 space-y-12">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold text-gray-800 mb-2">Sản Phẩm Nổi Bật</h2>
-                    <p className="text-gray-500">Mang đến cho khách hàng những cây đàn chất lượng nhất</p>
+                    <h2 className="text-3xl font-bold text-gray-800 mb-2">{title || "Sản Phẩm Nổi Bật"}</h2>
+                    <p className="text-gray-500">{subtitle || "Mang đến cho khách hàng những cây đàn chất lượng nhất"}</p>
                 </div>
                 {grouped.map((category, ci) => {
                     const page = currentPage(category._id);

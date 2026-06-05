@@ -1,12 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPen, faTrash, faSearch, faUserShield } from "@fortawesome/free-solid-svg-icons";
+import { faPen, faTrash, faSearch, faUserShield, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { useUsers } from "../hooks/useUsers";
 import { formatDate } from "../../../helpers/format";
 import Button from "../../../components/Button";
 import Input from "../../../components/Input";
 
 export default function Users() {
-    const { users, loading, fetchUsers, updateUser, handleDelete, filteredUsers, searchTerm, setSearchTerm, showModal, editingUser, formData, setFormData, openModal, closeModal } = useUsers();
+    const { users, loading, refetching, updateUser, handleDelete, filteredUsers, searchTerm, setSearchTerm, showModal, editingUser, formData, setFormData, openModal, closeModal } = useUsers();
 
     if (loading) {
         return (
@@ -34,8 +34,15 @@ export default function Users() {
                             placeholder="Tìm kiếm người dùng..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full rounded-lg border border-gray-200 py-2 pl-10 pr-4 text-sm outline-none focus:border-amber-500"
+                            className="w-full rounded-lg border border-gray-200 py-2 pl-10 pr-10 text-sm outline-none focus:border-amber-500"
                         />
+                        {refetching && (
+                            <FontAwesomeIcon
+                                icon={faSpinner}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-amber-500 animate-spin"
+                                aria-label="Đang tải lại"
+                            />
+                        )}
                     </div>
                 </div>
 

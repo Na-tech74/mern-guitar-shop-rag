@@ -1,28 +1,44 @@
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { categoryAPI } from "../api/adminAPI";
+import useDebounce from "../../../hooks/useDebounce";
+import { useDialog } from "../../../components/ConfirmDialog";
 
 export const useCategories = () => {
+    const { confirm, alert } = useDialog();
+
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [refetching, setRefetching] = useState(false);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
-    
+    const debouncedSearch = useDebounce(searchTerm, 300);
+
     const [showModal, setShowModal] = useState(false);
     const [editingCategory, setEditingCategory] = useState(null);
     const [formData, setFormData] = useState({ name: "", description: "", image: "" });
     const [imagePreview, setImagePreview] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
 
-    const fetchCategories = useCallback(async () => {
+    // Theo dõi blob URL hiện tại của preview để revoke đúng lúc.
+    const previewBlobRef = useRef(null);
+    const hasLoadedRef = useRef(false);
+
+    const fetchCategories = useCallback(async ({ silent = false } = {}) => {
         try {
-            setLoading(true);
+            if (silent && hasLoadedRef.current) {
+                setRefetching(true);
+            } else {
+                setLoading(true);
+            }
             setError(null);
             const res = await categoryAPI.getAll();
             setCategories(res.data?.data?.categories || []);
+            hasLoadedRef.current = true;
         } catch (err) {
             setError(err);
         } finally {
             setLoading(false);
+            setRefetching(false);
         }
     }, []);
 
@@ -32,46 +48,43 @@ export const useCategories = () => {
 
     useEffect(() => {
         const handleVisibility = () => {
-            if (document.visibilityState === "visible") {
-                fetchCategories();
+            if (document.visibilityState === "visible" && hasLoadedRef.current) {
+                fetchCategories({ silent: true });
             }
         };
         document.addEventListener("visibilitychange", handleVisibility);
         return () => document.removeEventListener("visibilitychange", handleVisibility);
     }, [fetchCategories]);
 
+    // Cleanup blob khi unmount.
+    useEffect(() => {
+        return () => {
+            if (previewBlobRef.current) {
+                URL.revokeObjectURL(previewBlobRef.current);
+                previewBlobRef.current = null;
+            }
+        };
+    }, []);
+
     const filteredCategories = useMemo(() => {
-        if (!searchTerm) return categories || [];
-        return (categories || []).filter(cat =>
-            cat.name?.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-    }, [categories, searchTerm]);
+        if (!debouncedSearch) return categories || [];
+        const term = debouncedSearch.toLowerCase();
+        return (categories || []).filter((cat) => cat.name?.toLowerCase().includes(term));
+    }, [categories, debouncedSearch]);
 
     const createCategory = useCallback(async (data) => {
-        try {
-            await categoryAPI.create(data);
-            await fetchCategories();
-        } catch (err) {
-            throw err;
-        }
+        await categoryAPI.create(data);
+        await fetchCategories({ silent: true });
     }, [fetchCategories]);
 
     const updateCategory = useCallback(async (id, data) => {
-        try {
-            await categoryAPI.update(id, data);
-            await fetchCategories();
-        } catch (err) {
-            throw err;
-        }
+        await categoryAPI.update(id, data);
+        await fetchCategories({ silent: true });
     }, [fetchCategories]);
 
     const deleteCategory = useCallback(async (id) => {
-        try {
-            await categoryAPI.delete(id);
-            await fetchCategories();
-        } catch (err) {
-            throw err;
-        }
+        await categoryAPI.delete(id);
+        await fetchCategories({ silent: true });
     }, [fetchCategories]);
 
     const handleSubmit = async (e) => {
@@ -93,21 +106,40 @@ export const useCategories = () => {
             }
             setShowModal(false);
             resetForm();
-        } catch (error) {
-            alert("Có lỗi xảy ra!");
+        } catch (err) {
+            alert({
+                title: "Lỗi",
+                message: err.response?.data?.message || "Có lỗi xảy ra!",
+                variant: "error",
+            });
         }
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Bạn có chắc muốn xóa?")) return;
+        const ok = await confirm({
+            title: "Xóa danh mục",
+            message: "Bạn có chắc muốn xóa danh mục này?",
+            confirmText: "Xóa",
+            variant: "danger",
+        });
+        if (!ok) return;
         try {
             await deleteCategory(id);
-        } catch (error) {
-            alert("Có lỗi xảy ra!");
+        } catch (err) {
+            alert({
+                title: "Lỗi",
+                message: err.response?.data?.message || "Có lỗi xảy ra!",
+                variant: "error",
+            });
         }
     };
 
     const handleEdit = (category) => {
+        // Revoke blob cũ nếu có khi mở form mới.
+        if (previewBlobRef.current) {
+            URL.revokeObjectURL(previewBlobRef.current);
+            previewBlobRef.current = null;
+        }
         setEditingCategory(category);
         setFormData({
             name: category.name,
@@ -120,6 +152,10 @@ export const useCategories = () => {
     };
 
     const resetForm = () => {
+        if (previewBlobRef.current) {
+            URL.revokeObjectURL(previewBlobRef.current);
+            previewBlobRef.current = null;
+        }
         setEditingCategory(null);
         setFormData({ name: "", description: "", image: "" });
         setImagePreview("");
@@ -135,13 +171,21 @@ export const useCategories = () => {
         const file = e.target.files[0];
         if (!file) return;
 
+        // Revoke blob cũ trước khi tạo blob mới.
+        if (previewBlobRef.current) {
+            URL.revokeObjectURL(previewBlobRef.current);
+        }
+        const url = URL.createObjectURL(file);
+        previewBlobRef.current = url;
+
         setSelectedFile(file);
-        setImagePreview(URL.createObjectURL(file));
+        setImagePreview(url);
     };
 
     return {
         categories,
         loading,
+        refetching,
         error,
         filteredCategories,
         searchTerm,

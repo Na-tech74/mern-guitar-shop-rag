@@ -33,6 +33,7 @@ const Users = lazy(() => import("./pages/AdminPage/ui/Users"));
 const Categories = lazy(() => import("./pages/AdminPage/ui/Categories"));
 const Settings = lazy(() => import("./pages/AdminPage/ui/Settings"));
 const Blog = lazy(() => import("./pages/AdminPage/ui/Blog"));
+const HomeContent = lazy(() => import("./pages/AdminPage/ui/HomeContent"));
 
 function LoadingFallback() {
   return (
@@ -45,7 +46,7 @@ function LoadingFallback() {
 function App() {
     useSessionRecovery();
     return (
-        <BrowserRouter>
+      <BrowserRouter>
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
           <Route path="/" element={<MainLayout />}>
@@ -77,6 +78,7 @@ function App() {
             </ProtectedRoute>
           }>
               <Route index element={<Dashboard />} />
+              <Route path="home-content" element={<HomeContent />} />
               <Route path="products" element={<AdminProducts />} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="users" element={<Users />} />

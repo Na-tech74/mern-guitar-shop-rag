@@ -1,24 +1,38 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { userAPI } from "../api/adminAPI";
+import useDebounce from "../../../hooks/useDebounce";
+import { useDialog } from "../../../components/ConfirmDialog";
 
 export const useUsers = () => {
+    const { confirm, alert } = useDialog();
+
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [refetching, setRefetching] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
+    const debouncedSearch = useDebounce(searchTerm, 300);
 
     const [showModal, setShowModal] = useState(false);
     const [editingUser, setEditingUser] = useState(null);
     const [formData, setFormData] = useState({ name: "", email: "", role: "user" });
 
-    const fetchUsers = useCallback(async () => {
+    const hasLoadedRef = useRef(false);
+
+    const fetchUsers = useCallback(async ({ silent = false } = {}) => {
         try {
-            setLoading(true);
+            if (silent && hasLoadedRef.current) {
+                setRefetching(true);
+            } else {
+                setLoading(true);
+            }
             const response = await userAPI.getAll();
             setUsers(response.data?.data || []);
+            hasLoadedRef.current = true;
         } catch (err) {
             console.error("fetchUsers error:", err);
         } finally {
             setLoading(false);
+            setRefetching(false);
         }
     }, []);
 
@@ -26,15 +40,24 @@ export const useUsers = () => {
         fetchUsers();
     }, [fetchUsers]);
 
-
+    useEffect(() => {
+        const handleVisibility = () => {
+            if (document.visibilityState === "visible" && hasLoadedRef.current) {
+                fetchUsers({ silent: true });
+            }
+        };
+        document.addEventListener("visibilitychange", handleVisibility);
+        return () => document.removeEventListener("visibilitychange", handleVisibility);
+    }, [fetchUsers]);
 
     const filteredUsers = useMemo(() => {
-        if (!searchTerm) return users || [];
+        if (!debouncedSearch) return users || [];
+        const term = debouncedSearch.toLowerCase();
         return (users || []).filter(user =>
-            user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.email?.toLowerCase().includes(searchTerm.toLowerCase())
+            user.name?.toLowerCase().includes(term) ||
+            user.email?.toLowerCase().includes(term)
         );
-    }, [users, searchTerm]);
+    }, [users, debouncedSearch]);
 
     const openModal = (user) => {
         setEditingUser(user);
@@ -50,30 +73,45 @@ export const useUsers = () => {
     const updateUser = async (id, data) => {
         try {
             await userAPI.update(id, data);
-            await fetchUsers();
+            await fetchUsers({ silent: true });
             closeModal();
         } catch (err) {
-            alert(err.response?.data?.message || "Không thể cập nhật!");
+            alert({
+                title: "Lỗi",
+                message: err.response?.data?.message || "Không thể cập nhật!",
+                variant: "error",
+            });
         }
     };
 
     const deleteUser = async (id) => {
         try {
             await userAPI.delete(id);
-            await fetchUsers();
+            await fetchUsers({ silent: true });
         } catch (err) {
-            alert(err.response?.data?.message || "Không thể xóa!");
+            alert({
+                title: "Lỗi",
+                message: err.response?.data?.message || "Không thể xóa!",
+                variant: "error",
+            });
         }
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Bạn có chắc muốn xóa người dùng này?")) return;
+        const ok = await confirm({
+            title: "Xóa người dùng",
+            message: "Bạn có chắc muốn xóa người dùng này?",
+            confirmText: "Xóa",
+            variant: "danger",
+        });
+        if (!ok) return;
         await deleteUser(id);
     };
 
     return {
         users,
         loading,
+        refetching,
         fetchUsers,
         filteredUsers,
         searchTerm,

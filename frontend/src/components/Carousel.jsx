@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight, faCartPlus, faMusic } from "@fortawesome/free-solid-svg-icons";
 
-const slides = [
+const defaultSlides = [
     {
         id: 1,
         title: "Guitar Acoustic Cao Cấp",
@@ -33,9 +33,14 @@ const slides = [
     },
 ];
 
+const defaultBrand = "Nam Acoustic";
+
 const transitionDuration = 600;
 
-export default function Carousel() {
+export default function Carousel({ data }) {
+    const slides = (data?.slides && data.slides.length > 0) ? data.slides : defaultSlides;
+    const brand = data?.brand || defaultBrand;
+
     const [currentSlide, setCurrentSlide] = useState(0);
     const [prevSlide, setPrevSlide] = useState(null);
     const [direction, setDirection] = useState(1);
@@ -50,7 +55,7 @@ export default function Carousel() {
         setPrevSlide(currentSlide);
         setCurrentSlide((prev) => (prev + 1) % slides.length);
         setTimeout(() => { setTransitioning(false); setPrevSlide(null); }, transitionDuration);
-    }, [currentSlide, transitioning]);
+    }, [currentSlide, transitioning, slides.length]);
 
     const prev = useCallback(() => {
         if (transitioning) return;
@@ -59,7 +64,7 @@ export default function Carousel() {
         setPrevSlide(currentSlide);
         setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
         setTimeout(() => { setTransitioning(false); setPrevSlide(null); }, transitionDuration);
-    }, [currentSlide, transitioning]);
+    }, [currentSlide, transitioning, slides.length]);
 
     const goTo = useCallback((index) => {
         if (transitioning || index === currentSlide) return;
@@ -137,7 +142,7 @@ export default function Carousel() {
                     <div className="max-w-2xl">
                         <div className="inline-flex items-center gap-2 px-4 py-2 bg-black/30 rounded-full mb-4">
                             <FontAwesomeIcon icon={faMusic} className="text-amber-500" />
-                            <span className="text-white/90 text-sm">Nam Acoustic</span>
+                            <span className="text-white/90 text-sm">{brand}</span>
                         </div>
 
                         <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-3 md:mb-4 leading-tight">

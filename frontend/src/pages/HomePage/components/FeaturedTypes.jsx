@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
-const features = [
+const defaultTypes = [
     {
         title: "Guitar Acoustic",
         subtitle: "Đa dạng mẫu mã",
@@ -23,19 +23,23 @@ const features = [
     }
 ];
 
-export default function FeaturedTypes() {
+export default function FeaturedTypes({ data }) {
+    const items = (data?.types && data.types.length > 0) ? data.types : defaultTypes;
+    const title = data?.title || "Bộ sưu tập";
+    const subtitle = data?.subtitle || "Khám phá các dòng guitar phổ biến nhất";
+
     return (
         <section className="py-10" style={{ contentVisibility: 'auto' }}>
             <div className="max-w-7xl mx-auto px-4">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold text-gray-800 mb-2">Bộ sưu tập</h2>
-                    <p className="text-gray-500">Khám phá các dòng guitar phổ biến nhất</p>
+                    <h2 className="text-3xl font-bold text-gray-800 mb-2">{title}</h2>
+                    <p className="text-gray-500">{subtitle}</p>
                 </div>
                 <div className="grid md:grid-cols-3 gap-6">
-                    {features.map((item) => (
+                    {items.map((item, idx) => (
                         <Link
-                            key={item.title}
-                            to={item.link}
+                            key={`${item.title}-${idx}`}
+                            to={item.link || "/products"}
                             className="group relative h-[200px] rounded-2xl overflow-hidden"
                         >
                             <img

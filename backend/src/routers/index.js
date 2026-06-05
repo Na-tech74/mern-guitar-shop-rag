@@ -12,6 +12,7 @@ import productRoutes from './product.routes.js';
 import blogRoutes from './blog.routes.js';
 import orderRoutes from './order.routes.js';
 import courseRoutes from './course.routes.js';
+import homeContentRoutes from './homeContent.routes.js';
 
 /**
  * Mount toàn bộ routes (bao gồm health check) vào Express app
@@ -41,4 +42,5 @@ export const mountRoutes = (app) => {
     app.use('/api/blogs', blogRoutes);
     app.use('/api/orders', orderRoutes);
     app.use('/api/courses', courseRoutes);
+    app.use('/api/home-content', homeContentRoutes);
 };

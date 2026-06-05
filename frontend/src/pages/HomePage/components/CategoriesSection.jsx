@@ -8,7 +8,7 @@ const defaultImages = {
     "ukulele": "https://images.unsplash.com/photo-1514117445517-2ec90fa4b84b?w=400&q=80",
     "piano": "https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=400&q=80"
 };
-export default function CategoriesSection({ categories }) {
+export default function CategoriesSection({ categories, title, subtitle }) {
     const getImage = (category) => {
         if (category.image) return category.image;
         return defaultImages[category.slug] || null;
@@ -17,8 +17,8 @@ export default function CategoriesSection({ categories }) {
         <section className="py-6" style={{ contentVisibility: 'auto' }}>
             <div className="max-w-7xl mx-auto px-4">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold text-gray-800 mb-2">Danh mục sản phẩm</h2>
-                    <p className="text-gray-500">Lựa chọn danh mục phù hợp với nhu cầu của bạn</p>
+                    <h2 className="text-3xl font-bold text-gray-800 mb-2">{title || "Danh mục sản phẩm"}</h2>
+                    <p className="text-gray-500">{subtitle || "Lựa chọn danh mục phù hợp với nhu cầu của bạn"}</p>
                 </div>
                 {categories.length === 0 ? (
                     <Skeleton.CategoryCard count={6} />

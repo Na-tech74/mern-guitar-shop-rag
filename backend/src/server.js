@@ -9,8 +9,11 @@
  */
 
 // Load .env TRƯỚC mọi import khác để các module dùng được process.env
-import dotenv from 'dotenv';
-dotenv.config();
+// Dùng side-effect import "dotenv/config" để chắc chắn .env được nạp
+// trước khi các module bên dưới (vd: cloudinay.config.js) đọc process.env.
+// Lưu ý: ES module imports bị hoisted nên `dotenv.config()` viết sau import
+// sẽ chạy SAU khi tất cả import đã load xong -> các module đọc env quá sớm.
+import 'dotenv/config';
 
 import mongoose from 'mongoose';
 

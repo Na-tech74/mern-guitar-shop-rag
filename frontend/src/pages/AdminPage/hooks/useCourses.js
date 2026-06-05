@@ -1,10 +1,14 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { courseAPI, categoryAPI } from "../api/adminAPI";
+import { useDialog } from "../../../components/ConfirmDialog";
 
 export default function useCourses() {
+    const { confirm, alert } = useDialog();
+
     const [courses, setCourses] = useState([]);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [refetching, setRefetching] = useState(false);
     const [error, setError] = useState(null);
     const [showForm, setShowForm] = useState(false);
     const [editingCourse, setEditingCourse] = useState(null);
@@ -20,8 +24,16 @@ export default function useCourses() {
     const [thumbnailFile, setThumbnailFile] = useState(null);
     const [thumbnailPreview, setThumbnailPreview] = useState("");
 
-    const fetchCourses = useCallback(async () => {
-        setLoading(true);
+    // Theo dõi blob URL của thumbnail để revoke đúng lúc.
+    const thumbBlobRef = useRef(null);
+    const hasLoadedRef = useRef(false);
+
+    const fetchCourses = useCallback(async ({ silent = false } = {}) => {
+        if (silent && hasLoadedRef.current) {
+            setRefetching(true);
+        } else {
+            setLoading(true);
+        }
         setError(null);
         try {
             const [coursesRes, catRes] = await Promise.all([
@@ -30,16 +42,38 @@ export default function useCourses() {
             ]);
             setCourses(coursesRes.data?.data?.courses || []);
             setCategories(catRes.data?.data?.categories || []);
+            hasLoadedRef.current = true;
         } catch (err) {
             setError(err.response?.data?.message || err.message);
         } finally {
             setLoading(false);
+            setRefetching(false);
         }
     }, []);
 
     useEffect(() => {
         fetchCourses();
     }, [fetchCourses]);
+
+    useEffect(() => {
+        const handleVisibility = () => {
+            if (document.visibilityState === "visible" && hasLoadedRef.current) {
+                fetchCourses({ silent: true });
+            }
+        };
+        document.addEventListener("visibilitychange", handleVisibility);
+        return () => document.removeEventListener("visibilitychange", handleVisibility);
+    }, [fetchCourses]);
+
+    // Cleanup blob khi unmount.
+    useEffect(() => {
+        return () => {
+            if (thumbBlobRef.current) {
+                URL.revokeObjectURL(thumbBlobRef.current);
+                thumbBlobRef.current = null;
+            }
+        };
+    }, []);
 
     const handleLessonChange = (index, field, value) => {
         setFormData(prev => {
@@ -81,15 +115,19 @@ export default function useCourses() {
             } else {
                 await courseAPI.create(fd);
             }
-            await fetchCourses();
+            await fetchCourses({ silent: true });
             resetForm();
-        } catch (error) {
-            const msg = error.response?.data?.message || error.message || "Có lỗi xảy ra!";
-            alert(msg);
+        } catch (err) {
+            const msg = err.response?.data?.message || err.message || "Có lỗi xảy ra!";
+            alert({ title: "Lỗi", message: msg, variant: "error" });
         }
     };
 
     const handleEdit = (course) => {
+        if (thumbBlobRef.current) {
+            URL.revokeObjectURL(thumbBlobRef.current);
+            thumbBlobRef.current = null;
+        }
         setEditingCourse(course);
         setFormData({
             title: course.title,
@@ -106,23 +144,42 @@ export default function useCourses() {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Bạn có chắc muốn xóa khóa học này?")) return;
+        const ok = await confirm({
+            title: "Xóa khóa học",
+            message: "Bạn có chắc muốn xóa khóa học này?",
+            confirmText: "Xóa",
+            variant: "danger",
+        });
+        if (!ok) return;
         try {
             await courseAPI.delete(id);
-            await fetchCourses();
-        } catch (error) {
-            alert(error.response?.data?.message || "Xóa thất bại!");
+            await fetchCourses({ silent: true });
+        } catch (err) {
+            alert({
+                title: "Lỗi",
+                message: err.response?.data?.message || "Xóa thất bại!",
+                variant: "error",
+            });
         }
     };
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (!file) return;
+        if (thumbBlobRef.current) {
+            URL.revokeObjectURL(thumbBlobRef.current);
+        }
+        const url = URL.createObjectURL(file);
+        thumbBlobRef.current = url;
         setThumbnailFile(file);
-        setThumbnailPreview(URL.createObjectURL(file));
+        setThumbnailPreview(url);
     };
 
     const resetForm = () => {
+        if (thumbBlobRef.current) {
+            URL.revokeObjectURL(thumbBlobRef.current);
+            thumbBlobRef.current = null;
+        }
         setShowForm(false);
         setEditingCourse(null);
         setFormData({ title: "", description: "", price: "", instructor: "Nam Acoustic", category: "", isPublished: false, lessons: [] });
@@ -136,7 +193,7 @@ export default function useCourses() {
     };
 
     return {
-        courses, categories, loading, error,
+        courses, categories, loading, refetching, error,
         showForm, editingCourse, formData, setFormData,
         thumbnailPreview, thumbnailFile,
         handleSubmit, handleEdit, handleDelete, handleFileChange,
