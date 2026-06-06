@@ -87,19 +87,19 @@ export default function WishlistPage() {
     }, [wishlist]);
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-950">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <nav className="text-sm mb-6">
                     <ol className="flex items-center gap-2 text-gray-500">
-                        <li><Link to="/" className="hover:text-amber-600">Trang chủ</Link></li>
+                        <li><Link to="/" className="hover:text-gray-400">Trang chủ</Link></li>
                         <li>/</li>
-                        <li className="text-gray-800 font-medium">Yêu thích</li>
+                        <li className="text-gray-100 font-medium">Yêu thích</li>
                     </ol>
                 </nav>
 
                 <div className="flex items-center justify-between mb-6">
                     <div>
-                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Sản phẩm yêu thích</h1>
+                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-100">Sản phẩm yêu thích</h1>
                         <p className="text-gray-500 text-sm mt-1">
                             {wishlist.length > 0
                                 ? `Có ${wishlist.length} sản phẩm`
@@ -121,13 +121,13 @@ export default function WishlistPage() {
                 </div>
 
                 {wishlist.length === 0 ? (
-                    <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
-                        <div className="size-24 mx-auto mb-6 bg-amber-50 rounded-full flex items-center justify-center">
-                            <FontAwesomeIcon icon={faHeartBroken} className="text-4xl text-amber-300" />
+                    <div className="text-center py-20 bg-gray-800 rounded-2xl border border-gray-700">
+                        <div className="size-24 mx-auto mb-6 bg-gray-700 rounded-full flex items-center justify-center">
+                            <FontAwesomeIcon icon={faHeartBroken} className="text-4xl text-gray-500" />
                         </div>
-                        <p className="text-gray-500 text-lg mb-2">Chưa có sản phẩm yêu thích</p>
+                        <p className="text-gray-300 text-lg mb-2">Chưa có sản phẩm yêu thích</p>
                         <p className="text-gray-400 text-sm mb-8">Hãy khám phá và thêm sản phẩm bạn yêu thích</p>
-                        <Link to="/products" className="inline-flex items-center gap-2 px-6 py-3 bg-amber-600 text-white rounded-lg hover:bg-amber-500 transition font-medium">
+                        <Link to="/products" className="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-lg hover:bg-amber-700 transition font-medium">
                             <FontAwesomeIcon icon={faArrowLeft} />
                             Khám phá sản phẩm
                         </Link>
@@ -137,8 +137,8 @@ export default function WishlistPage() {
                         {wishlist.map((item) => {
                             const isAdded = addedIds.has(item._id);
                             return (
-                                <div key={item._id} className="bg-white rounded-xl border border-gray-200 overflow-hidden group hover:shadow-lg hover:shadow-amber-100/50 transition-all duration-300">
-                                    <Link to={`/products/${item._id}`} className="block h-48 sm:h-52 bg-gray-100 overflow-hidden relative">
+                                <div key={item._id} className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden group hover:shadow-lg hover:shadow-gray-100/50 transition-all duration-300">
+                                    <Link to={`/products/${item._id}`} className="block h-48 sm:h-52 bg-gray-700 overflow-hidden relative">
                                         {item.images?.[0] ? (
                                             <img src={getOptimizedImage(item.images[0], 400)} alt={item.name} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                         ) : (
@@ -155,10 +155,10 @@ export default function WishlistPage() {
                                         </button>
                                     </Link>
                                     <div className="p-3 sm:p-4">
-                                        <Link to={`/products/${item._id}`} className="font-semibold text-gray-800 line-clamp-2 hover:text-amber-600 text-sm sm:text-base">
+                                        <Link to={`/products/${item._id}`} className="font-semibold text-gray-100 line-clamp-2 hover:text-amber-400 text-sm sm:text-base">
                                             {item.name}
                                         </Link>
-                                        <p className="text-amber-600 font-bold mt-1.5 text-sm sm:text-base">
+                                        <p className="text-gray-200 font-bold mt-1.5 text-sm sm:text-base">
                                             {new Intl.NumberFormat("vi-VN").format(item.price)} ₫
                                         </p>
                                         <button
@@ -167,8 +167,8 @@ export default function WishlistPage() {
                                             disabled={isAdded}
                                             className={`w-full mt-3 py-2 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2 ${
                                                 isAdded
-                                                    ? "bg-amber-700 text-white"
-                                                    : "bg-amber-600 hover:bg-amber-500 text-white"
+                                                    ? "bg-gray-800 text-white"
+                                                    : "bg-gray-700 hover:bg-amber-700 text-white"
                                             }`}
                                         >
                                             <FontAwesomeIcon icon={isAdded ? faCheckCircle : faShoppingCart} />

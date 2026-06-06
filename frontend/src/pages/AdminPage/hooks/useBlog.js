@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { blogAPI } from "../api/adminAPI";
+import { blogAPI } from "../../../api";
 import { useDialog } from "../../../components/ConfirmDialog";
 
 export default function useBlog() {

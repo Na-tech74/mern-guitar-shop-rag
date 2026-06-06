@@ -17,11 +17,11 @@ export default function OrderSuccessPage() {
     if (!state?.orderId) return null;
 
     return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12">
+        <div className="min-h-screen bg-white flex items-center justify-center py-12">
             <div className="max-w-lg mx-auto px-4 text-center">
-                <div className="bg-white rounded-2xl border border-gray-200 p-8 sm:p-12 shadow-sm">
-                    <div className="size-20 mx-auto mb-6 bg-green-100 rounded-full flex items-center justify-center">
-                        <FontAwesomeIcon icon={faCheckCircle} className="text-4xl text-green-500" />
+                <div className="bg-white rounded-2xl border border-gray-100 p-8 sm:p-12 shadow-soft">
+                    <div className="size-20 mx-auto mb-6 bg-emerald-50 rounded-2xl flex items-center justify-center">
+                        <FontAwesomeIcon icon={faCheckCircle} className="text-4xl text-emerald-500" />
                     </div>
 
                     <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
@@ -34,12 +34,12 @@ export default function OrderSuccessPage() {
                         Mã đơn hàng: <span className="font-mono font-medium text-gray-700">#{state.orderId.slice(-8).toUpperCase()}</span>
                     </p>
 
-                    <div className="bg-amber-50 rounded-xl p-4 mb-8">
-                        <p className="text-sm text-gray-600 mb-1">Tổng thanh toán</p>
+                    <div className="bg-amber-50 rounded-2xl p-6 mb-8">
+                        <p className="text-sm text-amber-600 mb-1">Tổng thanh toán</p>
                         <p className="text-2xl font-bold text-amber-600">
                             {new Intl.NumberFormat("vi-VN").format(state.total)} ₫
                         </p>
-                        <p className="text-xs text-gray-400 mt-2">
+                        <p className="text-xs text-amber-400 mt-2">
                             Thanh toán khi nhận hàng (COD)
                         </p>
                     </div>

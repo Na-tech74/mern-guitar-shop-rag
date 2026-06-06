@@ -24,7 +24,7 @@ export const formatDateTime = (dateString) => {
 
 export const getStatusColor = (status) => {
     switch (status) {
-        case "pending": return "bg-yellow-100 text-yellow-700";
+        case "pending": return "bg-amber-100 text-amber-700";
         case "processing": return "bg-blue-100 text-blue-700";
         case "shipped": return "bg-purple-100 text-purple-700";
         case "delivered": return "bg-green-100 text-green-700";

@@ -3,43 +3,11 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight, faCartPlus, faMusic } from "@fortawesome/free-solid-svg-icons";
 
-const defaultSlides = [
-    {
-        id: 1,
-        title: "Guitar Acoustic Cao Cấp",
-        subtitle: "Chất lượng âm thanh tuyệt vời cho mọi không gian",
-        description: "Khám phá bộ sưu tập guitar acoustic cao cấp với thiết kế tinh xảo và âm thanh sống động",
-        image: "https://res.cloudinary.com/dsh9anp7p/image/upload/w_1920,q_auto,f_auto/v1778735126/guitar-shop/tpyifrrwagyagalzdhhy.jpg",
-        cta: "Mua ngay",
-        path: "/products"
-    },
-    {
-        id: 2,
-        title: "Piano Chính Hãng",
-        subtitle: "Biểu diễn chuyên nghiệp với âm thanh hoàn hảo",
-        description: "Bộ sưu tập piano điện tử và acoustic từ các thương hiệu nổi tiếng thế giới",
-        image: "https://res.cloudinary.com/dsh9anp7p/image/upload/w_1920,q_auto,f_auto/v1778735619/guitar-shop/cwpqdps56lmbb4bdg2ye.jpg",
-        cta: "Khám phá",
-        path: "/products"
-    },
-    {
-        id: 3,
-        title: "Ukulele & Nhạc Cụ",
-        subtitle: "Học nhạc cùng giáo viên chuyên nghiệp",
-        description: "Đăng ký khóa học guitar, piano, violin và nhiều nhạc cụ khác với giáo viên giàu kinh nghiệm",
-        image: "https://res.cloudinary.com/dsh9anp7p/image/upload/w_1920,q_auto,f_auto/v1778735833/guitar-shop/dj7rhxldvz3jayu42qhg.jpg",
-        cta: "Đăng ký ngay",
-        path: "/products"
-    },
-];
-
-const defaultBrand = "Nam Acoustic";
-
 const transitionDuration = 600;
 
 export default function Carousel({ data }) {
-    const slides = (data?.slides && data.slides.length > 0) ? data.slides : defaultSlides;
-    const brand = data?.brand || defaultBrand;
+    const slides = data?.slides || [];
+    const brand = data?.brand;
 
     const [currentSlide, setCurrentSlide] = useState(0);
     const [prevSlide, setPrevSlide] = useState(null);
@@ -140,14 +108,14 @@ export default function Carousel({ data }) {
             <div className="relative h-full flex items-center z-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                     <div className="max-w-2xl">
-                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-black/30 rounded-full mb-4">
-                            <FontAwesomeIcon icon={faMusic} className="text-amber-500" />
+                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-black/30 backdrop-blur-sm rounded-full mb-4 ring-1 ring-white/10">
+                            <FontAwesomeIcon icon={faMusic} className="text-amber-400" />
                             <span className="text-white/90 text-sm">{brand}</span>
                         </div>
 
                         <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-3 md:mb-4 leading-tight">
                             {slide.title}
-                            <span className="block text-amber-400 text-2xl md:text-3xl lg:text-4xl xl:text-5xl mt-2">
+                            <span className="block text-gray-400 text-2xl md:text-3xl lg:text-4xl xl:text-5xl mt-2">
                                 Chất lượng cao
                             </span>
                         </h1>
@@ -162,7 +130,7 @@ export default function Carousel({ data }) {
                         <div className="flex flex-wrap gap-3 md:gap-4">
                             <Link
                                 to={slide.path || "/products"}
-                                className="inline-flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 bg-amber-600 hover:bg-amber-500 text-white font-semibold rounded-lg transition-transform duration-200 hover:scale-105 will-change-transform"
+                                className="inline-flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 bg-amber-400 hover:bg-amber-500 text-white font-semibold rounded-lg transition-colors"
                             >
                                 {slide.cta || "Xem thêm"}
                                 <FontAwesomeIcon icon={faCartPlus} />
@@ -204,7 +172,7 @@ export default function Carousel({ data }) {
                         className={`rounded-full transition-all duration-300 ${
                             index === currentSlide
                                 ? "w-6 md:w-8 h-2 bg-amber-500"
-                                : "w-2 h-2 bg-white/50 hover:bg-white/80"
+                                : "w-2 h-2 bg-white/30 hover:bg-white/60"
                         }`}
                         aria-label={`Go to slide ${index + 1}`}
                     />
@@ -213,7 +181,7 @@ export default function Carousel({ data }) {
 
             <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 z-20">
                 <div
-                    className="h-full bg-gradient-to-r from-amber-400 to-amber-600 transition-transform duration-300 will-change-transform origin-left"
+                    className="h-full bg-amber-500 transition-transform duration-300 will-change-transform origin-left"
                     style={{
                         transform: `scaleX(${(currentSlide + 1) / slides.length})`
                     }}

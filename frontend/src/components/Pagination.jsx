@@ -13,8 +13,10 @@ import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons
  *   label         (string, default "mục") - Đơn vị cho total (vd: "sản phẩm", "đơn hàng")
  *   siblings      (number, default 1) - Số trang hiển thị 2 bên trang hiện tại
  *   scrollToTop   (bool, default true) - Cuộn mượt lên container cha khi đổi trang
+ *   forceShow     (bool, default false) - Luôn hiển thị kể cả khi totalPages <= 1
+ *   wrapAround    (bool, default false) - Prev ở trang 1 về trang cuối, Next ở trang cuối về trang 1
  *
- * Tự động ẩn khi totalPages <= 1. Có đầy đủ aria-* cho screen reader.
+ * Mặc định ẩn khi totalPages <= 1. Có đầy đủ aria-* cho screen reader.
  */
 export default function Pagination({
     page,
@@ -24,6 +26,8 @@ export default function Pagination({
     label = "mục",
     siblings = 1,
     scrollToTop = true,
+    forceShow = false,
+    wrapAround = false,
 }) {
     const navRef = useRef(null);
 
@@ -55,11 +59,15 @@ export default function Pagination({
         return result;
     }, [page, totalPages, siblings]);
 
-    if (totalPages <= 1) return null;
+    if (!forceShow && totalPages <= 1) return null;
 
     const goTo = (newPage) => {
-        if (newPage < 1 || newPage > totalPages || newPage === page) return;
-        onChange(newPage);
+        if (newPage === page) return;
+        let next = newPage;
+        if (next < 1) next = wrapAround ? totalPages : 1;
+        else if (next > totalPages) next = wrapAround ? 1 : totalPages;
+        if (next === page) return;
+        onChange(next);
         if (scrollToTop) {
             const parent = navRef.current?.parentElement;
             if (parent?.scrollIntoView) {
@@ -78,16 +86,16 @@ export default function Pagination({
         >
             {total !== undefined && (
                 <p className="text-sm text-gray-500">
-                    Có <span className="font-medium text-gray-700">{total}</span> {label}
+                    Có <span className="font-medium text-amber-600">{total}</span> {label}
                 </p>
             )}
             <div className="flex items-center gap-1">
                 <button
                     type="button"
-                    disabled={page <= 1}
+                    disabled={!wrapAround && page <= 1}
                     onClick={() => goTo(page - 1)}
                     aria-label="Trang trước"
-                    className="size-9 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-amber-50 hover:text-amber-600 disabled:opacity-30 disabled:cursor-not-allowed transition"
+                    className="size-9 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:border-amber-200 hover:text-amber-500 disabled:opacity-30 disabled:cursor-not-allowed transition"
                 >
                     <FontAwesomeIcon icon={faChevronLeft} className="text-xs" />
                 </button>
@@ -107,8 +115,8 @@ export default function Pagination({
                             aria-label={`Trang ${p}`}
                             className={`min-w-9 h-9 px-2 flex items-center justify-center rounded-lg text-sm font-medium transition ${
                                 p === page
-                                    ? "bg-amber-600 text-white"
-                                    : "border border-gray-200 text-gray-600 hover:bg-amber-50 hover:text-amber-600"
+                                    ? "bg-amber-400 text-white shadow-sm"
+                                    : "border border-gray-200 text-gray-600 hover:border-amber-200 hover:text-amber-500"
                             }`}
                         >
                             {p}
@@ -117,10 +125,10 @@ export default function Pagination({
                 )}
                 <button
                     type="button"
-                    disabled={page >= totalPages}
+                    disabled={!wrapAround && page >= totalPages}
                     onClick={() => goTo(page + 1)}
                     aria-label="Trang sau"
-                    className="size-9 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-amber-50 hover:text-amber-600 disabled:opacity-30 disabled:cursor-not-allowed transition"
+                    className="size-9 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:border-amber-200 hover:text-amber-500 disabled:opacity-30 disabled:cursor-not-allowed transition"
                 >
                     <FontAwesomeIcon icon={faChevronRight} className="text-xs" />
                 </button>

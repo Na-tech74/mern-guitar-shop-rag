@@ -5,6 +5,7 @@
  *         -> cookie parser -> sanitize -> global rate-limit
  */
 
+import jwt from 'jsonwebtoken';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
@@ -16,11 +17,25 @@ import rateLimit from 'express-rate-limit';
 import { mongoSanitize } from '../middleware/sanitize.middleware.js';
 import { appError } from '../utils/appResponse.js';
 
+const isAdminRequest = (req) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) return false;
+
+    const token = authHeader.split(' ')[1];
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+        return decoded?.role === 'admin';
+    } catch (e) {
+        return false;
+    }
+};
+
 const globalRateLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 100,
     standardHeaders: true,
     legacyHeaders: false,
+    skip: (req) => isAdminRequest(req),
     handler: (req, res, next) => {
         return next(appError("Quá nhiều yêu cầu, vui lòng thử lại sau!", 429));
     }

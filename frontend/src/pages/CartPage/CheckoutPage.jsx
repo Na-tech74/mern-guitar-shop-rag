@@ -5,7 +5,7 @@ import {
     faArrowLeft, faMapMarkerAlt, faCreditCard, faMoneyBillWave,
     faTruck, faSpinner, faCheckCircle
 } from "@fortawesome/free-solid-svg-icons";
-import { cartAPI } from "./api/cartAPI";
+import { orderAPI } from "../../api";
 import { getOptimizedImage } from "../../helpers/format";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
@@ -82,7 +82,7 @@ export default function CheckoutPage() {
                 quantity: item.quantity,
             }));
 
-            const res = await cartAPI.createOrder({
+            const res = await orderAPI.create({
                 items,
                 shippingAddress: {
                     fullName: form.fullName.trim(),
@@ -113,29 +113,32 @@ export default function CheckoutPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <nav className="text-sm mb-6">
-                    <ol className="flex items-center gap-2 text-gray-500">
-                        <li><Link to="/" className="hover:text-amber-600">Trang chủ</Link></li>
-                        <li>/</li>
-                        <li><Link to="/cart" className="hover:text-amber-600">Giỏ hàng</Link></li>
-                        <li>/</li>
-                        <li className="text-gray-800 font-medium">Thanh toán</li>
+                    <ol className="flex items-center gap-2 text-gray-400">
+                        <li><Link to="/" className="hover:text-amber-500 transition">Trang chủ</Link></li>
+                        <li className="text-gray-300">/</li>
+                        <li><Link to="/cart" className="hover:text-amber-500 transition">Giỏ hàng</Link></li>
+                        <li className="text-gray-300">/</li>
+                        <li className="text-gray-600 font-medium">Thanh toán</li>
                     </ol>
                 </nav>
 
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">Thanh toán</h1>
+                <div className="mb-8">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Thanh toán</h1>
+                    <div className="w-12 h-1 bg-amber-400 rounded-full mt-2" />
+                </div>
 
                 <form onSubmit={handleSubmit}>
                     <div className="grid lg:grid-cols-3 gap-6">
                         <div className="lg:col-span-2 space-y-6">
-                            <div className="bg-white rounded-xl border border-gray-200 p-6">
+                            <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-soft">
                                 <div className="flex items-center gap-3 mb-5">
-                                    <div className="size-10 bg-amber-100 rounded-full flex items-center justify-center">
-                                        <FontAwesomeIcon icon={faMapMarkerAlt} className="text-amber-600" />
+                                    <div className="size-10 rounded-xl bg-amber-50 flex items-center justify-center">
+                                        <FontAwesomeIcon icon={faMapMarkerAlt} className="text-amber-500" />
                                     </div>
-                                    <h2 className="text-lg font-semibold text-gray-900">Thông tin giao hàng</h2>
+                                    <h2 className="text-lg font-semibold text-gray-800">Thông tin giao hàng</h2>
                                 </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -180,17 +183,17 @@ export default function CheckoutPage() {
                                 </div>
                             </div>
 
-                            <div className="bg-white rounded-xl border border-gray-200 p-6">
+                            <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-soft">
                                 <div className="flex items-center gap-3 mb-5">
-                                    <div className="size-10 bg-amber-100 rounded-full flex items-center justify-center">
-                                        <FontAwesomeIcon icon={faCreditCard} className="text-amber-600" />
+                                    <div className="size-10 rounded-xl bg-amber-50 flex items-center justify-center">
+                                        <FontAwesomeIcon icon={faCreditCard} className="text-amber-500" />
                                     </div>
-                                    <h2 className="text-lg font-semibold text-gray-900">Phương thức thanh toán</h2>
+                                    <h2 className="text-lg font-semibold text-gray-800">Phương thức thanh toán</h2>
                                 </div>
 
                                 <div className="space-y-3">
-                                    <label className={`flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition ${
-                                        paymentMethod === "cod" ? "border-amber-500 bg-amber-50" : "border-gray-200 hover:border-gray-300"
+                                    <label className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition ${
+                                        paymentMethod === "cod" ? "border-amber-400 bg-amber-50" : "border-gray-200 hover:border-gray-300"
                                     }`}>
                                         <input
                                             type="radio"
@@ -198,17 +201,17 @@ export default function CheckoutPage() {
                                             value="cod"
                                             checked={paymentMethod === "cod"}
                                             onChange={() => setPaymentMethod("cod")}
-                                            className="text-amber-600 focus:ring-amber-500"
+                                            className="text-amber-500 focus:ring-amber-400/30"
                                         />
-                                        <FontAwesomeIcon icon={faMoneyBillWave} className="text-amber-600 text-xl" />
+                                        <FontAwesomeIcon icon={faMoneyBillWave} className="text-amber-500 text-xl" />
                                         <div>
                                             <p className="font-medium text-gray-800">Thanh toán khi nhận hàng (COD)</p>
-                                            <p className="text-xs text-gray-500">Thanh toán bằng tiền mặt khi nhận hàng</p>
+                                            <p className="text-xs text-gray-400">Thanh toán bằng tiền mặt khi nhận hàng</p>
                                         </div>
                                     </label>
 
-                                    <label className={`flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition ${
-                                        paymentMethod === "banking" ? "border-amber-500 bg-amber-50" : "border-gray-200 hover:border-gray-300"
+                                    <label className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition ${
+                                        paymentMethod === "banking" ? "border-amber-400 bg-amber-50" : "border-gray-200 hover:border-gray-300"
                                     }`}>
                                         <input
                                             type="radio"
@@ -216,38 +219,38 @@ export default function CheckoutPage() {
                                             value="banking"
                                             checked={paymentMethod === "banking"}
                                             onChange={() => setPaymentMethod("banking")}
-                                            className="text-amber-600 focus:ring-amber-500"
+                                            className="text-amber-500 focus:ring-amber-400/30"
                                         />
-                                        <FontAwesomeIcon icon={faCreditCard} className="text-amber-600 text-xl" />
+                                        <FontAwesomeIcon icon={faCreditCard} className="text-amber-500 text-xl" />
                                         <div>
                                             <p className="font-medium text-gray-800">Chuyển khoản ngân hàng</p>
-                                            <p className="text-xs text-gray-500">Chuyển khoản qua tài khoản ngân hàng</p>
+                                            <p className="text-xs text-gray-400">Chuyển khoản qua tài khoản ngân hàng</p>
                                         </div>
                                     </label>
                                 </div>
                             </div>
 
-                            <div className="bg-white rounded-xl border border-gray-200 p-6">
-                                <h2 className="text-lg font-semibold text-gray-900 mb-4">Ghi chú</h2>
+                            <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-soft">
+                                <h2 className="text-lg font-semibold text-gray-800 mb-4">Ghi chú</h2>
                                 <textarea
                                     name="note"
                                     value={note}
                                     onChange={(e) => setNote(e.target.value)}
                                     placeholder="Ghi chú cho đơn hàng (không bắt buộc)..."
                                     rows={3}
-                                    className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg outline-none focus:border-amber-500 transition resize-none"
+                                    className="w-full px-4 py-3 text-sm bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition resize-none placeholder-gray-400"
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-4">
-                            <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm sticky top-28">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4">Đơn hàng</h3>
+                            <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-soft sticky top-6">
+                                <h3 className="text-lg font-semibold text-gray-800 mb-4">Đơn hàng</h3>
 
                                 <div className="space-y-3 max-h-64 overflow-y-auto">
                                     {cartItems.map((item) => (
-                                        <div key={item._id} className="flex gap-3">
-                                            <div className="size-14 rounded-lg bg-gray-100 overflow-hidden shrink-0">
+                                        <div key={item._id} className="flex gap-3 p-2 rounded-xl hover:bg-gray-50 transition">
+                                            <div className="size-14 rounded-xl bg-gray-100 overflow-hidden shrink-0">
                                                 <img
                                                     src={getOptimizedImage(item.images?.[0], 100) || ""}
                                                     alt={item.name}
@@ -258,8 +261,8 @@ export default function CheckoutPage() {
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-sm font-medium text-gray-800 truncate">{item.name}</p>
-                                                <p className="text-xs text-gray-500">x{item.quantity}</p>
-                                                <p className="text-sm font-medium text-amber-600">
+                                                <p className="text-xs text-gray-400">x{item.quantity}</p>
+                                                <p className="text-sm font-semibold text-amber-600">
                                                     {new Intl.NumberFormat("vi-VN").format(item.price * item.quantity)} ₫
                                                 </p>
                                             </div>
@@ -267,20 +270,20 @@ export default function CheckoutPage() {
                                     ))}
                                 </div>
 
-                                <div className="border-t mt-4 pt-4 space-y-2 text-sm">
-                                    <div className="flex justify-between text-gray-600">
+                                <div className="border-t border-gray-100 mt-4 pt-4 space-y-2 text-sm">
+                                    <div className="flex justify-between text-gray-500">
                                         <span>Tạm tính</span>
-                                        <span>{new Intl.NumberFormat("vi-VN").format(subtotal)} ₫</span>
+                                        <span className="font-medium text-gray-700">{new Intl.NumberFormat("vi-VN").format(subtotal)} ₫</span>
                                     </div>
-                                    <div className="flex justify-between text-gray-600">
+                                    <div className="flex justify-between text-gray-500">
                                         <span className="flex items-center gap-1">
-                                            <FontAwesomeIcon icon={faTruck} className="text-amber-600 text-xs" />
+                                            <FontAwesomeIcon icon={faTruck} className="text-amber-400 text-xs" />
                                             Phí vận chuyển
                                         </span>
-                                        <span className="text-green-600">Miễn phí</span>
+                                        <span className="text-emerald-600 font-medium">Miễn phí</span>
                                     </div>
-                                    <div className="border-t pt-2 flex justify-between font-semibold text-lg">
-                                        <span>Tổng cộng</span>
+                                    <div className="border-t border-gray-100 pt-2 flex justify-between font-bold text-lg">
+                                        <span className="text-gray-800">Tổng cộng</span>
                                         <span className="text-amber-600">{new Intl.NumberFormat("vi-VN").format(total)} ₫</span>
                                     </div>
                                 </div>
@@ -302,7 +305,7 @@ export default function CheckoutPage() {
                                     )}
                                 </Button>
 
-                                <Link to="/cart" className="block text-center mt-3 text-sm text-gray-500 hover:text-amber-600">
+                                <Link to="/cart" className="block text-center mt-3 text-sm text-gray-400 hover:text-amber-500 transition font-medium">
                                     <FontAwesomeIcon icon={faArrowLeft} className="mr-1" />
                                     Quay lại giỏ hàng
                                 </Link>

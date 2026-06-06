@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from "react";
-import { categoryAPI } from "../api/adminAPI";
+import { categoryAPI } from "../../../api";
 import useDebounce from "../../../hooks/useDebounce";
 import { useDialog } from "../../../components/ConfirmDialog";
 
@@ -73,19 +73,27 @@ export const useCategories = () => {
     }, [categories, debouncedSearch]);
 
     const createCategory = useCallback(async (data) => {
-        await categoryAPI.create(data);
-        await fetchCategories({ silent: true });
-    }, [fetchCategories]);
+        const res = await categoryAPI.create(data);
+        const created = res.data?.data?.category;
+        if (created) {
+            setCategories((prev) => [created, ...prev]);
+        }
+        return created;
+    }, []);
 
     const updateCategory = useCallback(async (id, data) => {
-        await categoryAPI.update(id, data);
-        await fetchCategories({ silent: true });
-    }, [fetchCategories]);
+        const res = await categoryAPI.update(id, data);
+        const updated = res.data?.data?.category;
+        if (updated) {
+            setCategories((prev) => prev.map((c) => (c._id === id ? updated : c)));
+        }
+        return updated;
+    }, []);
 
     const deleteCategory = useCallback(async (id) => {
         await categoryAPI.delete(id);
-        await fetchCategories({ silent: true });
-    }, [fetchCategories]);
+        setCategories((prev) => prev.filter((c) => c._id !== id));
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { userAPI } from "../api/adminAPI";
+import { userAPI } from "../../../api";
 
 const getInitialFormData = () => {
     const userInfo = JSON.parse(sessionStorage.getItem("userInfo") || "{}");

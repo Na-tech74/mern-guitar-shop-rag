@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import { userAPI } from "../api/adminAPI";
+import { userAPI } from "../../../api";
 import useDebounce from "../../../hooks/useDebounce";
 import { useDialog } from "../../../components/ConfirmDialog";
 

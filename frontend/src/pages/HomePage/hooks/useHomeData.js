@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-import { API } from "../../../api/axiosClient.js";
-import { productAPI } from "../../ProductsPage/api/productAPI.js";
-import { homeContentAPI } from "../../AdminPage/api/adminAPI.js";
+import { API, productAPI, homeContentAPI } from "../../../api";
 
 export default function useHomeData() {
     const [products, setProducts] = useState([]);
@@ -14,7 +12,7 @@ export default function useHomeData() {
         const fetchData = async () => {
             try {
                 const [productsRes, categoriesRes, homeRes] = await Promise.all([
-                    productAPI.getTop({ limit: 12 }),
+                    productAPI.getAll({ limit: 20 }),
                     API.get("/categories", { signal: abortController.signal }),
                     homeContentAPI.get(),
                 ]);

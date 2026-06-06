@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { courseAPI, categoryAPI } from "../api/adminAPI";
+import { courseAPI, categoryAPI } from "../../../api";
 import { useDialog } from "../../../components/ConfirmDialog";
 
 export default function useCourses() {

@@ -1,9 +1,8 @@
 // components/dashboard/AdminSidebar.jsx
 
-import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsisVertical, faXmark, faChartPie, faBox, faUsers, faCartShopping, faTag, faGear, faNewspaper, faVideo, faHouse } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsisVertical, faXmark, faChartPie, faBox, faUsers, faCartShopping, faTag, faGear, faNewspaper, faVideo, faHouse, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { useUserInfo } from "../../../hooks/useUserInfo.js";
 
 const adminSidebarMenuItems = [
@@ -12,6 +11,7 @@ const adminSidebarMenuItems = [
         items: [
             { name: "Bảng điều khiển", path: "/admin", icon: faChartPie },
             { name: "Trang chủ", path: "/admin/home-content", icon: faHouse },
+            { name: "Giới thiệu", path: "/admin/about-content", icon: faInfoCircle },
             { name: "Sản phẩm", path: "/admin/products", icon: faBox },
             { name: "Đơn hàng", path: "/admin/orders", icon: faCartShopping },
             { name: "Người dùng", path: "/admin/users", icon: faUsers },
@@ -63,9 +63,7 @@ export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }) {
 
                     <div className="flex items-center gap-3">
                         <div>
-                            <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-amber-500 to-amber-300 bg-clip-text text-transparent">
-                                Nam Acoustic
-                            </h1>
+                            <h1 className="text-xl md:text-2xl font-bold text-amber-500">Nam Acoustic</h1>
                             <p className="text-sm text-black/40 sm:block">Admin Page <br />Design by Nam Nguyễn</p>
                         </div>
                     </div>
@@ -99,7 +97,7 @@ export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }) {
                                             `
                                             flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all
                                             ${isActive
-                                                ? "bg-amber-50 text-amber-700"
+                                                ? "bg-gray-100 text-gray-800"
                                                 : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                                             }
                                         `
@@ -124,7 +122,7 @@ export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }) {
 
                     <div className="flex items-center gap-3 rounded-xl p-2 hover:bg-gray-100">
 
-                        <div className="flex size-10 items-center justify-center rounded-full bg-amber-100 text-sm font-semibold text-amber-700">
+                        <div className="flex size-10 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-800">
                             {userInfo?.name?.charAt(0).toUpperCase()}
                         </div>
 

@@ -3,7 +3,9 @@ export default function Logo({ title }) {
     return (
         <div className="text-center p-2">
             {title && <h2 className="text-lg font-semibold text-gray-700 mb-2">{title}</h2>}
-            <img src={logo} alt="Nam Acoustic" className="w-30 h-20 mx-auto object-contain" />
+            <div className="w-52 h-16 overflow-hidden">
+                <img src={logo} alt="Nam Acoustic" width="1793" height="576" className="w-full h-full object-cover object-center" />
+            </div>
         </div>
     );
 }

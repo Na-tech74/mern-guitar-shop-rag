@@ -63,8 +63,8 @@ export const register = async (req, res) => {
     });
 
     // Tạo JWT tokens cho phiên đăng nhập
-    const accessToken = generateAccessToken(newUser._id);
-    const refreshToken = generateRefreshToken(newUser._id);
+    const accessToken = generateAccessToken(newUser);
+    const refreshToken = generateRefreshToken(newUser);
 
     // Lưu refresh token và access token vào database để track phiên
     newUser.refreshToken = refreshToken;
@@ -135,8 +135,8 @@ export const login = async (req, res) => {
     }
 
     // Tạo JWT tokens mới cho phiên đăng nhập
-    const accessToken = generateAccessToken(existingUser._id);
-    const refreshToken = generateRefreshToken(existingUser._id);
+    const accessToken = generateAccessToken(existingUser);
+    const refreshToken = generateRefreshToken(existingUser);
 
     // Cập nhật refresh token mới vào database (revoke token cũ)
     existingUser.refreshToken = refreshToken;
@@ -367,8 +367,8 @@ export const refreshAccessToken = async (req, res) => {
     }
 
     // Tạo cặp token mới
-    const newAccessToken = generateAccessToken(existingUser._id);
-    const newRefreshToken = generateRefreshToken(existingUser._id);
+    const newAccessToken = generateAccessToken(existingUser);
+    const newRefreshToken = generateRefreshToken(existingUser);
 
     // Cập nhật refresh token mới vào database (rotate token)
     existingUser.refreshToken = newRefreshToken;

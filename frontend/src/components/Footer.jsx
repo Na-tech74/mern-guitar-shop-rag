@@ -17,72 +17,9 @@ import {
 
 import Logo from "./Logo";
 
-const navLinks = [
-  { to: "/", label: "Trang chủ" },
-  { to: "/products", label: "Sản phẩm" },
-  { to: "/courses", label: "Khóa học" },
-  { to: "/about", label: "Giới thiệu" },
-  { to: "/contact", label: "Liên hệ" },
-];
-
-const supportLinks = [
-  { to: "/faq", label: "Câu hỏi thường gặp" },
-  { to: "/shipping", label: "Chính sách giao hàng" },
-  { to: "/return", label: "Chính sách đổi trả" },
-  { to: "/warranty", label: "Bảo hành sản phẩm" },
-  { to: "/privacy", label: "Chính sách bảo mật" },
-];
-
-const contactInfo = [
-  {
-    icon: faMapMarkerAlt,
-    text: "123 Đường ABC, Quận 1, TP. Hồ Chí Minh",
-  },
-  {
-    icon: faPhone,
-    text: "0909 123 456",
-  },
-  {
-    icon: faEnvelope,
-    text: "contact@guitarshop.com",
-  },
-  {
-    icon: faClock,
-    text: "T2–CN: 8:00–22:00",
-  },
-];
-
-const socialLinks = [
-  {
-    href: "https://facebook.com",
-    icon: faFacebook,
-    hoverClass: "hover:bg-blue-600",
-  },
-  {
-    href: "https://instagram.com",
-    icon: faInstagram,
-    hoverClass: "hover:bg-pink-500",
-  },
-  {
-    href: "https://youtube.com",
-    icon: faYoutube,
-    hoverClass: "hover:bg-red-600",
-  },
-  {
-    href: "https://tiktok.com",
-    icon: faTiktok,
-    hoverClass: "hover:bg-black",
-  },
-];
-
-const bottomLinks = [
-  { to: "/terms", label: "Điều khoản" },
-  { to: "/privacy", label: "Bảo mật" },
-];
-
 const Footer = memo(function Footer() {
   return (
-    <footer className="bg-white text-gray-600">
+    <footer className="bg-white text-gray-600 border-t border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
 
@@ -97,17 +34,18 @@ const Footer = memo(function Footer() {
             </p>
 
             <div className="flex gap-3">
-              {socialLinks.map(({ href, icon, hoverClass }) => (
-                <a
-                  key={href}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`w-9 h-9 rounded-full flex items-center justify-center text-black bg-white ${hoverClass} hover:text-white transition duration-300`}
-                >
-                  <FontAwesomeIcon icon={icon} />
-                </a>
-              ))}
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full flex items-center justify-center text-gray-600 bg-gray-100 hover:bg-blue-600 hover:text-white transition duration-300">
+                <FontAwesomeIcon icon={faFacebook} />
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full flex items-center justify-center text-gray-600 bg-gray-100 hover:bg-pink-500 hover:text-white transition duration-300">
+                <FontAwesomeIcon icon={faInstagram} />
+              </a>
+              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full flex items-center justify-center text-gray-600 bg-gray-100 hover:bg-red-600 hover:text-white transition duration-300">
+                <FontAwesomeIcon icon={faYoutube} />
+              </a>
+              <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full flex items-center justify-center text-gray-600 bg-gray-100 hover:bg-black hover:text-white transition duration-300">
+                <FontAwesomeIcon icon={faTiktok} />
+              </a>
             </div>
           </div>
 
@@ -118,16 +56,11 @@ const Footer = memo(function Footer() {
             </h4>
 
             <ul className="space-y-2.5">
-              {navLinks.map(({ to, label }) => (
-                <li key={to}>
-                  <Link
-                    to={to}
-                    className="text-sm text-gray-400 hover:text-amber-600 transition"
-                  >
-                    {label}
-                  </Link>
-                </li>
-              ))}
+              <li><Link to="/" className="text-sm text-gray-500 hover:text-amber-600 transition">Trang chủ</Link></li>
+              <li><Link to="/products" className="text-sm text-gray-500 hover:text-amber-600 transition">Sản phẩm</Link></li>
+              <li><Link to="/courses" className="text-sm text-gray-500 hover:text-amber-600 transition">Khóa học</Link></li>
+              <li><Link to="/about" className="text-sm text-gray-500 hover:text-amber-600 transition">Giới thiệu</Link></li>
+              <li><Link to="/contact" className="text-sm text-gray-500 hover:text-amber-600 transition">Liên hệ</Link></li>
             </ul>
           </div>
 
@@ -138,16 +71,11 @@ const Footer = memo(function Footer() {
             </h4>
 
             <ul className="space-y-2.5">
-              {supportLinks.map(({ to, label }) => (
-                <li key={to}>
-                  <Link
-                    to={to}
-                    className="text-sm text-gray-400 hover:text-amber-600 transition"
-                  >
-                    {label}
-                  </Link>
-                </li>
-              ))}
+              <li><Link to="/faq" className="text-sm text-gray-500 hover:text-amber-600 transition">Câu hỏi thường gặp</Link></li>
+              <li><Link to="/shipping" className="text-sm text-gray-500 hover:text-amber-600 transition">Chính sách giao hàng</Link></li>
+              <li><Link to="/return" className="text-sm text-gray-500 hover:text-amber-600 transition">Chính sách đổi trả</Link></li>
+              <li><Link to="/warranty" className="text-sm text-gray-500 hover:text-amber-600 transition">Bảo hành sản phẩm</Link></li>
+              <li><Link to="/privacy" className="text-sm text-gray-500 hover:text-amber-600 transition">Chính sách bảo mật</Link></li>
             </ul>
           </div>
 
@@ -158,46 +86,48 @@ const Footer = memo(function Footer() {
             </h4>
 
             <ul className="space-y-3">
-              {contactInfo.map(({ icon, text }) => (
-                <li key={text} className="flex items-start gap-3">
-                  <div className="size-8 rounded-lg  flex items-center justify-center text-black shrink-0">
-                    <FontAwesomeIcon icon={icon} className="text-sm" />
-                  </div>
-
-                  <span className="text-sm text-gray-400">
-                    {text}
-                  </span>
-                </li>
-              ))}
+              <li className="flex items-start gap-3">
+                <div className="size-8 rounded-lg flex items-center justify-center text-amber-500 shrink-0">
+                  <FontAwesomeIcon icon={faMapMarkerAlt} className="text-sm" />
+                </div>
+                <span className="text-sm text-gray-500">537/1 An Phú Đông , Q12, TP. Hồ Chí Minh</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <div className="size-8 rounded-lg flex items-center justify-center text-amber-500 shrink-0">
+                  <FontAwesomeIcon icon={faPhone} className="text-sm" />
+                </div>
+                <span className="text-sm text-gray-500">037862381</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <div className="size-8 rounded-lg flex items-center justify-center text-amber-500 shrink-0">
+                  <FontAwesomeIcon icon={faEnvelope} className="text-sm" />
+                </div>
+                <span className="text-sm text-gray-500">namn98561@gmail.com</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <div className="size-8 rounded-lg flex items-center justify-center text-amber-500 shrink-0">
+                  <FontAwesomeIcon icon={faClock} className="text-sm" />
+                </div>
+                <span className="text-sm text-gray-500">T2–CN: 8:00–22:00</span>
+              </li>
             </ul>
           </div>
         </div>
       </div>
 
       {/* Bottom */}
-      <div className=" bg-gradient-to-r from-amber-600 to-amber-400 text-white text-xs px-4 sm:px-6 lg:px-8 py-4">
+      <div className="bg-amber-400 text-white text-xs px-4 sm:px-6 lg:px-8 py-4">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
-
           <p>
             © {new Date().getFullYear()} Nam Acoustic.
             No copyright design by Nam Nguyễn
           </p>
 
           <div className="flex items-center gap-4">
-            {bottomLinks.map(({ to, label }, index) => (
-              <div key={to} className="flex items-center gap-4">
-                {index > 0 && <span>|</span>}
-
-                <Link
-                  to={to}
-                  className="hover:text-amber-600 transition"
-                >
-                  {label}
-                </Link>
-              </div>
-            ))}
+            <Link to="/terms" className="hover:text-white/70 transition">Điều khoản</Link>
+            <span className="opacity-40">|</span>
+            <Link to="/privacy" className="hover:text-white/70 transition">Bảo mật</Link>
           </div>
-
         </div>
       </div>
     </footer>

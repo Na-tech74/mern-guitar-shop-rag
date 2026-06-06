@@ -20,7 +20,7 @@ const DialogContext = createContext(null);
 
 const variantConfig = {
     danger:  { icon: faTriangleExclamation, color: "text-red-600",    btn: "danger"  },
-    warning: { icon: faTriangleExclamation, color: "text-amber-600",  btn: "primary" },
+    warning: { icon: faTriangleExclamation, color: "text-gray-700",  btn: "primary" },
     info:    { icon: faCircleInfo,          color: "text-blue-600",   btn: "primary" },
     success: { icon: faCircleCheck,         color: "text-green-600",  btn: "primary" },
     error:   { icon: faCircleXmark,         color: "text-red-600",    btn: "primary" },
@@ -90,7 +90,7 @@ export function DialogProvider({ children }) {
                     aria-label="Đóng hộp thoại"
                 >
                     <div
-                        className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl"
+                        className="w-full max-w-sm rounded-xl bg-white p-6 shadow-pop"
                         onClick={(e) => e.stopPropagation()}
                         role="dialog"
                         aria-modal="true"

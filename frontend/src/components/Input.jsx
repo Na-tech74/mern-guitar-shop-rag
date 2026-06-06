@@ -34,7 +34,7 @@ export default function Input({
                     ${disabled ? "bg-gray-100 cursor-not-allowed" : "bg-white"}
                     ${error
                         ? "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500"
-                        : "border-gray-200 focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                        : "border-gray-200 focus:border-amber-400 focus:ring-1 focus:ring-amber-400/40"
                     }
                     ${className}
                 `}

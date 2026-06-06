@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { API } from "../api/axiosClient";
+import { API } from "../api";
 
 /**
  * useSessionRecovery

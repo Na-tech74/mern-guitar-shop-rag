@@ -5,12 +5,12 @@ import AdminLayout from "./layouts/AdminLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import useSessionRecovery from "./hooks/useSessionRecovery";
 
-const Login = lazy(() => import("./pages/AuthPage/ui/Login"));
-const Register = lazy(() => import("./pages/AuthPage/ui/Register"));
-const ForgotPassword = lazy(() => import("./pages/AuthPage/ui/ForgotPassword"));
-const HomePage = lazy(() => import("./pages/HomePage/ui/HomePage"));
-const ProductsPage = lazy(() => import("./pages/ProductsPage/ui/ProductsPage"));
-const ProductDetailPage = lazy(() => import("./pages/ProductsPage/ui/ProductDetailPage"));
+const Login = lazy(() => import("./pages/AuthPage/Login"));
+const Register = lazy(() => import("./pages/AuthPage/Register"));
+const ForgotPassword = lazy(() => import("./pages/AuthPage/ForgotPassword"));
+const HomePage = lazy(() => import("./pages/HomePage"));
+const ProductsPage = lazy(() => import("./pages/ProductsPage"));
+const ProductDetailPage = lazy(() => import("./pages/ProductsPage/ProductDetailPage"));
 const AboutPage = lazy(() => import("./pages/AboutPage/AboutPage"));
 const BlogPage = lazy(() => import("./pages/BlogPage/BlogPage"));
 const BlogDetailPage = lazy(() => import("./pages/BlogPage/BlogDetailPage"));
@@ -25,20 +25,21 @@ const OrdersPage = lazy(() => import("./pages/OrdersPage/OrdersPage"));
 const CoursesPage = lazy(() => import("./pages/CoursesPage/CoursesPage"));
 const CourseDetailPage = lazy(() => import("./pages/CoursesPage/CourseDetailPage"));
 const NotFound = lazy(() => import("./pages/NotFoundPage/NotFound"));
-const Dashboard = lazy(() => import("./pages/AdminPage/ui/Dashboard"));
-const AdminProducts = lazy(() => import("./pages/AdminPage/ui/Products"));
-const AdminOrders = lazy(() => import("./pages/AdminPage/ui/Orders"));
-const AdminCourses = lazy(() => import("./pages/AdminPage/ui/Courses"));
-const Users = lazy(() => import("./pages/AdminPage/ui/Users"));
-const Categories = lazy(() => import("./pages/AdminPage/ui/Categories"));
-const Settings = lazy(() => import("./pages/AdminPage/ui/Settings"));
-const Blog = lazy(() => import("./pages/AdminPage/ui/Blog"));
-const HomeContent = lazy(() => import("./pages/AdminPage/ui/HomeContent"));
+const Dashboard = lazy(() => import("./pages/AdminPage/Dashboard"));
+const AdminProducts = lazy(() => import("./pages/AdminPage/Products"));
+const AdminOrders = lazy(() => import("./pages/AdminPage/Orders"));
+const AdminCourses = lazy(() => import("./pages/AdminPage/Courses"));
+const Users = lazy(() => import("./pages/AdminPage/Users"));
+const Categories = lazy(() => import("./pages/AdminPage/Categories"));
+const Settings = lazy(() => import("./pages/AdminPage/Settings"));
+const Blog = lazy(() => import("./pages/AdminPage/Blog"));
+const HomeContent = lazy(() => import("./pages/AdminPage/HomeContent"));
+const AboutContent = lazy(() => import("./pages/AdminPage/AboutContent"));
 
 function LoadingFallback() {
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="animate-spin rounded-full size-12 border-b-2 border-amber-600" />
+      <div className="animate-spin rounded-full size-12 border-b-2 border-amber-500" />
     </div>
   );
 }
@@ -79,6 +80,7 @@ function App() {
           }>
               <Route index element={<Dashboard />} />
               <Route path="home-content" element={<HomeContent />} />
+              <Route path="about-content" element={<AboutContent />} />
               <Route path="products" element={<AdminProducts />} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="users" element={<Users />} />

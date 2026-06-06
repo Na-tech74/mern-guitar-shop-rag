@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { homeContentAPI } from "../api/adminAPI";
+import { homeContentAPI } from "../../../api";
 
 const defaultContent = {
     carousel: {

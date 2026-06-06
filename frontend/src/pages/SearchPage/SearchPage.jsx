@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faImage } from "@fortawesome/free-solid-svg-icons";
-import { API } from "../../api/axiosClient";
+import { API } from "../../api";
 import { getOptimizedImage } from "../../helpers/format";
 
 export default function SearchPage() {
@@ -25,7 +25,7 @@ export default function SearchPage() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <nav className="text-sm mb-8">
                     <ol className="flex items-center gap-2 text-gray-500">
-                        <li><Link to="/" className="hover:text-amber-600">Trang chủ</Link></li>
+                        <li><Link to="/" className="hover:text-gray-700">Trang chủ</Link></li>
                         <li>/</li>
                         <li className="text-gray-800 font-medium">Tìm kiếm</li>
                     </ol>
@@ -38,7 +38,7 @@ export default function SearchPage() {
 
                 {loading ? (
                     <div className="flex justify-center py-16">
-                        <div className="animate-spin rounded-full size-12 border-b-2 border-amber-600" />
+                        <div className="animate-spin rounded-full size-12 border-b-2 border-gray-700" />
                     </div>
                 ) : results.length === 0 && query ? (
                     <div className="text-center py-16">
@@ -59,8 +59,8 @@ export default function SearchPage() {
                                     )}
                                 </div>
                                 <div className="p-4">
-                                    <h3 className="font-semibold text-gray-800 line-clamp-1 group-hover:text-amber-600">{product.name}</h3>
-                                    <p className="text-amber-600 font-bold mt-1">{new Intl.NumberFormat("vi-VN").format(product.price)} ₫</p>
+                                    <h3 className="font-semibold text-gray-800 line-clamp-1 group-hover:text-gray-700">{product.name}</h3>
+                                    <p className="text-gray-700 font-bold mt-1">{new Intl.NumberFormat("vi-VN").format(product.price)} ₫</p>
                                 </div>
                             </Link>
                         ))}

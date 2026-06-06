@@ -1,11 +1,11 @@
 const baseStyles = "font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2";
 
 const variants = {
-    primary: "bg-gradient-to-r from-amber-600 to-amber-400 text-white hover:from-amber-700 hover:to-amber-500 disabled:opacity-50",
-    secondary: "bg-gray-200 text-gray-700 hover:bg-gray-300 disabled:opacity-50",
-    outline: "border-2 border-amber-600 text-amber-600 hover:bg-amber-600 hover:text-white disabled:opacity-50",
-    danger: "bg-red-600 text-white hover:bg-red-700 disabled:opacity-50",
-    success: "bg-green-600 text-white hover:bg-green-700 disabled:opacity-50",
+    primary: "bg-amber-400 text-white hover:bg-amber-500 disabled:opacity-50 shadow-sm",
+    secondary: "bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-50",
+    outline: "border border-amber-400 text-amber-500 hover:bg-amber-400 hover:text-white disabled:opacity-50",
+    danger: "bg-red-600 text-white hover:bg-red-700 disabled:opacity-50 shadow-sm",
+    success: "bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50 shadow-sm",
     ghost: "text-gray-600 hover:bg-gray-100 disabled:opacity-50",
 };
 

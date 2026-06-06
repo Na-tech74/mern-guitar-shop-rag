@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileInvoice, faImage } from "@fortawesome/free-solid-svg-icons";
-import { orderAPI } from "../AdminPage/api/adminAPI";
+import { orderAPI } from "../../api";
 import { getOptimizedImage, getStatusColor, getStatusLabel, formatCurrency, formatDate } from "../../helpers/format";
 
 export default function OrdersPage() {
@@ -27,9 +27,9 @@ export default function OrdersPage() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <nav className="text-sm mb-8">
                     <ol className="flex items-center gap-2 text-gray-500">
-                        <li><Link to="/" className="hover:text-amber-600">Trang chủ</Link></li>
+                        <li><Link to="/" className="hover:text-gray-700">Trang chủ</Link></li>
                         <li>/</li>
-                        <li><Link to="/account" className="hover:text-amber-600">Tài khoản</Link></li>
+                        <li><Link to="/account" className="hover:text-gray-700">Tài khoản</Link></li>
                         <li>/</li>
                         <li className="text-gray-800 font-medium">Đơn hàng</li>
                     </ol>
@@ -39,13 +39,13 @@ export default function OrdersPage() {
 
                 {loading ? (
                     <div className="flex justify-center py-16">
-                        <div className="animate-spin rounded-full size-12 border-b-2 border-amber-600" />
+                        <div className="animate-spin rounded-full size-12 border-b-2 border-gray-700" />
                     </div>
                 ) : orders.length === 0 ? (
                     <div className="text-center py-16">
                         <FontAwesomeIcon icon={faFileInvoice} className="text-6xl text-gray-300 mb-4" />
                         <p className="text-gray-500 text-lg mb-6">Bạn chưa có đơn hàng nào</p>
-                        <Link to="/products" className="inline-flex items-center gap-2 px-6 py-3 bg-amber-600 text-white rounded-lg hover:bg-amber-500 transition">
+                        <Link to="/products" className="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-lg hover:bg-amber-700 transition">
                             Mua sắm ngay
                         </Link>
                     </div>
@@ -87,12 +87,12 @@ export default function OrdersPage() {
                                 </div>
 
                                 <div className="flex justify-between items-center mt-3 pt-3 border-t border-gray-100">
-                                    <Link to={`/contact`} className="text-xs text-amber-600 hover:text-amber-500 font-medium">
+                                    <Link to={`/contact`} className="text-xs text-gray-700 hover:text-amber-500 font-medium">
                                         Liên hệ hỗ trợ
                                     </Link>
                                     <div className="flex items-center gap-2">
                                         <span className="text-sm text-gray-600">Tổng:</span>
-                                        <span className="font-bold text-amber-600">{formatCurrency(order.total)}</span>
+                                        <span className="font-bold text-gray-700">{formatCurrency(order.total)}</span>
                                     </div>
                                 </div>
                             </div>

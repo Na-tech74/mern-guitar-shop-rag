@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faFileInvoice, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
-import { API } from "../../api/axiosClient.js";
+import { faUser, faFileInvoice } from "@fortawesome/free-solid-svg-icons";
+import { API } from "../../api";
 
 export default function AccountPage() {
     const navigate = useNavigate();
@@ -36,7 +36,7 @@ export default function AccountPage() {
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <nav className="text-sm mb-8">
                     <ol className="flex items-center gap-2 text-gray-500">
-                        <li><Link to="/" className="hover:text-amber-600">Trang chủ</Link></li>
+                        <li><Link to="/" className="hover:text-gray-700">Trang chủ</Link></li>
                         <li>/</li>
                         <li className="text-gray-800 font-medium">Tài khoản</li>
                     </ol>
@@ -44,7 +44,7 @@ export default function AccountPage() {
 
                 {/* <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
                     <div className="flex items-center gap-4">
-                        <div className="size-16 rounded-full bg-amber-600 flex items-center justify-center text-white text-2xl font-bold">
+                        <div className="size-16 rounded-full bg-gray-700 flex items-center justify-center text-white text-2xl font-bold">
                             {(profile?.name || userInfo.name)?.charAt(0).toUpperCase()}
                         </div>
                         <div>
@@ -59,15 +59,15 @@ export default function AccountPage() {
 
                 <div className="grid md:grid-cols-3 gap-6">
                     <button type="button" onClick={() => setShowInfo(!showInfo)} className="text-left bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition">
-                        <div className="size-12 rounded-lg bg-amber-100 flex items-center justify-center mb-4">
-                            <FontAwesomeIcon icon={faUser} className="text-xl text-amber-600" />
+                        <div className="size-12 rounded-lg bg-gray-100 flex items-center justify-center mb-4">
+                            <FontAwesomeIcon icon={faUser} className="text-xl text-gray-700" />
                         </div>
                         <h3 className="font-semibold text-gray-900 mb-1">Thông tin tài khoản</h3>
                         <p className="text-sm text-gray-500">Xem thông tin cá nhân</p>
                     </button>
                     <Link to="/orders" className="block bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition">
-                        <div className="size-12 rounded-lg bg-amber-100 flex items-center justify-center mb-4">
-                            <FontAwesomeIcon icon={faFileInvoice} className="text-xl text-amber-600" />
+                        <div className="size-12 rounded-lg bg-gray-100 flex items-center justify-center mb-4">
+                            <FontAwesomeIcon icon={faFileInvoice} className="text-xl text-gray-700" />
                         </div>
                         <h3 className="font-semibold text-gray-900 mb-1">Đơn hàng của tôi</h3>
                         <p className="text-sm text-gray-500">Theo dõi lịch sử đơn hàng</p>

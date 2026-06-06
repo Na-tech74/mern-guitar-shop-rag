@@ -9,6 +9,7 @@ import {
     faRightFromBracket
 } from "@fortawesome/free-solid-svg-icons";
 import { useUserInfo } from "../../../hooks/useUserInfo.js";
+import { logoutAPI } from "../../../api";
 
 export default function AdminHeader({ toggleSidebar }) {
     const navigate = useNavigate();
@@ -16,7 +17,6 @@ export default function AdminHeader({ toggleSidebar }) {
 
     const handleLogout = async () => {
         try {
-            const { logoutAPI } = await import("../../AuthPage/api/authAPI.js");
             await logoutAPI();
         } catch {
             // ignore
@@ -107,7 +107,7 @@ export default function AdminHeader({ toggleSidebar }) {
                         <button
                             type="button"
                             onClick={handleLogout}
-                            className="flex size-9 items-center justify-center rounded-xl hover:bg-amber-50 text-gray-500 hover:text-amber-600 transition-colors"
+                            className="flex size-9 items-center justify-center rounded-xl hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
                             title="Đăng xuất"
                         >
                             <FontAwesomeIcon icon={faRightFromBracket} />

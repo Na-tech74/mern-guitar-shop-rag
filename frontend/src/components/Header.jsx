@@ -8,23 +8,7 @@ import {
 import { faFacebook, faYoutube, faTiktok, faInstagram } from '@fortawesome/free-brands-svg-icons';
 import Logo from './Logo.jsx';
 import { useUserInfo } from '../hooks/useUserInfo.js';
-
-const menuItems = [
-  { name: 'TRANG CHỦ', path: '/', hasDropdown: false },
-  {
-    name: 'SẢN PHẨM', path: '/products', hasDropdown: true, dropdownItems: [
-      { name: 'Guitar Acoustic', hash: 'guitar-acoustic' },
-      { name: 'Guitar Classic', hash: 'guitar-classic' },
-      { name: 'Piano', hash: 'piano' },
-      { name: 'Ukulele', hash: 'ukulele' },
-      { name: 'Tất cả sản phẩm', path: '/products' },
-    ]
-  },
-  { name: 'KHÓA HỌC', path: '/courses', hasDropdown: false },
-  { name: 'GIỚI THIỆU', path: '/about', hasDropdown: false },
-  { name: 'BÀI VIẾT', path: '/blog', hasDropdown: false },
-  { name: 'LIÊN HỆ', path: '/contact', hasDropdown: false },
-];
+import { logoutAPI } from '../api';
 
 const Header = memo(function Header() {
 
@@ -78,7 +62,6 @@ const Header = memo(function Header() {
 
   const handleLogout = async () => {
     try {
-      const { logoutAPI } = await import("../pages/AuthPage/api/authAPI.js");
       await logoutAPI();
     } catch {
       // ignore
@@ -104,33 +87,33 @@ const Header = memo(function Header() {
 
   return (
     <>
-      <header className="w-full fixed top-0 z-50 will-change-transform">
+      <header className="w-full sticky top-0 z-50 will-change-transform">
 
         {/* Top Bar */}
-        <div className="hidden lg:block bg-gradient-to-r from-amber-600 to-amber-400 text-white text-xs py-2">
-          <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <div className="hidden lg:block bg-amber-400 text-white text-xs py-2">
+          <div className="max-w-7xl mx-auto flex justify-between items-center px-4">
             <div className="flex items-center gap-4">
-              <a href="mailto:namn98561@gmail.com" className="hover:text-amber-200 transition">
+              <a href="mailto:namn98561@gmail.com" className="hover:text-white/70 transition">
                 <FontAwesomeIcon icon={faEnvelope} className="mr-1" />
                 namn98561@gmail.com
               </a>
-              <span className="opacity-50">|</span>
-              <a href="tel:0378623181" className="hover:text-amber-200 transition">
+              <span className="opacity-40">|</span>
+              <a href="tel:0378623181" className="hover:text-white/70 transition">
                 <FontAwesomeIcon icon={faPhone} className="mr-1" />
                 037.862.3181
               </a>
             </div>
             <div className="flex gap-3">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-amber-200 transition">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-white/70 transition">
                 <FontAwesomeIcon icon={faFacebook} />
               </a>
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="hover:text-amber-200 transition">
+              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="hover:text-white/70 transition">
                 <FontAwesomeIcon icon={faYoutube} />
               </a>
-              <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="hover:text-amber-200 transition">
+              <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="hover:text-white/70 transition">
                 <FontAwesomeIcon icon={faTiktok} />
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-amber-200 transition">
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-white/70 transition">
                 <FontAwesomeIcon icon={faInstagram} />
               </a>
             </div>
@@ -138,8 +121,8 @@ const Header = memo(function Header() {
         </div>
 
         {/* Main Header */}
-        <div className="bg-white">
-          <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+        <div className="bg-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 px-4">
             <Link to="/" className="shrink-0">
               <Logo />
             </Link>
@@ -152,9 +135,9 @@ const Header = memo(function Header() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Tìm kiếm sản phẩm..."
-                  className="flex-1 px-4 py-2 outline-none text-sm rounded-l-lg border border-gray-200 bg-gray-50 focus:border-amber-500 transition"
+                  className="flex-1 px-4 py-2 outline-none text-sm rounded-l-lg border border-gray-200 bg-gray-50 text-gray-700 placeholder-gray-400 focus:border-amber-400 transition"
                 />
-                <button type="submit" className="bg-amber-600 hover:bg-amber-500 px-4 text-white rounded-r-lg">
+                <button type="submit" className="bg-amber-400 hover:bg-amber-500 px-4 text-white rounded-r-lg transition">
                   <FontAwesomeIcon icon={faSearch} />
                 </button>
               </form>
@@ -163,9 +146,9 @@ const Header = memo(function Header() {
             {/* Right Icons */}
             <div className="hidden md:flex items-center gap-5">
               <Link to="/wishlist" className="relative group">
-                <FontAwesomeIcon icon={faHeart} className="text-xl text-gray-600 group-hover:text-amber-600 transition" />
+                <FontAwesomeIcon icon={faHeart} className="text-xl text-gray-600 group-hover:text-amber-500 transition" />
                 {wishlistCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-amber-600 text-white text-[10px] size-4 flex items-center justify-center rounded-full">
+                  <span className="absolute -top-2 -right-2 bg-amber-500 text-white text-[10px] size-4 flex items-center justify-center rounded-full">
                     {wishlistCount}
                   </span>
                 )}
@@ -176,7 +159,7 @@ const Header = memo(function Header() {
                 <button
                   type="button"
                   onClick={() => setIsAccountOpen(!isAccountOpen)}
-                  className="flex items-center gap-2 text-gray-600 hover:text-amber-600 transition"
+                  className="flex items-center gap-2 text-gray-600 hover:text-amber-500 transition"
                 >
                   <FontAwesomeIcon icon={faUser} className="text-xl" />
                   <span className="text-sm hidden lg:block">
@@ -187,7 +170,7 @@ const Header = memo(function Header() {
 
                 {isAccountOpen && (
                   <div className="absolute right-0 top-full mt-3 w-56 bg-white rounded-lg shadow-lg border border-gray-100 z-[100] overflow-hidden">
-                    <div className="p-3 bg-gradient-to-r from-amber-500 to-amber-600 text-white">
+                    <div className="p-3 bg-amber-400 text-white">
                       <p className="font-medium">
                         {isLoggedIn ? `Xin chào, ${userInfo?.name}` : 'Chào mừng bạn!'}
                       </p>
@@ -198,7 +181,7 @@ const Header = memo(function Header() {
                         <Link to="/login" className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-amber-50" onClick={() => setIsAccountOpen(false)}>
                           Đăng nhập
                         </Link>
-                        <Link to="/register" className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-amber-50 border-t" onClick={() => setIsAccountOpen(false)}>
+                        <Link to="/register" className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-amber-50 border-t border-gray-100" onClick={() => setIsAccountOpen(false)}>
                           Đăng ký
                         </Link>
                       </div>
@@ -207,10 +190,10 @@ const Header = memo(function Header() {
                         <Link to="/account" className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-amber-50" onClick={() => setIsAccountOpen(false)}>
                           Tài khoản
                         </Link>
-                        <Link to="/orders" className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-amber-50 border-t" onClick={() => setIsAccountOpen(false)}>
+                        <Link to="/orders" className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-amber-50 border-t border-gray-100" onClick={() => setIsAccountOpen(false)}>
                           Đơn hàng
                         </Link>
-                        <button type="button" onClick={handleLogout} className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-red-600 hover:bg-amber-50 border-t">
+                        <button type="button" onClick={handleLogout} className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-red-600 hover:bg-amber-50 border-t border-gray-100">
                           Đăng xuất
                           <FontAwesomeIcon icon={faRightFromBracket} />
                         </button>
@@ -222,9 +205,9 @@ const Header = memo(function Header() {
 
               {/* Cart */}
               <Link to="/cart" className="relative group">
-                <FontAwesomeIcon icon={faCartShopping} className="text-xl text-gray-600 group-hover:text-amber-600 transition" />
+                <FontAwesomeIcon icon={faCartShopping} className="text-xl text-gray-600 group-hover:text-amber-500 transition" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-amber-600 text-white text-[10px] size-4 flex items-center justify-center rounded-full font-bold">
+                  <span className="absolute -top-2 -right-2 bg-amber-500 text-white text-[10px] size-4 flex items-center justify-center rounded-full font-bold">
                     {cartCount}
                   </span>
                 )}
@@ -234,12 +217,12 @@ const Header = memo(function Header() {
             {/* Mobile Buttons */}
             <div className="flex lg:hidden items-center gap-3">
               <button type="button" onClick={() => setIsSearchOpen(!isSearchOpen)}>
-                <FontAwesomeIcon icon={faSearch} className="text-xl text-amber-600" />
+                <FontAwesomeIcon icon={faSearch} className="text-xl text-gray-700" />
               </button>
               <Link to="/cart" className="relative">
                 <FontAwesomeIcon icon={faCartShopping} className="text-xl text-gray-700" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-amber-600 text-white text-[10px] size-4 flex items-center justify-center rounded-full">
+                  <span className="absolute -top-2 -right-2 bg-amber-500 text-white text-[10px] size-4 flex items-center justify-center rounded-full">
                     {cartCount}
                   </span>
                 )}
@@ -253,17 +236,17 @@ const Header = memo(function Header() {
 
         {/* Mobile Search */}
         {isSearchOpen && (
-          <div className="lg:hidden px-4 pb-3 border-b border-gray-100">
+          <div className="lg:hidden px-4 pb-3 border-b border-gray-200 bg-white">
             <form onSubmit={handleSearch} className="flex">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Tìm kiếm..."
-                className="flex-1 px-4 py-2 outline-none text-sm rounded-l-lg border border-gray-200 bg-gray-50"
+                className="flex-1 px-4 py-2 outline-none text-sm rounded-l-lg border border-gray-200 bg-gray-50 text-gray-700 placeholder-gray-400"
                 autoFocus
               />
-              <button type="submit" className="bg-amber-600 hover:bg-amber-500 px-5 text-white rounded-r-lg">
+              <button type="submit" className="bg-amber-400 hover:bg-amber-500 px-5 text-white rounded-r-lg transition">
                 <FontAwesomeIcon icon={faSearch} />
               </button>
             </form>
@@ -271,130 +254,138 @@ const Header = memo(function Header() {
         )}
 
         {/* Navigation - Desktop */}
-        <div className="hidden lg:block bg-gray-200">
+        <div className="hidden lg:block bg-gray-100 border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center justify-between">
               <ul className="flex">
-                {menuItems.map((item) => (
-                  <li key={item.name} className="relative"
-                    onMouseEnter={() => {
-                      if (closeTimeoutRef.current) {
-                        clearTimeout(closeTimeoutRef.current);
-                        closeTimeoutRef.current = null;
-                      }
-                      setOpenDropdown(item.name);
-                    }}
-                    onMouseLeave={() => {
-                      closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 300);
-                    }}>
-                    <Link to={item.path} className="flex items-center gap-1 text-gray-600 hover:text-amber-600 px-4 py-3 text-sm font-medium transition">
-                      <span>{item.icon}</span>
-                      {item.name}
-                      {item.hasDropdown && <FontAwesomeIcon icon={faChevronDown} className="text-[10px]" />}
-                    </Link>
-                    {item.hasDropdown && openDropdown === item.name && (
-                      <div className="absolute top-full left-0 w-56 bg-white rounded-lg shadow-lg border border-gray-100 z-50 py-2"
-                        onMouseEnter={() => {
-                          if (closeTimeoutRef.current) {
-                            clearTimeout(closeTimeoutRef.current);
-                            closeTimeoutRef.current = null;
-                          }
-                        }}
-                        onMouseLeave={() => {
-                          closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 300);
-                        }}>
-                        {item.dropdownItems.map((subItem) =>
-                          subItem.hash ? (
-                            <button key={subItem.name} type="button" onClick={() => { setOpenDropdown(null); scrollToCategory(subItem.hash); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">
-                              {subItem.name}
-                            </button>
-                          ) : (
-                            <Link key={subItem.name} to={subItem.path} className="block px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">
-                              {subItem.name}
-                            </Link>
-                          )
-                        )}
-                      </div>
-                    )}
-                  </li>
-                ))}
+                <li className="relative"
+                  onMouseEnter={() => { clearTimeout(closeTimeoutRef.current); closeTimeoutRef.current = null; }}
+                  onMouseLeave={() => { closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 300); }}>
+                  <Link to="/" className="flex items-center gap-1 text-gray-800 hover:text-amber-500 px-4 py-3 text-sm font-semibold transition">
+                    TRANG CHỦ
+                  </Link>
+                </li>
+                <li className="relative"
+                  onMouseEnter={() => { clearTimeout(closeTimeoutRef.current); closeTimeoutRef.current = null; setOpenDropdown('SẢN PHẨM'); }}
+                  onMouseLeave={() => { closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 300); }}>
+                  <Link to="/products" className="flex items-center gap-1 text-gray-800 hover:text-amber-500 px-4 py-3 text-sm font-semibold transition">
+                    SẢN PHẨM
+                    <FontAwesomeIcon icon={faChevronDown} className="text-[10px]" />
+                  </Link>
+                  {openDropdown === 'SẢN PHẨM' && (
+                    <div className="absolute top-full left-0 w-56 bg-white rounded-lg shadow-lg border border-gray-100 z-50 py-2"
+                      onMouseEnter={() => { clearTimeout(closeTimeoutRef.current); closeTimeoutRef.current = null; }}
+                      onMouseLeave={() => { closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 300); }}>
+                      <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('guitar-acoustic'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Guitar Acoustic</button>
+                      <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('guitar-classic'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Guitar Classic</button>
+                      <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('piano'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Piano</button>
+                      <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('ukulele'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Ukulele</button>
+                      <Link to="/products" onClick={() => setOpenDropdown(null)} className="block px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Tất cả sản phẩm</Link>
+                    </div>
+                  )}
+                </li>
+                <li className="relative"
+                  onMouseEnter={() => { clearTimeout(closeTimeoutRef.current); closeTimeoutRef.current = null; }}
+                  onMouseLeave={() => { closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 300); }}>
+                  <Link to="/courses" className="flex items-center gap-1 text-gray-800 hover:text-amber-500 px-4 py-3 text-sm font-semibold transition">
+                    KHÓA HỌC
+                  </Link>
+                </li>
+                <li className="relative"
+                  onMouseEnter={() => { clearTimeout(closeTimeoutRef.current); closeTimeoutRef.current = null; }}
+                  onMouseLeave={() => { closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 300); }}>
+                  <Link to="/about" className="flex items-center gap-1 text-gray-800 hover:text-amber-500 px-4 py-3 text-sm font-semibold transition">
+                    GIỚI THIỆU
+                  </Link>
+                </li>
+                <li className="relative"
+                  onMouseEnter={() => { clearTimeout(closeTimeoutRef.current); closeTimeoutRef.current = null; }}
+                  onMouseLeave={() => { closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 300); }}>
+                  <Link to="/blog" className="flex items-center gap-1 text-gray-800 hover:text-amber-500 px-4 py-3 text-sm font-semibold transition">
+                    BÀI VIẾT
+                  </Link>
+                </li>
+                <li className="relative"
+                  onMouseEnter={() => { clearTimeout(closeTimeoutRef.current); closeTimeoutRef.current = null; }}
+                  onMouseLeave={() => { closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 300); }}>
+                  <Link to="/contact" className="flex items-center gap-1 text-gray-800 hover:text-amber-500 px-4 py-3 text-sm font-semibold transition">
+                    LIÊN HỆ
+                  </Link>
+                </li>
               </ul>
-              <div className="flex items-center gap-2 text-gray-500 text-sm">
+              <div className="flex items-center gap-2 text-gray-600 text-sm">
                 <span>Hỗ trợ:</span>
-                <a href="tel:0378623181" className="text-amber-600 font-medium hover:underline">037.862.3181</a>
+                <a href="tel:0378623181" className="text-gray-800 font-semibold hover:text-amber-600">037.862.3181</a>
               </div>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <>
-          <div className="fixed inset-0 bg-black/50 z-[1000]" onClick={() => setIsMobileMenuOpen(false)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsMobileMenuOpen(false); } }} role="button" tabIndex={0} />
-          <div className="fixed top-0 left-0 w-72 h-full bg-white z-[1001] shadow-xl overflow-y-auto">
-            <div className="bg-white p-4 flex justify-between items-center">
-              <Link to="/" className="shrink-0">
-                <Logo />
-              </Link>
-              <button type="button" onClick={() => setIsMobileMenuOpen(false)} className="text-white text-xl">
-                <FontAwesomeIcon icon={faTimes} />
-              </button>
-            </div>
-            <div className="p-4 border-b">
-              {!isLoggedIn ? (
-                <div className="flex gap-2">
-                  <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 text-center py-2 bg-amber-600 text-white rounded text-sm">Đăng nhập</Link>
-                  <Link to="/register" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 text-center py-2 border border-amber-600 text-amber-600 rounded text-sm">Đăng ký</Link>
-                </div>
-              ) : (
-                <div className="flex items-center gap-3">
-                  <div className="size-10 bg-amber-600 rounded-full flex items-center justify-center text-white font-bold">
-                    {userInfo?.name?.charAt(0)}
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <>
+            <div className="fixed inset-0 bg-black/50 z-[1000]" onClick={() => setIsMobileMenuOpen(false)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsMobileMenuOpen(false); } }} role="button" tabIndex={0} />
+            <div className="fixed top-0 left-0 w-72 h-full bg-white z-[1001] shadow-pop overflow-y-auto">
+              <div className="bg-white p-4 flex justify-between items-center border-b border-gray-100">
+                <Link to="/" className="shrink-0">
+                  <Logo />
+                </Link>
+                <button type="button" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-400 hover:text-gray-600 text-xl transition">
+                  <FontAwesomeIcon icon={faTimes} />
+                </button>
+              </div>
+              <div className="p-4 border-b border-gray-100">
+                {!isLoggedIn ? (
+                  <div className="flex gap-2">
+                    <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 text-center py-2 bg-amber-400 hover:bg-amber-500 text-white rounded text-sm transition">Đăng nhập</Link>
+                    <Link to="/register" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 text-center py-2 border border-gray-300 text-gray-700 hover:border-amber-500 hover:text-amber-600 rounded text-sm transition">Đăng ký</Link>
                   </div>
-                  <div>
-                    <p className="font-medium">{userInfo?.name}</p>
-                    <p className="text-xs text-gray-500">{userInfo?.email}</p>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <div className="size-10 bg-amber-500 rounded-full flex items-center justify-center text-white font-bold">
+                      {userInfo?.name?.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-800">{userInfo?.name}</p>
+                      <p className="text-xs text-gray-500">{userInfo?.email}</p>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
+              <div className="py-2">
+                <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
+                  <span>TRANG CHỦ</span>
+                </Link>
+                <button type="button" onClick={() => setOpenDropdown(openDropdown === 'SẢN PHẨM' ? null : 'SẢN PHẨM')} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
+                  <span>SẢN PHẨM</span>
+                  <FontAwesomeIcon icon={faChevronDown} className={`text-xs transition-transform ${openDropdown === 'SẢN PHẨM' ? 'rotate-180' : ''}`} />
+                </button>
+                {openDropdown === 'SẢN PHẨM' && (
+                  <div className="bg-amber-50/50 pl-4">
+                    <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-acoustic'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Guitar Acoustic</button>
+                    <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-classic'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Guitar Classic</button>
+                    <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('piano'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Piano</button>
+                    <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('ukulele'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Ukulele</button>
+                    <Link to="/products" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Tất cả sản phẩm</Link>
+                  </div>
+                )}
+                <Link to="/courses" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
+                  <span>KHÓA HỌC</span>
+                </Link>
+                <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
+                  <span>GIỚI THIỆU</span>
+                </Link>
+                <Link to="/blog" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
+                  <span>BÀI VIẾT</span>
+                </Link>
+                <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
+                  <span>LIÊN HỆ</span>
+                </Link>
+              </div>
             </div>
-            <div className="py-2">
-              {menuItems.map((item) => (
-                <div key={item.name}>
-                  {item.hasDropdown ? (
-                    <>
-                      <button type="button" onClick={() => setOpenDropdown(openDropdown === item.name ? null : item.name)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-gray-50">
-                        <span>{item.name}</span>
-                        <FontAwesomeIcon icon={faChevronDown} className={`text-xs transition-transform ${openDropdown === item.name ? 'rotate-180' : ''}`} />
-                      </button>
-                      {openDropdown === item.name && (
-                        <div className="bg-gray-50 pl-4">
-                          {item.dropdownItems.map((subItem) =>
-                            subItem.hash ? (
-                              <button key={subItem.name} type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory(subItem.hash); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-amber-600">
-                                {subItem.name}
-                              </button>
-                            ) : (
-                              <Link key={subItem.name} to={subItem.path} className="block px-4 py-2 text-sm text-gray-600 hover:text-amber-600" onClick={() => setIsMobileMenuOpen(false)}>
-                                {subItem.name}
-                              </Link>
-                            )
-                          )}
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <Link to={item.path} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-gray-50">
-                      <span>{item.name}</span>
-                    </Link>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </>
-      )}
+          </>
+        )}
     </>
   );
 });

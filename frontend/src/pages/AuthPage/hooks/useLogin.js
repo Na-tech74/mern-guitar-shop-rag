@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { loginAPI } from "../api/authAPI";
+import { loginAPI } from "../../../api";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function useLogin() {

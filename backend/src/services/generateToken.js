@@ -9,12 +9,12 @@ import jwt from "jsonwebtoken";
 
 /**
  * Tạo access token (thời hạn 15 phút)
- * @param {string} id - User ID (MongoDB _id)
+ * @param {Object} user - User document (cần _id và role)
  * @returns {string} JWT access token
  */
-export const generateAccessToken = (id) => {
+export const generateAccessToken = (user) => {
     return jwt.sign(
-        { id },
+        { id: user._id, role: user.role },
         process.env.JWT_ACCESS_SECRET,
         {
             expiresIn: "15m"
@@ -24,12 +24,12 @@ export const generateAccessToken = (id) => {
 
 /**
  * Tạo refresh token (thời hạn 7 ngày)
- * @param {string} id - User ID (MongoDB _id)
+ * @param {Object} user - User document (cần _id và role)
  * @returns {string} JWT refresh token
  */
-export const generateRefreshToken = (id) => {
+export const generateRefreshToken = (user) => {
     return jwt.sign(
-        { id },
+        { id: user._id, role: user.role },
         process.env.JWT_REFRESH_SECRET,
         {
             expiresIn: "7d"

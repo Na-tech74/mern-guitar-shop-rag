@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { forgotPasswordAPI, resetPasswordAPI } from "../api/authAPI";
+import { forgotPasswordAPI, resetPasswordAPI } from "../../../api";
 import { useNavigate } from "react-router-dom";
 export default function useForgotPassword() {
     const [step, setStep] = useState(1);
