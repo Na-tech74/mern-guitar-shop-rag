@@ -55,6 +55,12 @@ const userSchema = new mongoose.Schema({
         default: "user"
     },
 
+    // URL ảnh đại diện (upload lên Cloudinary)
+    avatar: {
+        type: String,
+        default: ""
+    },
+
 }, { timestamps: true }); // Tự động thêm createdAt và updatedAt
 
 export default mongoose.model("Users", userSchema);

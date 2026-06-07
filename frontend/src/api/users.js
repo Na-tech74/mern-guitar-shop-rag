@@ -8,4 +8,9 @@ export const userAPI = {
     getProfile: () => API.get("/users/me"),
     updateMyProfile: (data) => API.put("/users/me", data),
     changePassword: (data) => API.put("/users/password", data),
+    uploadAvatar: (formData) =>
+        API.post("/users/me/avatar", formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        }),
+    deleteAvatar: () => API.delete("/users/me/avatar"),
 };

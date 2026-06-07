@@ -47,7 +47,8 @@ export default function useLogin() {
             sessionStorage.setItem("userInfo", JSON.stringify({
                 name: data.user.name,
                 email: data.user.email,
-                role: data.user.role
+                role: data.user.role,
+                avatar: data.user.avatar || "",
             }));
 
             const isSafeRedirect = (url) =>

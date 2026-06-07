@@ -202,10 +202,10 @@ export function useHomeContent() {
     const tabs = [
         { id: "carousel", label: "Carousel" },
         { id: "features", label: "Tính năng" },
-        { id: "headings", label: "Tiêu đề section" },
+        { id: "headings", label: "Tiêu đề" },
         { id: "clip", label: "Khuyến mãi" },
         { id: "types", label: "Bộ sưu tập" },
-        { id: "cta", label: "Hỗ trợ (CTA)" },
+        { id: "cta", label: "Tư vấn" },
     ];
 
     return {

@@ -4,11 +4,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faSearch, faHeart, faUser, faCartShopping, faBars,
   faChevronDown, faEnvelope, faTimes, faRightFromBracket, faPhone,
+  faCamera, faTrash, faSpinner,
 } from '@fortawesome/free-solid-svg-icons';
 import { faFacebook, faYoutube, faTiktok, faInstagram } from '@fortawesome/free-brands-svg-icons';
 import Logo from './Logo.jsx';
+import UserAvatar from './UserAvatar.jsx';
 import { useUserInfo } from '../hooks/useUserInfo.js';
-import { logoutAPI } from '../api';
+import { logoutAPI, userAPI } from '../api';
 
 const Header = memo(function Header() {
 
@@ -19,8 +21,11 @@ const Header = memo(function Header() {
   const [cartCount, setCartCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [avatarError, setAvatarError] = useState("");
   const closeTimeoutRef = useRef(null);
   const dropdownRef = useRef(null);
+  const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
   const userInfo = useUserInfo();
@@ -36,6 +41,7 @@ const Header = memo(function Header() {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsAccountOpen(false);
+        setAvatarError("");
       }
     };
     updateCounts();
@@ -54,7 +60,7 @@ const Header = memo(function Header() {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/tim-kiem?q=${encodeURIComponent(searchQuery)}`);
+      navigate(`/tim-kiem?q=${encodeURIComponent(searchQuery.trim())}`);
       setIsSearchOpen(false);
       setSearchQuery('');
     }
@@ -73,16 +79,78 @@ const Header = memo(function Header() {
     navigate("/");
   };
 
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image")) {
+      setAvatarError("Chỉ chấp nhận file ảnh");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setAvatarError("Ảnh tối đa 10MB");
+      return;
+    }
+
+    setAvatarError("");
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("avatar", file);
+      const { data } = await userAPI.uploadAvatar(formData);
+
+      const current = JSON.parse(sessionStorage.getItem("userInfo") || "{}");
+      const updated = { ...current, avatar: data.data.avatar };
+      sessionStorage.setItem("userInfo", JSON.stringify(updated));
+      window.dispatchEvent(new Event("user-info-updated"));
+    } catch (err) {
+      setAvatarError(err.response?.data?.message || "Tải ảnh thất bại");
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
+  };
+
+  const handleDeleteAvatar = async () => {
+    setUploading(true);
+    setAvatarError("");
+    try {
+      await userAPI.deleteAvatar();
+      const current = JSON.parse(sessionStorage.getItem("userInfo") || "{}");
+      const updated = { ...current, avatar: "" };
+      sessionStorage.setItem("userInfo", JSON.stringify(updated));
+      window.dispatchEvent(new Event("user-info-updated"));
+    } catch (err) {
+      setAvatarError(err.response?.data?.message || "Xóa ảnh thất bại");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const scrollToCategory = useCallback((slug) => {
+    const scrollNow = () => {
+      const el = document.getElementById(`category-${slug}`);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+    const el = document.getElementById(`category-${slug}`);
+    if (el) {
+      scrollNow();
+      return;
+    }
     navigate("/");
-    let retries = 10;
+    let retries = 40;
     const interval = setInterval(() => {
       const el = document.getElementById(`category-${slug}`);
-      if (el || --retries <= 0) {
+      if (el) {
+        scrollNow();
         clearInterval(interval);
-        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      } else if (--retries <= 0) {
+        clearInterval(interval);
       }
-    }, 300);
+    }, 150);
   }, [navigate]);
 
   return (
@@ -122,8 +190,8 @@ const Header = memo(function Header() {
 
         {/* Main Header */}
         <div className="bg-white border-b border-gray-200">
-          <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 px-4">
-            <Link to="/" className="shrink-0">
+          <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 pl-0 pr-4 sm:px-4">
+            <Link to="/" className="shrink-0 -ml-6 sm:ml-0">
               <Logo />
             </Link>
 
@@ -160,44 +228,121 @@ const Header = memo(function Header() {
                   type="button"
                   onClick={() => setIsAccountOpen(!isAccountOpen)}
                   className="flex items-center gap-2 text-gray-600 hover:text-amber-500 transition"
+                  aria-haspopup="menu"
+                  aria-expanded={isAccountOpen}
                 >
-                  <FontAwesomeIcon icon={faUser} className="text-xl" />
-                  <span className="text-sm hidden lg:block">
+                  {isLoggedIn ? (
+                    <UserAvatar user={userInfo} size="sm" />
+                  ) : (
+                    <FontAwesomeIcon icon={faUser} className="text-xl" />
+                  )}
+                  <span className="text-sm hidden lg:block max-w-[120px] truncate">
                     {isLoggedIn ? userInfo?.name : 'Đăng nhập'}
                   </span>
                   <FontAwesomeIcon icon={faChevronDown} className="text-[10px]" />
                 </button>
 
                 {isAccountOpen && (
-                  <div className="absolute right-0 top-full mt-3 w-56 bg-white rounded-lg shadow-lg border border-gray-100 z-[100] overflow-hidden">
-                    <div className="p-3 bg-amber-400 text-white">
-                      <p className="font-medium">
-                        {isLoggedIn ? `Xin chào, ${userInfo?.name}` : 'Chào mừng bạn!'}
-                      </p>
-                      {isLoggedIn && <p className="text-xs opacity-80">{userInfo?.email}</p>}
-                    </div>
+                  <div className="absolute right-0 top-full mt-3 w-64 bg-white rounded-xl shadow-lg border border-gray-100 z-[100] overflow-hidden">
                     {!isLoggedIn ? (
-                      <div className="py-2">
-                        <Link to="/login" className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-amber-50" onClick={() => setIsAccountOpen(false)}>
-                          Đăng nhập
-                        </Link>
-                        <Link to="/register" className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-amber-50 border-t border-gray-100" onClick={() => setIsAccountOpen(false)}>
-                          Đăng ký
-                        </Link>
-                      </div>
+                      <>
+                        <div className="p-3 bg-amber-400 text-white">
+                          <p className="font-medium">Chào mừng bạn!</p>
+                          <p className="text-xs opacity-80">Đăng nhập để tiếp tục</p>
+                        </div>
+                        <div className="py-2">
+                          <Link to="/login" className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-amber-50" onClick={() => setIsAccountOpen(false)}>
+                            Đăng nhập
+                          </Link>
+                          <Link to="/register" className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-amber-50 border-t border-gray-100" onClick={() => setIsAccountOpen(false)}>
+                            Đăng ký
+                          </Link>
+                        </div>
+                      </>
                     ) : (
-                      <div className="py-2">
-                        <Link to="/account" className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-amber-50" onClick={() => setIsAccountOpen(false)}>
-                          Tài khoản
-                        </Link>
-                        <Link to="/orders" className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-amber-50 border-t border-gray-100" onClick={() => setIsAccountOpen(false)}>
-                          Đơn hàng
-                        </Link>
-                        <button type="button" onClick={handleLogout} className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-red-600 hover:bg-amber-50 border-t border-gray-100">
-                          Đăng xuất
-                          <FontAwesomeIcon icon={faRightFromBracket} />
-                        </button>
-                      </div>
+                      <>
+                        {/* USER INFO + AVATAR UPLOAD */}
+                        <div className="flex items-center gap-3 px-3 py-3 border-b border-gray-100">
+                          <div className="relative shrink-0 group">
+                            <UserAvatar user={userInfo} size="2xl" />
+                            <button
+                              type="button"
+                              onClick={handleAvatarClick}
+                              disabled={uploading}
+                              className="
+                                absolute inset-0 flex items-center justify-center
+                                rounded-full bg-black/50 text-white
+                                opacity-0 group-hover:opacity-100
+                                transition-opacity cursor-pointer
+                                disabled:cursor-not-allowed
+                              "
+                              title="Đổi ảnh đại diện"
+                            >
+                              {uploading
+                                ? <FontAwesomeIcon icon={faSpinner} className="animate-spin" />
+                                : <FontAwesomeIcon icon={faCamera} />}
+                            </button>
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-sm font-semibold text-gray-800">
+                              {userInfo?.name}
+                            </p>
+                            <p className="truncate text-xs text-gray-500">{userInfo?.email}</p>
+                          </div>
+                        </div>
+
+                        {avatarError && (
+                          <div className="px-3 py-2 text-xs text-red-600 bg-red-50 border-b border-red-100">
+                            {avatarError}
+                          </div>
+                        )}
+
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          onChange={handleAvatarChange}
+                          className="hidden"
+                        />
+
+                        <div className="py-1">
+                          <button
+                            type="button"
+                            onClick={handleAvatarClick}
+                            disabled={uploading}
+                            className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors disabled:opacity-50"
+                          >
+                            <FontAwesomeIcon icon={faCamera} className="text-base text-gray-400" />
+                            <span>{userInfo?.avatar ? "Đổi ảnh đại diện" : "Tải ảnh lên"}</span>
+                          </button>
+                          {userInfo?.avatar && (
+                            <button
+                              type="button"
+                              onClick={handleDeleteAvatar}
+                              disabled={uploading}
+                              className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors disabled:opacity-50"
+                            >
+                              <FontAwesomeIcon icon={faTrash} className="text-base text-gray-400" />
+                              <span>Xóa ảnh hiện tại</span>
+                            </button>
+                          )}
+                          <Link to="/account" className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setIsAccountOpen(false)}>
+                            <FontAwesomeIcon icon={faUser} className="text-base text-gray-400" />
+                            <span>Tài khoản</span>
+                          </Link>
+                          <Link to="/orders" className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setIsAccountOpen(false)}>
+                            <FontAwesomeIcon icon={faRightFromBracket} className="text-base text-gray-400" />
+                            <span>Đơn hàng</span>
+                          </Link>
+                        </div>
+
+                        <div className="border-t border-gray-100 py-1">
+                          <button type="button" onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                            <FontAwesomeIcon icon={faRightFromBracket} className="text-base" />
+                            <span>Đăng xuất</span>
+                          </button>
+                        </div>
+                      </>
                     )}
                   </div>
                 )}
@@ -278,9 +423,11 @@ const Header = memo(function Header() {
                       onMouseLeave={() => { closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 300); }}>
                       <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('guitar-acoustic'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Guitar Acoustic</button>
                       <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('guitar-classic'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Guitar Classic</button>
+                      <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('guitar-electric'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Guitar Electric</button>
+                      <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('guitar-bass'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Guitar Bass</button>
                       <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('piano'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Piano</button>
                       <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('ukulele'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Ukulele</button>
-                      <hr/>
+                      <hr />
                       <Link to="/products" onClick={() => setOpenDropdown(null)} className="block px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Tất cả sản phẩm</Link>
                     </div>
                   )}
@@ -326,7 +473,15 @@ const Header = memo(function Header() {
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <>
-          <div className="fixed inset-0 bg-black/50 z-[1000]" onClick={() => setIsMobileMenuOpen(false)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsMobileMenuOpen(false); } }} role="button" tabIndex={0} />
+          <div className="fixed inset-0 bg-black/50 z-[1000]"
+            onClick={() => setIsMobileMenuOpen(false)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setIsMobileMenuOpen(false);
+              }
+            }}
+            role="button" tabIndex={0} />
           <div className="fixed top-0 left-0 w-72 h-full bg-white z-[1001] shadow-pop overflow-y-auto">
             <div className="bg-white p-4 flex justify-between items-center border-b border-gray-100">
               <Link to="/" className="shrink-0">
@@ -336,6 +491,7 @@ const Header = memo(function Header() {
                 <FontAwesomeIcon icon={faTimes} />
               </button>
             </div>
+
             <div className="p-4 border-b border-gray-100">
               {!isLoggedIn ? (
                 <div className="flex gap-2">
@@ -344,16 +500,15 @@ const Header = memo(function Header() {
                 </div>
               ) : (
                 <div className="flex items-center gap-3">
-                  <div className="size-10 bg-amber-500 rounded-full flex items-center justify-center text-white font-bold">
-                    {userInfo?.name?.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-800">{userInfo?.name}</p>
-                    <p className="text-xs text-gray-500">{userInfo?.email}</p>
+                  <UserAvatar user={userInfo} size="lg" />
+                  <div className="min-w-0">
+                    <p className="font-medium text-gray-800 truncate">{userInfo?.name}</p>
+                    <p className="text-xs text-gray-500 truncate">{userInfo?.email}</p>
                   </div>
                 </div>
               )}
             </div>
+
             <div className="py-2">
               <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
                 <span>TRANG CHỦ</span>
@@ -364,13 +519,18 @@ const Header = memo(function Header() {
               </button>
               {openDropdown === 'SẢN PHẨM' && (
                 <div className="bg-amber-50/50 pl-4">
-                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-acoustic'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Guitar Acoustic</button>
-                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-classic'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Guitar Classic</button>
-                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('piano'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Piano</button>
-                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('ukulele'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Ukulele</button>
-                  <Link to="/products" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Tất cả sản phẩm</Link>
+                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-acoustic'); }} className="block w-full text-left px-4 py-2  text-gray-600 hover:text-amber-600">Guitar Acoustic</button>
+                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-classic'); }} className="block w-full text-left px-4 py-2  text-gray-600 hover:text-amber-600">Guitar Classic</button>
+                  <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('guitar-electric'); }} className="block w-full text-left px-4 py-2  text-gray-600 hover:bg-amber-50 hover:text-amber-600">Guitar Electric</button>
+                  <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('guitar-bass'); }} className="block w-full text-left px-4 py-2  text-gray-600 hover:bg-amber-50 hover:text-amber-600">Guitar Bass</button>
+                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('piano'); }} className="block w-full text-left px-4 py-2  text-gray-600 hover:text-amber-600">Piano</button>
+                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('ukulele'); }} className="block w-full text-left px-4 py-2  text-gray-600 hover:text-amber-600">Ukulele</button>
+                  <hr />
+                  <Link to="/products" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-2  text-gray-600 hover:text-amber-600">Tất cả sản phẩm</Link>
+                  <hr />
                 </div>
               )}
+
               <Link to="/courses" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
                 <span>KHÓA HỌC</span>
               </Link>
@@ -383,6 +543,47 @@ const Header = memo(function Header() {
               <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
                 <span>LIÊN HỆ</span>
               </Link>
+            </div>
+
+            {/* Top Bar - Social */}
+            <div className="flex items-center justify-center gap-6 py-3 text-gray-700">
+
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-lg hover:text-blue-600 transition"
+              >
+                <FontAwesomeIcon icon={faFacebook} />
+              </a>
+
+              <a
+                href="https://youtube.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-lg hover:text-red-600 transition"
+              >
+                <FontAwesomeIcon icon={faYoutube} />
+              </a>
+
+              <a
+                href="https://tiktok.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-lg hover:text-black transition"
+              >
+                <FontAwesomeIcon icon={faTiktok} />
+              </a>
+
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-lg hover:text-pink-500 transition"
+              >
+                <FontAwesomeIcon icon={faInstagram} />
+              </a>
+
             </div>
           </div>
         </>

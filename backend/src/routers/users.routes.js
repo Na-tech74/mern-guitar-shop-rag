@@ -6,6 +6,7 @@
 import express from "express";
 import { adminOnly, protect, authLimiter } from "../middleware/auth.middleware.js";
 import { asyncHandler } from "../middleware/asyncHandler.js";
+import { upload } from "../middleware/upload.middleware.js";
 import {
     deleteUser,
     getAllUser,
@@ -13,7 +14,9 @@ import {
     getMyProfile,
     updateMyProfile,
     changePassword,
-    updateUser
+    updateUser,
+    uploadMyAvatar,
+    deleteMyAvatar
 } from "../controller/users.controller.js";
 
 const router = express.Router();
@@ -31,6 +34,20 @@ router.get("/me", protect, asyncHandler(getMyProfile));
  * Protected - Cần authentication
  */
 router.put("/me", protect, asyncHandler(updateMyProfile));
+
+/**
+ * POST /api/users/me/avatar
+ * Upload avatar cho người dùng hiện tại (multipart/form-data, field: avatar)
+ * Protected - Cần authentication
+ */
+router.post("/me/avatar", protect, upload.single("avatar"), asyncHandler(uploadMyAvatar));
+
+/**
+ * DELETE /api/users/me/avatar
+ * Xóa avatar của người dùng hiện tại
+ * Protected - Cần authentication
+ */
+router.delete("/me/avatar", protect, asyncHandler(deleteMyAvatar));
 
 /**
  * PUT /api/users/password

@@ -112,7 +112,7 @@ const ImageUploader = ({ value, onChange, alt = "" }) => {
                 <img
                     src={value}
                     alt={alt}
-                    className="h-32 w-full rounded-lg object-cover border border-gray-200"
+                    className="h-32 sm:h-40 w-full rounded-lg object-cover border border-gray-200"
                     loading="lazy"
                 />
                 <button
@@ -195,7 +195,7 @@ const VideoUploader = ({ value, onChange, label = "Video" }) => {
                         onChange={handleFile}
                         className="hidden"
                     />
-                    <div className="text-center">
+                    <div className="text-center px-3">
                         <FontAwesomeIcon icon={faVideo} className="text-2xl mb-2 block" />
                         <div>Click để tải {label.toLowerCase()} lên</div>
                         <div className="text-xs text-gray-400 mt-1">(Tối đa 50MB - mp4, webm, mov...)</div>
@@ -211,7 +211,7 @@ const VideoUploader = ({ value, onChange, label = "Video" }) => {
             <div className="relative">
                 <video
                     src={value}
-                    className="h-40 w-full rounded-lg object-cover border border-gray-200 bg-black"
+                    className="h-40 sm:h-48 w-full rounded-lg object-cover border border-gray-200 bg-black"
                     controls
                     muted
                     playsInline
@@ -268,29 +268,33 @@ export default function HomeContent() {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
             <div className="flex items-center justify-between flex-wrap gap-3">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                        <FontAwesomeIcon icon={faHouse} className="text-gray-700" />
-                        Quản lý Trang chủ
+                <div className="min-w-0">
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-2">
+                        <FontAwesomeIcon icon={faHouse} className="text-gray-700 shrink-0" />
+                        <span className="truncate">Quản lý Trang chủ</span>
                     </h1>
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-gray-500 text-xs sm:text-sm mt-0.5">
                         Chỉnh sửa toàn bộ nội dung hiển thị trên trang chủ
                     </p>
                 </div>
                 <Link
                     to="/"
                     target="_blank"
-                    className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 hover:bg-gray-50"
+                    className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 border border-gray-200 rounded-lg text-xs sm:text-sm text-gray-700 hover:bg-gray-50 shrink-0"
                 >
-                    <FontAwesomeIcon icon={faEye} /> Xem trang chủ
+                    <FontAwesomeIcon icon={faEye} />
+                    <span className="hidden sm:inline">Xem trang chủ</span>
                 </Link>
             </div>
 
-            <div className="flex gap-6">
-                <div className="w-48 shrink-0">
-                    <div className="rounded-xl bg-white p-2 shadow-sm sticky top-24">
+            <div className="lg:flex lg:gap-6">
+                <div className="lg:w-48 lg:shrink-0 mb-4 lg:mb-0">
+                    <div className="rounded-xl bg-white p-2 shadow-sm
+                                    sticky top-[60px] lg:top-24 z-20
+                                    flex flex-wrap lg:flex-col gap-1
+                                    -mx-4 px-4 lg:mx-0 lg:px-2">
                         {tabs.map((tab) => (
                             <button
                                 key={tab.id}
@@ -299,7 +303,10 @@ export default function HomeContent() {
                                     setActiveTab(tab.id);
                                     setMessage(null);
                                 }}
-                                className={`flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all ${activeTab === tab.id
+                                className={`flex items-center justify-center lg:justify-start gap-2 lg:gap-3 rounded-lg
+                                            px-3 lg:px-4 py-2 lg:py-3 text-xs lg:text-sm font-medium transition-all
+                                            whitespace-nowrap
+                                            ${activeTab === tab.id
                                     ? "bg-gray-100 text-gray-800"
                                     : "text-gray-600 hover:bg-gray-50"
                                     }`}
@@ -310,10 +317,10 @@ export default function HomeContent() {
                     </div>
                 </div>
 
-                <div className="flex-1 space-y-4 min-w-0">
+                <div className="flex-1 min-w-0 space-y-4">
                     <MessageBanner message={message} />
 
-                    <form onSubmit={handleSubmit} className="rounded-xl bg-white p-6 shadow-sm space-y-8">
+                    <form onSubmit={handleSubmit} className="rounded-xl bg-white p-4 sm:p-6 shadow-sm space-y-6 sm:space-y-8">
                         {activeTab === "carousel" && (
                             <CarouselSection formData={formData} handlers={handlers} />
                         )}
@@ -333,15 +340,16 @@ export default function HomeContent() {
                             <CtaSection formData={formData} handlers={handlers} />
                         )}
 
-                        <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                        <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 pt-4 border-t border-gray-100">
                             <Button
                                 type="button"
                                 variant="secondary"
                                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                                className="w-full sm:w-auto"
                             >
                                 <FontAwesomeIcon icon={faChevronLeft} /> Lên đầu trang
                             </Button>
-                            <Button type="submit" variant="primary" loading={saving}>
+                            <Button type="submit" variant="primary" loading={saving} className="w-full sm:w-auto">
                                 Lưu thay đổi
                             </Button>
                         </div>
@@ -366,7 +374,7 @@ const CarouselSection = ({ formData, handlers }) => {
             <SectionTitle hint="Carousel hiển thị đầu trang chủ. Tối đa nhiều slide.">
                 Carousel (Banner đầu trang)
             </SectionTitle>
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <Input
                     label="Tên thương hiệu (hiển thị nhỏ trên slide)"
                     value={formData.carousel.brand}
@@ -375,10 +383,10 @@ const CarouselSection = ({ formData, handlers }) => {
             </div>
 
             {formData.carousel.slides.map((slide, index) => (
-                <div key={index} className="rounded-xl border border-gray-200 p-4 space-y-3">
-                    <div className="flex items-center justify-between">
-                        <h4 className="font-semibold text-gray-700">Slide {index + 1}</h4>
-                        <div className="flex gap-1">
+                <div key={index} className="rounded-xl border border-gray-200 p-3 sm:p-4 space-y-3">
+                    <div className="flex items-center justify-between gap-2">
+                        <h4 className="font-semibold text-gray-700 text-sm sm:text-base">Slide {index + 1}</h4>
+                        <div className="flex gap-1 shrink-0">
                             <button
                                 type="button"
                                 onClick={() => moveSlide(index, -1)}
@@ -399,7 +407,7 @@ const CarouselSection = ({ formData, handlers }) => {
                             </button>
                         </div>
                     </div>
-                    <div className="grid md:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <Input
                             label="Tiêu đề"
                             value={slide.title}
@@ -416,7 +424,7 @@ const CarouselSection = ({ formData, handlers }) => {
                         value={slide.description}
                         onChange={(e) => updateSlide(index, "description", e.target.value)}
                     />
-                    <div className="grid md:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         <Input
                             label="URL hình ảnh"
                             value={slide.image}
@@ -452,9 +460,9 @@ const FeaturesSection = ({ formData, handlers, iconOptions }) => {
                 Banner tính năng
             </SectionTitle>
             {formData.featuresBanner.features.map((feature, index) => (
-                <div key={index} className="rounded-xl border border-gray-200 p-4 space-y-3">
-                    <h4 className="font-semibold text-gray-700">Tính năng {index + 1}</h4>
-                    <div className="grid md:grid-cols-2 gap-3">
+                <div key={index} className="rounded-xl border border-gray-200 p-3 sm:p-4 space-y-3">
+                    <h4 className="font-semibold text-gray-700 text-sm sm:text-base">Tính năng {index + 1}</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Biểu tượng
@@ -494,8 +502,8 @@ const HeadingsSection = ({ formData, handlers }) => {
             <SectionTitle hint="Tiêu đề và mô tả của các section danh mục, sản phẩm nổi bật và bộ sưu tập.">
                 Tiêu đề các section
             </SectionTitle>
-            <div className="rounded-xl border border-gray-200 p-4 space-y-3">
-                <h4 className="font-semibold text-gray-700">Section danh mục</h4>
+            <div className="rounded-xl border border-gray-200 p-3 sm:p-4 space-y-3">
+                <h4 className="font-semibold text-gray-700 text-sm sm:text-base">Section danh mục</h4>
                 <Input
                     label="Tiêu đề"
                     value={formData.categoriesSection.title}
@@ -507,8 +515,8 @@ const HeadingsSection = ({ formData, handlers }) => {
                     onChange={(e) => handlers.updateCategory("subtitle", e.target.value)}
                 />
             </div>
-            <div className="rounded-xl border border-gray-200 p-4 space-y-3">
-                <h4 className="font-semibold text-gray-700">Section sản phẩm nổi bật</h4>
+            <div className="rounded-xl border border-gray-200 p-3 sm:p-4 space-y-3">
+                <h4 className="font-semibold text-gray-700 text-sm sm:text-base">Section sản phẩm nổi bật</h4>
                 <Input
                     label="Tiêu đề"
                     value={formData.featuredProducts.title}
@@ -527,10 +535,10 @@ const HeadingsSection = ({ formData, handlers }) => {
 const ClipSection = ({ formData, handlers }) => {
     return (
         <div className="space-y-6">
-            <SectionTitle hint="Section video khuyến mãi ở giữa trang chủ. Để trống URL video sẽ dùng video mặc định.">
-                Section khuyến mãi (Clip)
+            <SectionTitle hint="Section video khuyến mãi ở giữa trang chủ (tương ứng component HomeClip1). Để trống URL video sẽ dùng video mặc định.">
+                Section khuyến mãi (Clip 1)
             </SectionTitle>
-            <div className="rounded-xl border border-gray-200 p-4 space-y-3">
+            <div className="rounded-xl border border-gray-200 p-3 sm:p-4 space-y-3">
                 <Input
                     label="Tiêu đề"
                     value={formData.clip.title}
@@ -541,7 +549,7 @@ const ClipSection = ({ formData, handlers }) => {
                     value={formData.clip.description}
                     onChange={(e) => handlers.updateClip("description", e.target.value)}
                 />
-                <div className="grid md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <Input
                         label="Nhãn nút bấm"
                         value={formData.clip.buttonText}
@@ -575,7 +583,7 @@ const FeaturedTypesSection = ({ formData, handlers }) => {
             <SectionTitle hint="Section bộ sưu tập hiển thị các dòng sản phẩm.">
                 Bộ sưu tập
             </SectionTitle>
-            <div className="rounded-xl border border-gray-200 p-4 space-y-3">
+            <div className="rounded-xl border border-gray-200 p-3 sm:p-4 space-y-3">
                 <Input
                     label="Tiêu đề"
                     value={formData.featuredTypes.title}
@@ -588,9 +596,9 @@ const FeaturedTypesSection = ({ formData, handlers }) => {
                 />
             </div>
             {formData.featuredTypes.types.map((type, index) => (
-                <div key={index} className="rounded-xl border border-gray-200 p-4 space-y-3">
-                    <h4 className="font-semibold text-gray-700">Mục {index + 1}</h4>
-                    <div className="grid md:grid-cols-2 gap-3">
+                <div key={index} className="rounded-xl border border-gray-200 p-3 sm:p-4 space-y-3">
+                    <h4 className="font-semibold text-gray-700 text-sm sm:text-base">Mục {index + 1}</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <Input
                             label="Tiêu đề"
                             value={type.title}
@@ -602,7 +610,7 @@ const FeaturedTypesSection = ({ formData, handlers }) => {
                             onChange={(e) => updateFeaturedType(index, "subtitle", e.target.value)}
                         />
                     </div>
-                    <div className="grid md:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <Input
                             label="URL hình ảnh"
                             value={type.image}
@@ -628,10 +636,10 @@ const FeaturedTypesSection = ({ formData, handlers }) => {
 const CtaSection = ({ formData, handlers }) => {
     return (
         <div className="space-y-6">
-            <SectionTitle hint="Section kêu gọi hành động ở cuối trang chủ (CTA hỗ trợ). Để trống URL video sẽ dùng video mặc định.">
-                Section CTA hỗ trợ
+            <SectionTitle hint="Section kêu gọi hành động ở cuối trang chủ (tương ứng component HomeClip2). Để trống URL video sẽ dùng video mặc định.">
+                Section tư vấn (Clip 2)
             </SectionTitle>
-            <div className="rounded-xl border border-gray-200 p-4 space-y-3">
+            <div className="rounded-xl border border-gray-200 p-3 sm:p-4 space-y-3">
                 <Input
                     label="Nhãn nhỏ (badge)"
                     value={formData.ctaSection.badgeText}
@@ -647,7 +655,7 @@ const CtaSection = ({ formData, handlers }) => {
                     value={formData.ctaSection.description}
                     onChange={(e) => handlers.updateCta("description", e.target.value)}
                 />
-                <div className="grid md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <Input
                         label="Nút chính - Nhãn"
                         value={formData.ctaSection.primaryButtonText}
@@ -659,7 +667,7 @@ const CtaSection = ({ formData, handlers }) => {
                         onChange={(e) => handlers.updateCta("primaryButtonLink", e.target.value)}
                     />
                 </div>
-                <div className="grid md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <Input
                         label="Nút phụ - Nhãn"
                         value={formData.ctaSection.secondaryButtonText}

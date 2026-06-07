@@ -3,6 +3,7 @@ import { appError, appSuccess } from "../utils/appResponse.js";
 import { isValidEmail, isValidPassword, isValidObjectId } from '../utils/valid.js';
 import usersModel from '../models/users.model.js';
 import { formatDateTime } from '../utils/format.js';
+import { uploadImages } from '../services/uploadImages.js';
 
 /**
  * Lấy danh sách tất cả người dùng (chỉ admin)
@@ -245,6 +246,7 @@ export const updateMyProfile = async (req, res) => {
             name: user.name,
             email: user.email,
             role: user.role,
+            avatar: user.avatar || "",
             createdAt: formatDateTime(user.createdAt),
             updatedAt: formatDateTime(user.updatedAt),
         }
@@ -296,5 +298,59 @@ export const changePassword = async (req, res) => {
     return appSuccess(res, {
         statusCode: 200,
         message: "Đổi mật khẩu thành công! Vui lòng đăng nhập lại."
+    });
+};
+
+/**
+ * Upload avatar cho người dùng hiện tại
+ * @param {Object} req - Request chứa file ảnh trong req.file (field name: "avatar")
+ * @returns {200} URL avatar mới
+ */
+export const uploadMyAvatar = async (req, res) => {
+    if (!req.file) {
+        throw appError("Vui lòng chọn file ảnh để tải lên!", 400);
+    }
+
+    const urls = await uploadImages([req.file], "avatars");
+
+    const user = await usersModel
+        .findById(req.user._id)
+        .select("-password -refreshToken");
+    if (!user) {
+        throw appError("Không tìm thấy người dùng!", 404);
+    }
+
+    user.avatar = urls[0];
+    await user.save();
+
+    return appSuccess(res, {
+        statusCode: 200,
+        message: "Cập nhật ảnh đại diện thành công!",
+        data: {
+            avatar: user.avatar,
+        },
+    });
+};
+
+/**
+ * Xóa avatar của người dùng hiện tại
+ */
+export const deleteMyAvatar = async (req, res) => {
+    const user = await usersModel
+        .findById(req.user._id)
+        .select("-password -refreshToken");
+    if (!user) {
+        throw appError("Không tìm thấy người dùng!", 404);
+    }
+
+    user.avatar = "";
+    await user.save();
+
+    return appSuccess(res, {
+        statusCode: 200,
+        message: "Đã xóa ảnh đại diện!",
+        data: {
+            avatar: "",
+        },
     });
 };

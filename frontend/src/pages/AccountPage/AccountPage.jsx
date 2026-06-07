@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -6,10 +6,11 @@ import {
     faFileInvoice, faHeart, faKey, faRightFromBracket,
     faPenToSquare, faCheck, faXmark, faBagShopping,
     faArrowRight, faCircleCheck, faCircleExclamation,
-    faEye, faEyeSlash
+    faEye, faEyeSlash, faCamera, faTrash, faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
-import { API, logoutAPI, orderAPI } from "../../api";
+import { API, logoutAPI, orderAPI, userAPI } from "../../api";
 import { formatDate } from "../../helpers/format";
+import UserAvatar from "../../components/UserAvatar.jsx";
 
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const isValidPassword = (password) =>
@@ -30,6 +31,8 @@ export default function AccountPage() {
     const [orders, setOrders] = useState([]);
     const [activeTab, setActiveTab] = useState("profile");
     const [toast, setToast] = useState(null);
+    const [uploading, setUploading] = useState(false);
+    const fileInputRef = useRef(null);
 
     useEffect(() => {
         const info = JSON.parse(sessionStorage.getItem("userInfo") || "null");
@@ -45,7 +48,14 @@ export default function AccountPage() {
     const fetchProfile = async () => {
         try {
             const res = await API.get("/users/me");
-            setProfile(res.data?.data);
+            const data = res.data?.data;
+            setProfile(data);
+            if (data?.avatar !== undefined) {
+                const current = JSON.parse(sessionStorage.getItem("userInfo") || "{}");
+                const updated = { ...current, avatar: data.avatar || "" };
+                sessionStorage.setItem("userInfo", JSON.stringify(updated));
+                window.dispatchEvent(new Event("user-info-updated"));
+            }
         } catch {
             //
         }
@@ -77,11 +87,64 @@ export default function AccountPage() {
         navigate("/");
     };
 
+    const handleAvatarClick = () => fileInputRef.current?.click();
+
+    const handleAvatarChange = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        if (!file.type.startsWith("image")) {
+            showToast("error", "Chỉ chấp nhận file ảnh");
+            return;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+            showToast("error", "Ảnh tối đa 10MB");
+            return;
+        }
+
+        setUploading(true);
+        try {
+            const formData = new FormData();
+            formData.append("avatar", file);
+            const { data } = await userAPI.uploadAvatar(formData);
+
+            const current = JSON.parse(sessionStorage.getItem("userInfo") || "{}");
+            const updated = { ...current, avatar: data.data.avatar };
+            sessionStorage.setItem("userInfo", JSON.stringify(updated));
+            window.dispatchEvent(new Event("user-info-updated"));
+
+            await fetchProfile();
+            showToast("success", "Cập nhật ảnh đại diện thành công!");
+        } catch (err) {
+            showToast("error", err.response?.data?.message || "Tải ảnh thất bại");
+        } finally {
+            setUploading(false);
+            e.target.value = "";
+        }
+    };
+
+    const handleDeleteAvatar = async () => {
+        setUploading(true);
+        try {
+            await userAPI.deleteAvatar();
+            const current = JSON.parse(sessionStorage.getItem("userInfo") || "{}");
+            const updated = { ...current, avatar: "" };
+            sessionStorage.setItem("userInfo", JSON.stringify(updated));
+            window.dispatchEvent(new Event("user-info-updated"));
+            await fetchProfile();
+            showToast("success", "Đã xóa ảnh đại diện");
+        } catch (err) {
+            showToast("error", err.response?.data?.message || "Xóa ảnh thất bại");
+        } finally {
+            setUploading(false);
+        }
+    };
+
     if (!userInfo) return null;
 
     const displayName = profile?.name || userInfo.name;
     const displayEmail = profile?.email || userInfo.email;
     const displayRole = profile?.role || userInfo.role;
+    const displayAvatar = profile?.avatar || userInfo.avatar || "";
     const isAdmin = displayRole === "admin";
     const initials = displayName?.charAt(0).toUpperCase() || "U";
 
@@ -101,12 +164,51 @@ export default function AccountPage() {
                 {/* Hero / Profile Header */}
                 <div className="bg-white rounded-xl shadow-soft border border-gray-100 p-6 sm:p-8 mb-6">
                     <div className="flex flex-col sm:flex-row items-center sm:items-center gap-5">
-                        <div className="relative shrink-0">
-                            <div className="size-20 sm:size-24 rounded-full bg-amber-100 flex items-center justify-center text-3xl sm:text-4xl font-bold text-amber-600">
-                                {initials}
+                        <div className="relative shrink-0 group">
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                accept="image/*"
+                                onChange={handleAvatarChange}
+                                className="hidden"
+                            />
+                            <div className="size-20 sm:size-24">
+                                {displayAvatar ? (
+                                    <img
+                                        src={displayAvatar}
+                                        alt={displayName}
+                                        className="size-full rounded-full object-cover bg-gray-100"
+                                    />
+                                ) : (
+                                    <div className="size-full rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-3xl sm:text-4xl font-bold text-white">
+                                        {initials}
+                                    </div>
+                                )}
                             </div>
+                            <button
+                                type="button"
+                                onClick={handleAvatarClick}
+                                disabled={uploading}
+                                className="
+                                    absolute inset-0 flex items-center justify-center gap-1
+                                    rounded-full bg-black/55 text-white text-xs font-medium
+                                    opacity-0 group-hover:opacity-100
+                                    transition-opacity cursor-pointer
+                                    disabled:cursor-not-allowed
+                                "
+                                title="Đổi ảnh đại diện"
+                            >
+                                {uploading ? (
+                                    <FontAwesomeIcon icon={faSpinner} className="animate-spin text-base" />
+                                ) : (
+                                    <>
+                                        <FontAwesomeIcon icon={faCamera} />
+                                        <span className="hidden sm:inline">Đổi ảnh</span>
+                                    </>
+                                )}
+                            </button>
                             {isAdmin && (
-                                <div className="absolute -bottom-1 -right-1 size-8 rounded-full bg-white border border-gray-200 shadow-flat flex items-center justify-center">
+                                <div className="absolute -bottom-1 -right-1 size-8 rounded-full bg-white border border-gray-200 shadow-flat flex items-center justify-center pointer-events-none">
                                     <FontAwesomeIcon icon={faShieldHalved} className="text-amber-600 text-sm" />
                                 </div>
                             )}
@@ -130,6 +232,17 @@ export default function AccountPage() {
                                     <FontAwesomeIcon icon={faCalendarDays} className="text-[10px]" />
                                     Thành viên từ {formatDate(profile.createdAt)}
                                 </p>
+                            )}
+                            {displayAvatar && (
+                                <button
+                                    type="button"
+                                    onClick={handleDeleteAvatar}
+                                    disabled={uploading}
+                                    className="mt-2 inline-flex items-center gap-1 text-xs text-gray-500 hover:text-red-600 transition disabled:opacity-50"
+                                >
+                                    <FontAwesomeIcon icon={faTrash} className="text-[10px]" />
+                                    Xóa ảnh đại diện
+                                </button>
                             )}
                         </div>
                         <button
@@ -359,6 +472,7 @@ function ProfileTab({ profile, userInfo, onSaved, showToast }) {
                     name: updated.name,
                     email: updated.email,
                     role: updated.role || userInfo.role,
+                    avatar: updated.avatar !== undefined ? updated.avatar : (userInfo.avatar || ""),
                 };
                 sessionStorage.setItem("userInfo", JSON.stringify(newInfo));
                 window.dispatchEvent(new Event("user-info-updated"));

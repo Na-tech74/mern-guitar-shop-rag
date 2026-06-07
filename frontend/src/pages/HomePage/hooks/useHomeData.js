@@ -12,7 +12,8 @@ export default function useHomeData() {
         const fetchData = async () => {
             try {
                 const [productsRes, categoriesRes, homeRes] = await Promise.all([
-                    productAPI.getAll({ limit: 20 }),
+                    // phân trang sản phẩm trang home
+                    productAPI.getAll({ limit: 500 }),
                     API.get("/categories", { signal: abortController.signal }),
                     homeContentAPI.get(),
                 ]);

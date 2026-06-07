@@ -1,148 +1,125 @@
-// components/dashboard/AdminSidebar.jsx
-
 import { NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsisVertical, faXmark, faChartPie, faBox, faUsers, faCartShopping, faTag, faGear, faNewspaper, faVideo, faHouse, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-import { useUserInfo } from "../../../hooks/useUserInfo.js";
+import logo from "../../../assets/images/logo.jpg";
+import {
+    faXmark,
+    faChartPie,
+    faBox,
+    faUsers,
+    faCartShopping,
+    faTag,
+    faGear,
+    faNewspaper,
+    faVideo,
+    faHouse,
+    faInfoCircle,
+} from "@fortawesome/free-solid-svg-icons";
 
-const adminSidebarMenuItems = [
-    {
-        title: "Quản lý",
-        items: [
-            { name: "Bảng điều khiển", path: "/admin", icon: faChartPie },
-            { name: "Trang chủ", path: "/admin/home-content", icon: faHouse },
-            { name: "Giới thiệu", path: "/admin/about-content", icon: faInfoCircle },
-            { name: "Sản phẩm", path: "/admin/products", icon: faBox },
-            { name: "Đơn hàng", path: "/admin/orders", icon: faCartShopping },
-            { name: "Người dùng", path: "/admin/users", icon: faUsers },
-            { name: "Danh mục", path: "/admin/categories", icon: faTag },
-            { name: "Khóa học", path: "/admin/courses", icon: faVideo },
-            { name: "Blog", path: "/admin/blog", icon: faNewspaper },
+function NavItem({ to, icon, name, end }) {
+    return (
+        <NavLink
+            to={to}
+            end={end}
+            className={({ isActive }) =>
+                `flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
+                    isActive
+                        ? "bg-amber-400 text-white"
+                        : "text-gray-700 hover:bg-amber-50 hover:text-amber-600"
+                }`
+            }
+        >
+            <FontAwesomeIcon icon={icon} className="text-base shrink-0" />
+            <span className="truncate">{name}</span>
+        </NavLink>
+    );
+}
 
-        ]
-    },
-    {
-        title: "Hệ thống",
-        items: [
-            { name: "Cài đặt", path: "/admin/settings", icon: faGear },
-        ]
-    }
-];
-
-export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }) {
-
-    const userInfo = useUserInfo();
-
+export default function AdminSidebar({ isMobileOpen, setIsMobileOpen }) {
     return (
         <>
-            {/* Overlay */}
-            {isSidebarOpen && (
+            {isMobileOpen && (
                 <div
-                    onClick={() => setIsSidebarOpen(false)}
-                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsSidebarOpen(false); } }}
-                    role="button"
-                    tabIndex={0}
-                    className="fixed inset-0 z-40  lg:hidden"
+                    onClick={() => setIsMobileOpen(false)}
+                    className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+                    aria-label="Đóng menu"
                 />
             )}
 
             <aside
                 className={`
-                    fixed left-0 top-0 z-50
-                    h-screen w-[260px]
-                    border-r border-gray-200
-                    bg-white
-                    transition-all duration-300
-                    ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-                    lg:translate-x-0
+                    fixed left-0 top-0 z-50 h-screen w-[240px]
+                    bg-white border-r border-gray-200
+                    flex flex-col transition-transform duration-200
+                    lg:sticky lg:translate-x-0
+                    ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
                 `}
             >
-
                 {/* LOGO */}
-                <div className="flex items-center justify-between border-b bg-gray-200  px-3 py-3">
-
-                    <div className="flex items-center gap-3">
-                        <div>
-                            <h1 className="text-xl md:text-2xl font-bold text-amber-500">Nam Acoustic</h1>
-                            <p className="text-sm text-black/40 sm:block">Admin Page <br />Design by Nam Nguyễn</p>
-                        </div>
-                    </div>
-
+                <div className="flex shrink-0 items-center gap-2 border-b border-gray-200 h-[100px] px-4">
+                    <img
+                        src={logo}
+                        alt="Nam Acoustic"
+                        className="h-10 w-auto object-contain"
+                    />
                     <button
                         type="button"
-                        onClick={() => setIsSidebarOpen(false)}
-                        className="lg:hidden"
+                        onClick={() => setIsMobileOpen(false)}
+                        className="ml-auto flex size-7 items-center justify-center rounded text-gray-500 hover:bg-gray-100 lg:hidden"
+                        aria-label="Đóng"
                     >
                         <FontAwesomeIcon icon={faXmark} />
                     </button>
                 </div>
 
                 {/* MENU */}
-                <div className="space-y-6 overflow-y-auto p-3">
+                <nav className="flex-1 overflow-y-auto p-2">
+                    <ul className="space-y-1">
+                        <li>
+                            <NavItem to="/admin" icon={faChartPie} name="Bảng điều khiển" end />
+                        </li>
+                        <li>
+                            <NavItem to="/admin/home-content" icon={faHouse} name="Trang chủ" />
+                        </li>
+                        <li>
+                            <NavItem to="/admin/about-content" icon={faInfoCircle} name="Giới thiệu" />
+                        </li>
+                        <li>
+                            <NavItem to="/admin/products" icon={faBox} name="Sản phẩm" />
+                        </li>
+                        <li>
+                            <NavItem to="/admin/orders" icon={faCartShopping} name="Đơn hàng" />
+                        </li>
+                        <li>
+                            <NavItem to="/admin/users" icon={faUsers} name="Người dùng" />
+                        </li>
+                        <li>
+                            <NavItem to="/admin/categories" icon={faTag} name="Danh mục" />
+                        </li>
+                        <li>
+                            <NavItem to="/admin/courses" icon={faVideo} name="Khóa học" />
+                        </li>
+                        <li>
+                            <NavItem to="/admin/blog" icon={faNewspaper} name="Blog" />
+                        </li>
+                    </ul>
+                </nav>
 
-                    {adminSidebarMenuItems.map((section) => (
-                        <div key={section.title}>
-
-                            <h3 className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
-                                {section.title}
-                            </h3>
-
-                            <div className="space-y-1">
-
-                                {section.items.map((item) => (
-                                    <NavLink
-                                        key={item.name}
-                                        to={item.path}
-                                        className={({ isActive }) =>
-                                            `
-                                            flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all
-                                            ${isActive
-                                                ? "bg-gray-100 text-gray-800"
-                                                : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                                            }
-                                        `
-                                        }
-                                    >
-
-                                        <FontAwesomeIcon
-                                            icon={item.icon}
-                                            className="text-base"
-                                        />
-
-                                        <span>{item.name}</span>
-                                    </NavLink>
-                                ))}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
-                {/* USER */}
-                <div className="absolute bottom-0 left-0 w-full border-t border-gray-200 p-3">
-
-                    <div className="flex items-center gap-3 rounded-xl p-2 hover:bg-gray-100">
-
-                        <div className="flex size-10 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-800">
-                            {userInfo?.name?.charAt(0).toUpperCase()}
-                        </div>
-
-                        <div className="flex-1 overflow-hidden">
-                            <h4 className="truncate text-sm font-semibold text-gray-800">
-                                {userInfo?.name}
-                            </h4>
-
-                            <p className="truncate text-xs text-gray-500">
-                                Quản trị viên
-                            </p>
-                        </div>
-
-                        <button type="button">
-                            <FontAwesomeIcon
-                                icon={faEllipsisVertical}
-                                className="text-gray-400"
-                            />
-                        </button>
-                    </div>
+                {/* FOOTER - Cài đặt */}
+                <div className="shrink-0 border-t border-gray-200 p-2">
+                    <NavLink
+                        to="/admin/settings"
+                        onClick={() => setIsMobileOpen(false)}
+                        className={({ isActive }) =>
+                            `flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
+                                isActive
+                                    ? "bg-amber-500 text-white"
+                                    : "text-gray-700 hover:bg-gray-100"
+                            }`
+                        }
+                    >
+                        <FontAwesomeIcon icon={faGear} className="text-base shrink-0" />
+                        <span className="truncate">Cài đặt</span>
+                    </NavLink>
                 </div>
             </aside>
         </>

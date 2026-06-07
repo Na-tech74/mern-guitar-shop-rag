@@ -1,0 +1,10 @@
+ValidationError: The 'X-Forwarded-For' header is set but the Express 'trust proxy' setting is false (default). This could indicate a misconfiguration which would prevent express-rate-limit from accurately identifying users. See https://express-rate-limit.github.io/ERR_ERL_UNEXPECTED_X_FORWARDED_FOR/ for more information.
+    at Object.xForwardedForHeader (file:///D:/mern-guitar-shop-rag/backend/node_modules/express-rate-limit/dist/index.mjs:352:13)
+    at wrappedValidations.<computed> [as xForwardedForHeader] (file:///D:/mern-guitar-shop-rag/backend/node_modules/express-rate-limit/dist/index.mjs:675:22)
+    at Object.keyGenerator (file:///D:/mern-guitar-shop-rag/backend/node_modules/express-rate-limit/dist/index.mjs:782:20)
+    at file:///D:/mern-guitar-shop-rag/backend/node_modules/express-rate-limit/dist/index.mjs:864:32
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async file:///D:/mern-guitar-shop-rag/backend/node_modules/express-rate-limit/dist/index.mjs:825:5 {
+  code: 'ERR_ERL_UNEXPECTED_X_FORWARDED_FOR',
+  help: 'https://express-rate-limit.github.io/ERR_ERL_UNEXPECTED_X_FORWARDED_FOR/'
+}

@@ -5,20 +5,21 @@ import AdminHeader from "../pages/AdminPage/components/Header";
 import { DialogProvider } from "../components/ConfirmDialog";
 
 export default function AdminLayout() {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isMobileOpen, setIsMobileOpen] = useState(false);
 
     return (
         <DialogProvider>
-            <div className="min-h-screen bg-gray-50">
+            <div className="min-h-screen bg-gray-100 lg:flex">
                 <AdminSidebar
-                    isSidebarOpen={isSidebarOpen}
-                    setIsSidebarOpen={setIsSidebarOpen}
+                    isMobileOpen={isMobileOpen}
+                    setIsMobileOpen={setIsMobileOpen}
                 />
-                <div className={`transition-all duration-300 lg:ml-[260px] ${isSidebarOpen ? "ml-0" : ""}`}>
-                    <div className="sticky top-0 z-40">
-                        <AdminHeader toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
-                    </div>
-                    <main className="p-4 md:p-6 lg:p-8 pt-20 md:pt-24 min-h-screen">
+
+                <div className="flex min-w-0 flex-1 flex-col">
+                    <AdminHeader
+                        toggleMobileSidebar={() => setIsMobileOpen((v) => !v)}
+                    />
+                    <main className="flex-1 p-4 md:p-6">
                         <Outlet />
                     </main>
                 </div>

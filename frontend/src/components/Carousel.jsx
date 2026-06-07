@@ -115,9 +115,6 @@ export default function Carousel({ data }) {
 
                         <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-3 md:mb-4 leading-tight">
                             {slide.title}
-                            <span className="block text-gray-400 text-2xl md:text-3xl lg:text-4xl xl:text-5xl mt-2">
-                                Chất lượng cao
-                            </span>
                         </h1>
 
                         <p className="text-base md:text-lg lg:text-xl text-white/80 mb-2">
