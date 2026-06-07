@@ -280,6 +280,7 @@ const Header = memo(function Header() {
                       <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('guitar-classic'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Guitar Classic</button>
                       <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('piano'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Piano</button>
                       <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('ukulele'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Ukulele</button>
+                      <hr/>
                       <Link to="/products" onClick={() => setOpenDropdown(null)} className="block px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Tất cả sản phẩm</Link>
                     </div>
                   )}
@@ -322,70 +323,70 @@ const Header = memo(function Header() {
         </div>
       </header>
 
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <>
-            <div className="fixed inset-0 bg-black/50 z-[1000]" onClick={() => setIsMobileMenuOpen(false)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsMobileMenuOpen(false); } }} role="button" tabIndex={0} />
-            <div className="fixed top-0 left-0 w-72 h-full bg-white z-[1001] shadow-pop overflow-y-auto">
-              <div className="bg-white p-4 flex justify-between items-center border-b border-gray-100">
-                <Link to="/" className="shrink-0">
-                  <Logo />
-                </Link>
-                <button type="button" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-400 hover:text-gray-600 text-xl transition">
-                  <FontAwesomeIcon icon={faTimes} />
-                </button>
-              </div>
-              <div className="p-4 border-b border-gray-100">
-                {!isLoggedIn ? (
-                  <div className="flex gap-2">
-                    <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 text-center py-2 bg-amber-400 hover:bg-amber-500 text-white rounded text-sm transition">Đăng nhập</Link>
-                    <Link to="/register" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 text-center py-2 border border-gray-300 text-gray-700 hover:border-amber-500 hover:text-amber-600 rounded text-sm transition">Đăng ký</Link>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-3">
-                    <div className="size-10 bg-amber-500 rounded-full flex items-center justify-center text-white font-bold">
-                      {userInfo?.name?.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-800">{userInfo?.name}</p>
-                      <p className="text-xs text-gray-500">{userInfo?.email}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div className="py-2">
-                <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
-                  <span>TRANG CHỦ</span>
-                </Link>
-                <button type="button" onClick={() => setOpenDropdown(openDropdown === 'SẢN PHẨM' ? null : 'SẢN PHẨM')} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
-                  <span>SẢN PHẨM</span>
-                  <FontAwesomeIcon icon={faChevronDown} className={`text-xs transition-transform ${openDropdown === 'SẢN PHẨM' ? 'rotate-180' : ''}`} />
-                </button>
-                {openDropdown === 'SẢN PHẨM' && (
-                  <div className="bg-amber-50/50 pl-4">
-                    <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-acoustic'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Guitar Acoustic</button>
-                    <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-classic'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Guitar Classic</button>
-                    <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('piano'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Piano</button>
-                    <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('ukulele'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Ukulele</button>
-                    <Link to="/products" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Tất cả sản phẩm</Link>
-                  </div>
-                )}
-                <Link to="/courses" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
-                  <span>KHÓA HỌC</span>
-                </Link>
-                <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
-                  <span>GIỚI THIỆU</span>
-                </Link>
-                <Link to="/blog" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
-                  <span>BÀI VIẾT</span>
-                </Link>
-                <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
-                  <span>LIÊN HỆ</span>
-                </Link>
-              </div>
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <>
+          <div className="fixed inset-0 bg-black/50 z-[1000]" onClick={() => setIsMobileMenuOpen(false)} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsMobileMenuOpen(false); } }} role="button" tabIndex={0} />
+          <div className="fixed top-0 left-0 w-72 h-full bg-white z-[1001] shadow-pop overflow-y-auto">
+            <div className="bg-white p-4 flex justify-between items-center border-b border-gray-100">
+              <Link to="/" className="shrink-0">
+                <Logo />
+              </Link>
+              <button type="button" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-400 hover:text-gray-600 text-xl transition">
+                <FontAwesomeIcon icon={faTimes} />
+              </button>
             </div>
-          </>
-        )}
+            <div className="p-4 border-b border-gray-100">
+              {!isLoggedIn ? (
+                <div className="flex gap-2">
+                  <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 text-center py-2 bg-amber-400 hover:bg-amber-500 text-white rounded text-sm transition">Đăng nhập</Link>
+                  <Link to="/register" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 text-center py-2 border border-gray-300 text-gray-700 hover:border-amber-500 hover:text-amber-600 rounded text-sm transition">Đăng ký</Link>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <div className="size-10 bg-amber-500 rounded-full flex items-center justify-center text-white font-bold">
+                    {userInfo?.name?.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-800">{userInfo?.name}</p>
+                    <p className="text-xs text-gray-500">{userInfo?.email}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="py-2">
+              <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
+                <span>TRANG CHỦ</span>
+              </Link>
+              <button type="button" onClick={() => setOpenDropdown(openDropdown === 'SẢN PHẨM' ? null : 'SẢN PHẨM')} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
+                <span>SẢN PHẨM</span>
+                <FontAwesomeIcon icon={faChevronDown} className={`text-xs transition-transform ${openDropdown === 'SẢN PHẨM' ? 'rotate-180' : ''}`} />
+              </button>
+              {openDropdown === 'SẢN PHẨM' && (
+                <div className="bg-amber-50/50 pl-4">
+                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-acoustic'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Guitar Acoustic</button>
+                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-classic'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Guitar Classic</button>
+                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('piano'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Piano</button>
+                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('ukulele'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Ukulele</button>
+                  <Link to="/products" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Tất cả sản phẩm</Link>
+                </div>
+              )}
+              <Link to="/courses" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
+                <span>KHÓA HỌC</span>
+              </Link>
+              <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
+                <span>GIỚI THIỆU</span>
+              </Link>
+              <Link to="/blog" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
+                <span>BÀI VIẾT</span>
+              </Link>
+              <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
+                <span>LIÊN HỆ</span>
+              </Link>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 });

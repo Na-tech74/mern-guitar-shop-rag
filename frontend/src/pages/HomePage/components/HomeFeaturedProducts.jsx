@@ -40,13 +40,42 @@ export default function FeaturedProducts({ products, categories, title, subtitle
 
     if (products.length === 0) {
         return (
-            <section className="py-16 bg-white">
-                <div className="max-w-7xl mx-auto px-4">
+            <section className="py-7 bg-white min-h-[3200px] md:min-h-[2200px]">
+                <div className="max-w-7xl mx-auto px-4 space-y-12">
                     <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold text-gray-800 mb-2">{title || "Sản Phẩm Nổi Bật"}</h2>
-                        <p className="text-gray-500">{subtitle || "Mang đến cho khách hàng những cây đàn chất lượng nhất"}</p>
+                        <h2 className="text-3xl font-bold text-gray-800 mb-2">{title}</h2>
+                        <div className="w-16 h-1 bg-amber-400 rounded-full mx-auto mb-3" />
+                        <p className="text-gray-500">{subtitle}</p>
                     </div>
-                    <Skeleton.ProductCard count={8} />
+                    {[0, 1].map((i) => (
+                        <div key={i}>
+                            <div className="flex items-center justify-between mb-6">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-1 h-8 bg-amber-400 rounded-full" />
+                                    <div>
+                                        <Skeleton.Block className="h-6 w-48 mb-2" />
+                                        <Skeleton.Block className="h-3 w-32" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                                {Array.from({ length: 4 }).map((_, j) => (
+                                    <div key={j} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                                        <Skeleton.Block className="h-60 rounded-none" />
+                                        <div className="p-4 space-y-2">
+                                            <Skeleton.Block className="h-4 w-3/4" />
+                                            <Skeleton.Block className="h-3 w-full" />
+                                            <Skeleton.Block className="h-3 w-5/6" />
+                                            <div className="flex justify-between pt-1">
+                                                <Skeleton.Block className="h-5 w-1/3" />
+                                                <Skeleton.Block className="h-4 w-1/6" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </section>
         );
@@ -54,7 +83,7 @@ export default function FeaturedProducts({ products, categories, title, subtitle
 
     if (grouped.length === 0) {
         return (
-            <section className="py-16 bg-white">
+            <section className="py-7 bg-white min-h-[800px]">
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="text-center py-12">
                         <FontAwesomeIcon icon={faMusic} className="text-5xl text-gray-300 mb-4" />
@@ -66,12 +95,12 @@ export default function FeaturedProducts({ products, categories, title, subtitle
     }
 
     return (
-        <section className="py-16 bg-white">
+        <section className="py-5 bg-white min-h-[3200px] md:min-h-[2200px]">
             <div className="max-w-7xl mx-auto px-4 space-y-12">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold text-gray-800 mb-2">{title || "Sản Phẩm Nổi Bật"}</h2>
+                    <h2 className="text-3xl font-bold text-gray-800 mb-2">{title}</h2>
                     <div className="w-16 h-1 bg-amber-400 rounded-full mx-auto mb-3" />
-                    <p className="text-gray-500">{subtitle || "Mang đến cho khách hàng những cây đàn chất lượng nhất"}</p>
+                    <p className="text-gray-500">{subtitle }</p>
                 </div>
                 {grouped.map((category) => {
                     const tp = totalPages[category._id] || 1;

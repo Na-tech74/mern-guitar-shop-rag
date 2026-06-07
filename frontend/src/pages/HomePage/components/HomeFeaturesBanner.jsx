@@ -22,7 +22,7 @@ export default function FeaturesBanner({ features }) {
     if (items.length === 0) return null;
 
     return (
-        <section className="bg-white py-12">
+        <section className="bg-white py-7">
             <div className="max-w-7xl mx-auto px-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
 

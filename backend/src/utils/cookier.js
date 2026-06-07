@@ -15,6 +15,7 @@ export const refreshTokenCookie = (res, token) => {
         httpOnly: true, // Chỉ server đọc được, JS không truy cập (bảo vệ XSS)
         secure: isProduction, // Chỉ gửi qua HTTPS khi production
         sameSite: isProduction ? "strict" : "lax", // Bảo vệ CSRF
+        path: '/', // Đảm bảo cookie gửi cho mọi route
         maxAge: 7 * 24 * 60 * 60 * 1000 // Hết hạn sau 7 ngày
     });
 };

@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { API } from "../api";
 
 /**
  * useSessionRecovery
@@ -10,11 +9,14 @@ import { API } from "../api";
  *    (để trả lời khi tab khác hỏi "có ai đang login không?")
  * 2. Nếu không có → hỏi các tab khác qua BroadcastChannel
  *    - Có tab khác đang login → KHÔNG recover (giữ mỗi tab độc lập)
- *    - Không có → gọi POST /auth/refresh (dùng refresh cookie 7 ngày)
+ *    - Không có → KHÔNG gọi refresh chủ động (sẽ để interceptor xử lý
+ *      lười khi có request bảo vệ thực sự cần). Nhờ vậy user chưa login
+ *      không bị 401 "Không tìm thấy refresh token" spam trong Network/Console.
  *
  * Mục đích:
  * - Mở tab mới khi đã có tab đang login → tab mới KHÔNG tự đăng nhập theo
- * - Đóng hết tab → mở lại browser → vẫn tự đăng nhập nhờ refresh cookie
+ * - Đóng hết tab → mở lại browser → request bảo vệ đầu tiên sẽ trigger
+ *   refresh qua interceptor (nếu cookie còn hạn)
  *
  * Lưu ý: BroadcastChannel không echo message lại cho tab gửi, nên khi tab A
  * gửi "who-has-session" thì chỉ tab B/C/... mới nhận được.
@@ -28,7 +30,6 @@ export default function useSessionRecovery() {
         const channel = new BroadcastChannel(CHANNEL_NAME);
         let otherTabHasSession = false;
         let startupTimer;
-        let recoverTimer;
         let cancelled = false;
 
         const handleMessage = (e) => {
@@ -53,46 +54,13 @@ export default function useSessionRecovery() {
         }
 
         startupTimer = setTimeout(() => {
-            if (cancelled) return;
+            if (cancelled || otherTabHasSession) return;
             channel.postMessage({ type: "who-has-session" });
-
-            recoverTimer = setTimeout(async () => {
-                if (cancelled || otherTabHasSession) return;
-
-                try {
-                    const refreshRes = await API.post("/auth/refresh");
-                    const newToken = refreshRes.data?.data?.accessToken;
-                    if (!newToken || cancelled) return;
-
-                    sessionStorage.setItem("token", newToken);
-
-                    try {
-                        const profileRes = await API.get("/users/me");
-                        const user = profileRes.data?.data;
-                        if (user && !cancelled) {
-                            sessionStorage.setItem(
-                                "userInfo",
-                                JSON.stringify({
-                                    name: user.name,
-                                    email: user.email,
-                                    role: user.role
-                                })
-                            );
-                            window.dispatchEvent(new Event("user-info-updated"));
-                        }
-                    } catch {
-                        // Không lấy được profile thì vẫn giữ token, Header sẽ hiển thị "Đăng nhập"
-                    }
-                } catch {
-                    // Refresh token cookie hết hạn hoặc không tồn tại → im lặng, user phải đăng nhập lại
-                }
-            }, REQUEST_TIMEOUT);
         }, Math.random() * STARTUP_JITTER);
 
         return () => {
             cancelled = true;
             clearTimeout(startupTimer);
-            if (recoverTimer) clearTimeout(recoverTimer);
             channel.removeEventListener("message", handleMessage);
             channel.close();
         };

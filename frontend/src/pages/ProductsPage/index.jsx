@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faThLarge, faList, faShoppingCart, faImage, faCheck, faXmark, faBoxOpen, faTriangleExclamation, faFire, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { faThLarge, faList, faShoppingCart, faImage, faCheck, faBoxOpen, faTriangleExclamation, faFire, faEye } from "@fortawesome/free-solid-svg-icons";
 import useProducts from "./hooks/useProducts";
 import { API } from "../../api";
 import { getOptimizedImage, formatCurrency } from "../../helpers/format";
@@ -12,6 +12,7 @@ import Button from "../../components/Button";
 import useCart from "./hooks/useCart";
 
 export default function ProductsPage() {
+    
     const { products, loading, error, pagination, fetchProducts } = useProducts();
     const [categories, setCategories] = useState([]);
     const [viewMode, setViewMode] = useState("grid");
@@ -42,6 +43,7 @@ export default function ProductsPage() {
     return (
         <>
             <Carousel />
+
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
                 {/* Breadcrumb */}
@@ -173,81 +175,104 @@ export default function ProductsPage() {
                             </div>
                         ) : (
                             <div className={viewMode === "grid" ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" : "space-y-4"}>
-                                {products.map((product) => (
-                                    <Link
-                                        key={product._id}
-                                        to={`/products/${product._id}`}
-                                        className={`bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-soft hover:shadow-pop hover:border-amber-200 transition-all duration-300 group ${viewMode === "list" ? "flex" : "flex flex-col"}`}
-                                    >
-                                        <div className={`relative ${viewMode === "list" ? "w-52 shrink-0" : ""}`}>
-                                            <div className={`w-full ${viewMode === "list" ? "h-full" : "h-56"} bg-gray-100 overflow-hidden`}>
-                                                {product.images?.[0] ? (
-                                                    <img
-                                                        src={getOptimizedImage(product.images[0], 400)}
-                                                        alt={product.name}
-                                                        loading="lazy"
-                                                        decoding="async"
-                                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                                    />
-                                                ) : (
-                                                    <div className="w-full h-full flex items-center justify-center text-gray-300">
-                                                        <FontAwesomeIcon icon={faImage} className="text-3xl" />
-                                                    </div>
-                                                )}
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none" />
-                                                {product.sold > 0 && (
-                                                    <div className="absolute top-3 left-3 bg-amber-500 text-white text-[11px] font-medium px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
-                                                        <FontAwesomeIcon icon={faFire} className="text-[9px]" />
-                                                        Hot
-                                                    </div>
-                                                )}
-                                                {product.stock !== undefined && (
-                                                    <div className={`absolute top-3 right-3 rounded-full px-2.5 py-1 text-[11px] font-medium flex items-center gap-1 shadow-sm ${
-                                                        product.stock > 0
-                                                            ? "bg-emerald-500 text-white"
-                                                            : "bg-gray-500 text-white"
-                                                    }`}>
-                                                        <span className={`size-1.5 rounded-full ${product.stock > 0 ? "bg-white" : "bg-gray-300"}`} />
-                                                        {product.stock > 0 ? "Còn hàng" : "Hết hàng"}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        <div className="p-4 flex flex-col flex-1 min-w-0">
-                                            {product.category?.name && (
-                                                <p className="text-[11px] font-semibold tracking-wider uppercase text-amber-500 mb-1.5">
-                                                    {product.category.name}
-                                                </p>
-                                            )}
-                                            <h3 className="font-semibold text-gray-800 mb-2 line-clamp-2 leading-snug">
-                                                {product.name}
-                                            </h3>
-                                            {viewMode === "list" && product.description && (
-                                                <p className="text-sm text-gray-500 mb-3 line-clamp-2 leading-relaxed">
-                                                    {product.description}
-                                                </p>
-                                            )}
-                                            <div className="mt-auto">
-                                                <div className="flex items-center gap-2 mb-3">
-                                                    <span className="text-xl font-bold text-amber-600">{formatCurrency(product.price)}</span>
+                                {products.map((product) => {
+                                    const inStock = product.stock === undefined || product.stock > 0;
+                                    const isAdded = !!addedMap[product._id];
+                                    return (
+                                        <div
+                                            key={product._id}
+                                            className={`bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-soft hover:shadow-pop hover:border-amber-200 transition-all duration-300 group ${viewMode === "list" ? "flex" : "flex flex-col"}`}
+                                        >
+                                            <Link
+                                                to={`/products/${product._id}`}
+                                                className={`relative block ${viewMode === "list" ? "w-52 shrink-0" : ""}`}
+                                            >
+                                                <div className={`w-full ${viewMode === "list" ? "h-full" : "h-56"} bg-gray-100 overflow-hidden`}>
+                                                    {product.images?.[0] ? (
+                                                        <img
+                                                            src={getOptimizedImage(product.images[0], 400)}
+                                                            alt={product.name}
+                                                            loading="lazy"
+                                                            decoding="async"
+                                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                        />
+                                                    ) : (
+                                                        <div className="w-full h-full flex items-center justify-center text-gray-300">
+                                                            <FontAwesomeIcon icon={faImage} className="text-3xl" />
+                                                        </div>
+                                                    )}
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none" />
+                                                    {product.sold > 0 && (
+                                                        <div className="absolute top-3 left-3 bg-amber-500 text-white text-[11px] font-medium px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
+                                                            <FontAwesomeIcon icon={faFire} className="text-[9px]" />
+                                                            Hot
+                                                        </div>
+                                                    )}
+                                                    {product.stock !== undefined && (
+                                                        <div className={`absolute top-3 right-3 rounded-full px-2.5 py-1 text-[11px] font-medium flex items-center gap-1 shadow-sm ${
+                                                            product.stock > 0
+                                                                ? "bg-emerald-500 text-white"
+                                                                : "bg-gray-500 text-white"
+                                                        }`}>
+                                                            <span className={`size-1.5 rounded-full ${product.stock > 0 ? "bg-white" : "bg-gray-300"}`} />
+                                                            {product.stock > 0 ? "Còn hàng" : "Hết hàng"}
+                                                        </div>
+                                                    )}
                                                 </div>
-                                                <button
-                                                    type="button"
-                                                    onClick={(e) => addToCart(product, e)}
-                                                    className={`w-full py-2.5 rounded-xl text-sm font-medium transition flex items-center justify-center gap-2 shadow-sm ${
-                                                        addedMap[product._id]
-                                                            ? "bg-emerald-500 text-white"
-                                                            : "bg-amber-400 hover:bg-amber-500 text-white hover:shadow-md"
-                                                    }`}
-                                                >
-                                                    <FontAwesomeIcon icon={addedMap[product._id] ? faCheck : faShoppingCart} className="text-sm" />
-                                                    {addedMap[product._id] ? "Đã thêm" : "Thêm vào giỏ"}
-                                                </button>
+                                            </Link>
+
+                                            <div className="p-4 flex flex-col flex-1 min-w-0">
+                                                <Link to={`/products/${product._id}`} className="block">
+                                                    {product.category?.name && (
+                                                        <p className="text-[11px] font-semibold tracking-wider uppercase text-amber-500 mb-1.5">
+                                                            {product.category.name}
+                                                        </p>
+                                                    )}
+                                                    <h3 className="font-semibold text-gray-800 mb-2 line-clamp-2 leading-snug hover:text-amber-600 transition">
+                                                        {product.name}
+                                                    </h3>
+                                                </Link>
+                                                {viewMode === "list" && product.description && (
+                                                    <p className="text-sm text-gray-500 mb-3 line-clamp-2 leading-relaxed">
+                                                        {product.description}
+                                                    </p>
+                                                )}
+                                                <div className="mt-auto">
+                                                    <div className="flex items-center gap-2 mb-3">
+                                                        <span className="text-xl font-bold text-amber-600">{formatCurrency(product.price)}</span>
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <Link
+                                                            to={`/products/${product._id}`}
+                                                            className="flex-1 py-2.5 rounded-xl text-sm font-medium transition flex items-center justify-center gap-1.5 border border-gray-200 text-gray-700 hover:border-amber-400 hover:text-amber-600 hover:bg-amber-50"
+                                                        >
+                                                            <FontAwesomeIcon icon={faEye} className="text-xs" />
+                                                            Xem chi tiết
+                                                        </Link>
+                                                        <button
+                                                            type="button"
+                                                            disabled={!inStock}
+                                                            onClick={(e) => addToCart(product, 1, e)}
+                                                            className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition flex items-center justify-center gap-1.5 shadow-sm ${
+                                                                !inStock
+                                                                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                                                    : isAdded
+                                                                        ? "bg-emerald-500 text-white"
+                                                                        : "bg-amber-400 hover:bg-amber-500 text-white hover:shadow-md"
+                                                            }`}
+                                                        >
+                                                            <FontAwesomeIcon
+                                                                icon={isAdded ? faCheck : faShoppingCart}
+                                                                className="text-xs"
+                                                            />
+                                                            {isAdded ? "Đã thêm" : "Thêm giỏ"}
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </Link>
-                                ))}
+                                    );
+                                })}
                             </div>
                         )}
 

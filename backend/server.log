@@ -1,1 +1,57 @@
 
+> backend@1.0.0 dev
+> nodemon src/server.js
+
+[33m[nodemon] 3.1.14[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,cjs,json[39m
+[32m[nodemon] starting `node src/server.js`[39m
+MongoDB connected!
+Server running on port 5000
+[0mGET /api/home-content [36m304[0m 14.557 ms - -[0m
+[0mGET /api/categories [36m304[0m 18.581 ms - -[0m
+[0mPOST /api/auth/refresh [33m401[0m 1.119 ms - 63[0m
+[0mGET /api/products?limit=20 [36m304[0m 46.755 ms - -[0m
+[0mGET /api/home-content [36m304[0m 11.429 ms - -[0m
+[0mGET /api/products?limit=20 [36m304[0m 7.323 ms - -[0m
+[0mGET /api/home-content [36m304[0m 5.037 ms - -[0m
+[0mGET /api/categories [36m304[0m 6.780 ms - -[0m
+[0mGET /api/products?limit=20 [36m304[0m 16.279 ms - -[0m
+[0mGET /api/home-content [36m304[0m 5.478 ms - -[0m
+[0mGET /api/products?limit=20 [36m304[0m 10.051 ms - -[0m
+[0mPOST /api/auth/refresh [33m401[0m 0.668 ms - 63[0m
+[0mGET /api/home-content [36m304[0m 4.917 ms - -[0m
+[0mGET /api/categories [36m304[0m 11.931 ms - -[0m
+[0mGET /api/products?limit=20 [36m304[0m 23.703 ms - -[0m
+[0mGET /api/home-content [36m304[0m 5.883 ms - -[0m
+[0mGET /api/products?limit=20 [36m304[0m 9.442 ms - -[0m
+[0mPOST /api/auth/refresh [33m401[0m 0.602 ms - 63[0m
+[0mGET /api/categories [32m200[0m 4.971 ms - -[0m
+[0mGET /api/home-content [32m200[0m 3.657 ms - -[0m
+[0mGET /api/products?limit=20 [32m200[0m 11.221 ms - -[0m
+[0mGET /api/home-content [36m304[0m 3.345 ms - -[0m
+[0mGET /api/products?limit=20 [36m304[0m 9.327 ms - -[0m
+[0mPOST /api/auth/refresh [33m401[0m 0.704 ms - 63[0m
+[0mGET /api/home-content [36m304[0m 4.336 ms - -[0m
+[0mGET /api/categories [36m304[0m 6.100 ms - -[0m
+[0mGET /api/products?limit=20 [36m304[0m 14.717 ms - -[0m
+[0mGET /api/home-content [36m304[0m 4.724 ms - -[0m
+[0mGET /api/products?limit=20 [36m304[0m 5.817 ms - -[0m
+[0mPOST /api/auth/refresh [33m401[0m 1.228 ms - 63[0m
+[0mGET /api/home-content [36m304[0m 3.054 ms - -[0m
+[0mGET /api/categories [36m304[0m 5.108 ms - -[0m
+[0mPOST /api/auth/refresh [33m401[0m 0.642 ms - 63[0m
+[0mGET /api/products?limit=20 [36m304[0m 17.643 ms - -[0m
+[0mGET /api/home-content [36m304[0m 7.651 ms - -[0m
+[0mGET /api/products?limit=20 [36m304[0m 7.715 ms - -[0m
+[0mGET /api/home-content [36m304[0m 3.932 ms - -[0m
+[0mGET /api/categories [36m304[0m 11.050 ms - -[0m
+[0mGET /api/products?limit=20 [36m304[0m 17.881 ms - -[0m
+[0mGET /api/home-content [36m304[0m 5.174 ms - -[0m
+[0mGET /api/products?limit=20 [36m304[0m 8.685 ms - -[0m
+[0mPOST /api/auth/refresh [33m401[0m 0.430 ms - 63[0m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+MongoDB connected!
+Server running on port 5000
