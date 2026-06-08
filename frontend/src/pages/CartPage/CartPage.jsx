@@ -92,12 +92,12 @@ export default function CartPage() {
                 </div>
 
                 {cartItems.length === 0 ? (
-                    <div className="text-center py-20 bg-white rounded-2xl border border-gray-100 shadow-soft max-w-lg mx-auto">
-                        <div className="size-24 mx-auto mb-6 bg-amber-50 rounded-2xl flex items-center justify-center">
-                            <FontAwesomeIcon icon={faShoppingCart} className="text-4xl text-amber-400" />
+                    <div className="text-center py-12 sm:py-20 bg-white rounded-2xl border border-gray-100 shadow-soft max-w-lg mx-auto px-4 sm:px-6">
+                        <div className="size-16 sm:size-24 mx-auto mb-4 sm:mb-6 bg-amber-50 rounded-2xl flex items-center justify-center">
+                            <FontAwesomeIcon icon={faShoppingCart} className="text-2xl sm:text-4xl text-amber-400" />
                         </div>
-                        <p className="text-gray-700 text-lg font-medium mb-2">Giỏ hàng của bạn đang trống</p>
-                        <p className="text-gray-400 text-sm mb-8">Hãy khám phá các sản phẩm của chúng tôi</p>
+                        <p className="text-gray-700 text-base sm:text-lg font-medium mb-1 sm:mb-2">Giỏ hàng của bạn đang trống</p>
+                        <p className="text-gray-400 text-xs sm:text-sm mb-6 sm:mb-8">Hãy khám phá các sản phẩm của chúng tôi</p>
                         <Link to="/products" className="inline-flex items-center gap-2 px-6 py-3 bg-amber-400 hover:bg-amber-500 text-white rounded-full font-medium transition shadow-sm">
                             <FontAwesomeIcon icon={faArrowLeft} />
                             Tiếp tục mua sắm
@@ -109,8 +109,8 @@ export default function CartPage() {
                             {cartItems.map((item) => {
                                 const itemTotal = (item.price || 0) * (item.quantity || 1);
                                 return (
-                                    <div key={item._id} className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-5 flex gap-4 sm:gap-5 shadow-soft hover:shadow-pop transition-all duration-300">
-                                        <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl bg-gray-100 overflow-hidden shrink-0">
+                                    <div key={item._id} className="bg-white rounded-2xl border border-gray-100 p-3 sm:p-5 flex gap-3 sm:gap-5 shadow-soft hover:shadow-pop transition-all duration-300">
+                                        <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-xl bg-gray-100 overflow-hidden shrink-0">
                                             <img
                                                 src={getOptimizedImage(item.images?.[0], 200) || "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=200&q=80"}
                                                 alt={item.name}
@@ -186,8 +186,8 @@ export default function CartPage() {
                         </div>
 
                         <div className="space-y-4">
-                            <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-soft sticky top-6">
-                                <h3 className="text-lg font-semibold text-gray-800 mb-5">Tổng giỏ hàng</h3>
+                            <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6 shadow-soft sm:sticky sm:top-6">
+                                <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-4 sm:mb-5">Tổng giỏ hàng</h3>
 
                                 <div className="space-y-3 text-sm">
                                     <div className="flex justify-between text-gray-600">

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { API, productAPI, homeContentAPI } from "../../../api";
+import { productAPI, categoryAPI, homeContentAPI } from "../../../api";
 
 export default function useHomeData() {
     const [products, setProducts] = useState([]);
@@ -14,7 +14,7 @@ export default function useHomeData() {
                 const [productsRes, categoriesRes, homeRes] = await Promise.all([
                     // phân trang sản phẩm trang home
                     productAPI.getAll({ limit: 500 }),
-                    API.get("/categories", { signal: abortController.signal }),
+                    categoryAPI.getAll({ signal: abortController.signal }),
                     homeContentAPI.get(),
                 ]);
                 if (!abortController.signal.aborted) {

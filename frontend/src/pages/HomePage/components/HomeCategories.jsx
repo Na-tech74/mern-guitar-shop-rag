@@ -19,34 +19,35 @@ export default function CategoriesSection({ categories, title, subtitle }) {
                         {categories.slice(0,6).map((category) => {
                             const anchorId = `category-${category.slug || category.name.toLowerCase().replace(/\s+/g, "-")}`;
                             return (
-                            <a
-                                key={category._id}
-                                href={`#${anchorId}`}
-                                className="group bg-white rounded-xl border border-gray-100 overflow-hidden shadow-soft hover:shadow-pop transition-all duration-300"
-                            >
-                                <div className="relative h-40 overflow-hidden">
-                                    {category.image ? (
-                                        <img
-                                            src={category.image}
-                                            alt={category.name}
-                                            loading="lazy"
-                                            decoding="async"
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            <div key={category._id} id={anchorId} className="scroll-mt-[140px]">
+                                <a
+                                    href={`#fp-${category.slug || category.name.toLowerCase().replace(/\s+/g, "-")}`}
+                                    className="group block bg-white rounded-xl border border-gray-100 overflow-hidden shadow-soft hover:shadow-pop transition-all duration-300"
+                                >
+                                    <div className="relative h-40 overflow-hidden">
+                                        {category.image ? (
+                                            <img
+                                                src={category.image}
+                                                alt={category.name}
+                                                loading="lazy"
+                                                decoding="async"
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                         />
-                                    ) : (
-                                        <div className="w-full h-full bg-gray-50 flex items-center justify-center">
-                                            <FontAwesomeIcon icon={faGuitar} className="text-4xl text-gray-300" />
-                                        </div>
-                                    )}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                                </div>
-                                <div className="p-4 text-center">
-                                    <h3 className="font-semibold text-gray-800 group-hover:text-amber-500 transition-colors">{category.name}</h3>
-                                    <p className="text-sm text-gray-400 mt-1 line-clamp-2">
-                                        {category.description || "Xem sản phẩm"}
-                                    </p>
-                                </div>
-                            </a>
+                                        ) : (
+                                            <div className="w-full h-full bg-gray-50 flex items-center justify-center">
+                                                <FontAwesomeIcon icon={faGuitar} className="text-4xl text-gray-300" />
+                                            </div>
+                                        )}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                                    </div>
+                                    <div className="p-4 text-center">
+                                        <h3 className="font-semibold text-gray-800 group-hover:text-amber-500 transition-colors">{category.name}</h3>
+                                        <p className="text-sm text-gray-400 mt-1 line-clamp-2">
+                                            {category.description || "Xem sản phẩm"}
+                                        </p>
+                                    </div>
+                                </a>
+                            </div>
                             );
                         })}
                     </div>

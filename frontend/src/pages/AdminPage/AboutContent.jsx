@@ -109,7 +109,7 @@ const ImageUploader = ({ value, onChange, alt = "", height = "h-32" }) => {
                 <img
                     src={value}
                     alt={alt}
-                    className={`${height} w-full rounded-lg object-cover border border-gray-200`}
+                    className={`${height} w-200 h-200 rounded-lg object-cover border border-gray-200`}
                     loading="lazy"
                 />
                 <button

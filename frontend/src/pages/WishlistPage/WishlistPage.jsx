@@ -13,10 +13,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { getOptimizedImage, formatCurrency } from "../../helpers/format";
 import Button from "../../components/Button";
+import useCart from "../ProductsPage/hooks/useCart";
 
 export default function WishlistPage() {
     const [items, setItems] = useState([]);
-    const [addedIds, setAddedIds] = useState(new Set());
+    const { addToCart, addedMap } = useCart();
 
     useEffect(() => {
         setItems(JSON.parse(localStorage.getItem("wishlist") || "[]"));
@@ -34,17 +35,6 @@ export default function WishlistPage() {
         [items]
     );
 
-    const markAdded = useCallback((id) => {
-        setAddedIds((prev) => new Set(prev).add(id));
-        setTimeout(() => {
-            setAddedIds((prev) => {
-                const next = new Set(prev);
-                next.delete(id);
-                return next;
-            });
-        }, 1500);
-    }, []);
-
     const remove = useCallback((id) => {
         setItems((prev) => {
             const next = prev.filter((it) => it._id !== id);
@@ -61,43 +51,9 @@ export default function WishlistPage() {
         window.dispatchEvent(new Event("wishlist-updated"));
     }, []);
 
-    const addToCart = useCallback((item) => {
-        const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-        const existing = cart.find((c) => c._id === item._id);
-        if (existing) existing.quantity += 1;
-        else {
-            cart.push({
-                _id: item._id,
-                name: item.name,
-                price: item.price,
-                images: item.images,
-                quantity: 1,
-            });
-        }
-        localStorage.setItem("cart", JSON.stringify(cart));
-        window.dispatchEvent(new Event("cart-updated"));
-        markAdded(item._id);
-    }, [markAdded]);
-
     const addAllToCart = useCallback(() => {
-        const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-        items.forEach((item) => {
-            const existing = cart.find((c) => c._id === item._id);
-            if (existing) existing.quantity += 1;
-            else {
-                cart.push({
-                    _id: item._id,
-                    name: item.name,
-                    price: item.price,
-                    images: item.images,
-                    quantity: 1,
-                });
-            }
-        });
-        localStorage.setItem("cart", JSON.stringify(cart));
-        window.dispatchEvent(new Event("cart-updated"));
-        items.forEach((it) => markAdded(it._id));
-    }, [items, markAdded]);
+        items.forEach((item) => addToCart(item, 1));
+    }, [items, addToCart]);
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -112,13 +68,13 @@ export default function WishlistPage() {
                     </ol>
                 </nav>
 
-                <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-5 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                        <div className="size-11 rounded-xl bg-amber-50 flex items-center justify-center">
-                            <FontAwesomeIcon icon={faHeart} className="text-amber-500" />
+                <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-4 sm:p-5 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                        <div className="size-10 sm:size-11 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
+                            <FontAwesomeIcon icon={faHeart} className="text-amber-500 text-sm sm:text-base" />
                         </div>
                         <div>
-                            <h1 className="text-xl font-bold text-gray-900">Sản phẩm yêu thích</h1>
+                            <h1 className="text-lg sm:text-xl font-bold text-gray-900">Sản phẩm yêu thích</h1>
                             <p className="text-xs text-gray-500">
                                 {items.length > 0
                                     ? `${items.length} sản phẩm · Tổng ${formatCurrency(totalValue)}`
@@ -128,14 +84,15 @@ export default function WishlistPage() {
                     </div>
                     {items.length > 0 && (
                         <div className="flex items-center gap-2">
-                            <Button variant="primary" size="md" onClick={addAllToCart}>
+                            <Button variant="primary" size="md" onClick={addAllToCart} className="!text-xs sm:!text-sm !px-3 sm:!px-4">
                                 <FontAwesomeIcon icon={faShoppingBag} />
-                                Thêm tất cả vào giỏ
+                                <span className="sm:hidden">Thêm hết</span>
+                                <span className="hidden sm:inline">Thêm tất cả vào giỏ</span>
                             </Button>
                             <button
                                 type="button"
                                 onClick={clearAll}
-                                className="px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-lg transition inline-flex items-center gap-1.5 font-medium"
+                                className="px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm text-red-600 hover:bg-red-50 rounded-lg transition inline-flex items-center gap-1.5 font-medium"
                             >
                                 <FontAwesomeIcon icon={faTrash} />
                                 Xóa hết
@@ -145,12 +102,12 @@ export default function WishlistPage() {
                 </div>
 
                 {items.length === 0 ? (
-                    <div className="bg-white border border-gray-100 rounded-2xl shadow-sm py-20 px-6 text-center">
-                        <div className="size-24 mx-auto mb-6 bg-amber-50 rounded-2xl flex items-center justify-center">
-                            <FontAwesomeIcon icon={faHeartBroken} className="text-4xl text-amber-400" />
+                    <div className="bg-white border border-gray-100 rounded-2xl shadow-sm py-12 sm:py-20 px-4 sm:px-6 text-center">
+                        <div className="size-16 sm:size-24 mx-auto mb-4 sm:mb-6 bg-amber-50 rounded-2xl flex items-center justify-center">
+                            <FontAwesomeIcon icon={faHeartBroken} className="text-2xl sm:text-4xl text-amber-400" />
                         </div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Chưa có sản phẩm yêu thích</h2>
-                        <p className="text-gray-500 max-w-md mx-auto mb-6">
+                        <h2 className="text-lg sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2">Chưa có sản phẩm yêu thích</h2>
+                        <p className="text-xs sm:text-base text-gray-500 max-w-md mx-auto mb-4 sm:mb-6 px-2 sm:px-0">
                             Lưu lại những món đàn bạn thích để mua sau hoặc chia sẻ với bạn bè.
                         </p>
                         <Link
@@ -164,13 +121,13 @@ export default function WishlistPage() {
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                         {items.map((item) => {
-                            const isAdded = addedIds.has(item._id);
+                            const isAdded = !!addedMap[item._id];
                             return (
                                 <article
                                     key={item._id}
                                     className="group bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
                                 >
-                                    <div className="relative h-52 bg-gray-50 overflow-hidden">
+                                    <div className="relative h-44 sm:h-52 bg-gray-50 overflow-hidden">
                                         <Link to={`/products/${item._id}`} className="block w-full h-full">
                                             {item.images?.[0] ? (
                                                 <img
@@ -201,18 +158,18 @@ export default function WishlistPage() {
                                         </button>
                                     </div>
 
-                                    <div className="p-4">
+                                    <div className="p-3 sm:p-4">
                                         <Link
                                             to={`/products/${item._id}`}
-                                            className="block font-semibold text-gray-900 line-clamp-2 hover:text-amber-600 transition min-h-[2.75rem]"
+                                            className="block font-semibold text-gray-900 line-clamp-2 hover:text-amber-600 transition min-h-[2.5rem] sm:min-h-[2.75rem] text-sm sm:text-base"
                                         >
                                             {item.name}
                                         </Link>
 
-                                        <div className="mt-4 flex items-center gap-2">
+                                        <div className="mt-3 sm:mt-4 flex items-center gap-2">
                                             <button
                                                 type="button"
-                                                onClick={() => addToCart(item)}
+                                                onClick={() => addToCart(item, 1)}
                                                 disabled={isAdded}
                                                 className={`flex-1 inline-flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition ${
                                                     isAdded

@@ -9,19 +9,19 @@ export default function FeaturedTypes({ data }) {
     const subtitle = data?.subtitle || "Khám phá các dòng guitar phổ biến nhất";
 
     return (
-        <section className="py-16 bg-gray-50" style={{ contentVisibility: 'auto' }}>
+        <section className="py-10 sm:py-16 bg-gray-50" style={{ contentVisibility: 'auto' }}>
             <div className="max-w-7xl mx-auto px-4">
-                <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold text-gray-800 mb-2">{title}</h2>
+                <div className="text-center mb-8 sm:mb-12">
+                    <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">{title}</h2>
                     <div className="w-16 h-1 bg-amber-400 rounded-full mx-auto mb-3" />
-                    <p className="text-gray-500">{subtitle}</p>
+                    <p className="text-sm sm:text-base text-gray-500">{subtitle}</p>
                 </div>
-                <div className="grid md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
                     {items.map((item, idx) => (
                         <Link
                             key={`${item.title}-${idx}`}
                             to={item.link || "/products"}
-                            className="group relative h-[320px] rounded-2xl overflow-hidden shadow-soft hover:shadow-pop transition-all duration-500"
+                            className="group relative h-[200px] sm:h-[260px] md:h-[320px] rounded-2xl overflow-hidden shadow-soft hover:shadow-pop transition-all duration-500"
                         >
                             <img
                                 src={item.image}
@@ -32,15 +32,15 @@ export default function FeaturedTypes({ data }) {
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
                             <div className="absolute inset-0 ring-1 ring-inset ring-white/10 group-hover:ring-amber-400/30 rounded-2xl transition-all duration-500" />
-                            <div className="absolute top-4 left-4">
-                                <span className="inline-flex items-center justify-center size-8 rounded-full bg-white/15 backdrop-blur-sm text-white/80 text-xs font-semibold">
+                            <div className="absolute top-3 left-3 sm:top-4 sm:left-4">
+                                <span className="inline-flex items-center justify-center size-7 sm:size-8 rounded-full bg-white/15 backdrop-blur-sm text-white/80 text-xs font-semibold">
                                     {(idx + 1).toString().padStart(2, '0')}
                                 </span>
                             </div>
-                            <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/60 to-transparent">
-                                <h3 className="text-xl font-bold text-white mb-1">{item.title}</h3>
-                                <p className="text-sm text-white/60 mb-4 line-clamp-2">{item.subtitle}</p>
-                                <span className="inline-flex items-center gap-2 text-sm font-medium text-amber-400 group-hover:text-amber-300 transition-colors">
+                            <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 bg-gradient-to-t from-black/60 to-transparent">
+                                <h3 className="text-base sm:text-lg md:text-xl font-bold text-white mb-1">{item.title}</h3>
+                                <p className="text-xs sm:text-sm text-white/60 mb-3 sm:mb-4 line-clamp-2">{item.subtitle}</p>
+                                <span className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-amber-400 group-hover:text-amber-300 transition-colors">
                                     Khám phá
                                     <FontAwesomeIcon icon={faArrowRight} className="text-xs group-hover:translate-x-1 transition-transform" />
                                 </span>

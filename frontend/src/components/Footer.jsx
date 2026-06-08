@@ -20,14 +20,14 @@ import Logo from "./Logo";
 const Footer = memo(function Footer() {
   return (
     <footer className="bg-white text-gray-600 border-t border-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-12">
 
-          {/* Cột 1 - Logo: full width trên mobile */}
+          {/* Cột 1 - Logo */}
           <div className="col-span-2 lg:col-span-1 space-y-4">
-            <div className="-ml-8">
-             <Logo/>
-            </div>
+          <div className="-ml-10">
+                <Logo/>
+          </div>
             <p className="text-sm text-gray-400 leading-relaxed">
               Nam Acoustic là cửa hàng nhạc cụ hàng đầu tại TP.HCM,
               chuyên cung cấp đàn guitar acoustic, classic và electric
@@ -82,7 +82,7 @@ const Footer = memo(function Footer() {
             </ul>
           </div>
 
-          {/* Cột 4 - Liên hệ: full width trên mobile */}
+          {/* Cột 4 - Liên hệ */}
           <div className="col-span-2 lg:col-span-1">
             <h4 className="text-base font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">
               Liên hệ

@@ -150,7 +150,7 @@ export default function AccountPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-amber-50/30 to-gray-50">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
 
                 {/* Breadcrumb */}
                 <nav className="text-sm mb-6">
@@ -162,8 +162,8 @@ export default function AccountPage() {
                 </nav>
 
                 {/* Hero / Profile Header */}
-                <div className="bg-white rounded-xl shadow-soft border border-gray-100 p-6 sm:p-8 mb-6">
-                    <div className="flex flex-col sm:flex-row items-center sm:items-center gap-5">
+                <div className="bg-white rounded-xl shadow-soft border border-gray-100 p-4 sm:p-8 mb-6">
+                    <div className="flex flex-col sm:flex-row items-center sm:items-center gap-4 sm:gap-5">
                         <div className="relative shrink-0 group">
                             <input
                                 ref={fileInputRef}
@@ -172,7 +172,7 @@ export default function AccountPage() {
                                 onChange={handleAvatarChange}
                                 className="hidden"
                             />
-                            <div className="size-20 sm:size-24">
+                            <div className="size-16 sm:size-24">
                                 {displayAvatar ? (
                                     <img
                                         src={displayAvatar}
@@ -214,8 +214,8 @@ export default function AccountPage() {
                             )}
                         </div>
                         <div className="flex-1 text-center sm:text-left">
-                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-1">
-                                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{displayName}</h1>
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-1">
+                                <h1 className="text-xl sm:text-3xl font-bold text-gray-900">{displayName}</h1>
                                 {isAdmin && (
                                     <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 text-xs font-semibold w-fit mx-auto sm:mx-0">
                                         <FontAwesomeIcon icon={faShieldHalved} className="text-[10px]" />
@@ -228,7 +228,7 @@ export default function AccountPage() {
                                 {displayEmail}
                             </p>
                             {profile?.createdAt && (
-                                <p className="text-gray-400 text-xs mt-1 flex items-center justify-center sm:justify-start gap-2">
+                                <p className="text-gray-400 text-xs mt-1 hidden sm:flex items-center justify-center sm:justify-start gap-2">
                                     <FontAwesomeIcon icon={faCalendarDays} className="text-[10px]" />
                                     Thành viên từ {formatDate(profile.createdAt)}
                                 </p>
@@ -238,7 +238,7 @@ export default function AccountPage() {
                                     type="button"
                                     onClick={handleDeleteAvatar}
                                     disabled={uploading}
-                                    className="mt-2 inline-flex items-center gap-1 text-xs text-gray-500 hover:text-red-600 transition disabled:opacity-50"
+                                    className="mt-2 hidden sm:inline-flex items-center gap-1 text-xs text-gray-500 hover:text-red-600 transition disabled:opacity-50"
                                 >
                                     <FontAwesomeIcon icon={faTrash} className="text-[10px]" />
                                     Xóa ảnh đại diện
@@ -257,7 +257,7 @@ export default function AccountPage() {
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
                     <StatCard
                         icon={faBagShopping}
                         label="Đơn hàng"
@@ -289,44 +289,46 @@ export default function AccountPage() {
 
                     {/* Sidebar Nav */}
                     <aside className="lg:col-span-1">
-                        <div className="bg-white rounded-xl shadow-soft border border-gray-100 p-2 lg:sticky lg:top-4">
-                            <nav className="flex lg:flex-col gap-1 overflow-x-auto lg:overflow-visible">
+                        <div className="bg-white rounded-xl shadow-soft border border-gray-100 p-1.5 lg:sticky lg:top-4">
+                            <nav className="flex flex-wrap lg:flex-col gap-1">
                                 {TABS.map((tab) => (
                                     <button
                                         key={tab.id}
                                         type="button"
                                         onClick={() => setActiveTab(tab.id)}
-                                        className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition whitespace-nowrap ${
+                                        className={`flex items-center gap-1.5 sm:gap-2.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition ${
                                             activeTab === tab.id
                                                 ? "bg-amber-50 text-amber-700"
                                                 : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                                         }`}
                                     >
-                                        <FontAwesomeIcon icon={tab.icon} className="text-xs" />
+                                        <FontAwesomeIcon icon={tab.icon} className="text-[10px] sm:text-xs" />
                                         {tab.label}
                                     </button>
                                 ))}
                                 <Link
                                     to="/orders"
-                                    className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition whitespace-nowrap"
+                                    className="flex items-center gap-1.5 sm:gap-2.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition"
                                 >
-                                    <FontAwesomeIcon icon={faFileInvoice} className="text-xs" />
-                                    Đơn hàng của tôi
+                                    <FontAwesomeIcon icon={faFileInvoice} className="text-[10px] sm:text-xs" />
+                                    <span className="hidden sm:inline">Đơn hàng của tôi</span>
+                                    <span className="sm:hidden">Đơn hàng</span>
                                 </Link>
                                 <Link
                                     to="/wishlist"
-                                    className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition whitespace-nowrap"
+                                    className="flex items-center gap-1.5 sm:gap-2.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition"
                                 >
-                                    <FontAwesomeIcon icon={faHeart} className="text-xs" />
-                                    Yêu thích
+                                    <FontAwesomeIcon icon={faHeart} className="text-[10px] sm:text-xs" />
+                                    <span className="hidden sm:inline">Yêu thích</span>
+                                    <span className="sm:hidden">Thích</span>
                                 </Link>
                                 <button
                                     type="button"
                                     onClick={handleLogout}
-                                    className="lg:hidden flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition whitespace-nowrap"
+                                    className="lg:hidden flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-red-600 hover:bg-red-50 transition"
                                 >
-                                    <FontAwesomeIcon icon={faRightFromBracket} className="text-xs" />
-                                    Đăng xuất
+                                    <FontAwesomeIcon icon={faRightFromBracket} className="text-[10px]" />
+                                    <span>Thoát</span>
                                 </button>
                             </nav>
                         </div>
@@ -349,7 +351,7 @@ export default function AccountPage() {
                 </div>
 
                 {/* Quick Links */}
-                <div className="mt-8 grid sm:grid-cols-2 gap-4">
+                <div className="mt-8 hidden sm:grid sm:grid-cols-2 gap-4">
                     <QuickLink
                         to="/orders"
                         icon={faFileInvoice}
@@ -400,14 +402,14 @@ function StatCard({ icon, label, value, accent = "amber" }) {
         rose: "bg-rose-50 text-rose-600",
     };
     return (
-        <div className="bg-white rounded-xl shadow-soft border border-gray-100 p-4 hover:shadow-lift transition group">
-            <div className="flex items-center gap-3">
-                <div className={`size-10 rounded-lg ${accents[accent]} flex items-center justify-center group-hover:scale-110 transition`}>
-                    <FontAwesomeIcon icon={icon} className="text-sm" />
+        <div className="bg-white rounded-xl shadow-soft border border-gray-100 p-3 sm:p-4 hover:shadow-lift transition group">
+            <div className="flex items-center gap-2 sm:gap-3">
+                <div className={`size-8 sm:size-10 rounded-lg ${accents[accent]} flex items-center justify-center group-hover:scale-110 transition`}>
+                    <FontAwesomeIcon icon={icon} className="text-xs sm:text-sm" />
                 </div>
                 <div className="min-w-0">
                     <p className="text-xs text-gray-500 truncate">{label}</p>
-                    <p className="text-xl font-bold text-gray-900">{value}</p>
+                    <p className="text-lg sm:text-xl font-bold text-gray-900">{value}</p>
                 </div>
             </div>
         </div>
@@ -418,10 +420,10 @@ function QuickLink({ to, icon, title, desc }) {
     return (
         <Link
             to={to}
-            className="group flex items-center gap-4 bg-white rounded-xl shadow-soft border border-gray-100 p-4 hover:shadow-lift hover:border-amber-200 transition"
+            className="group flex items-center gap-3 sm:gap-4 bg-white rounded-xl shadow-soft border border-gray-100 p-3 sm:p-4 hover:shadow-lift hover:border-amber-200 transition"
         >
-            <div className="size-12 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition">
-                <FontAwesomeIcon icon={icon} className="text-lg" />
+            <div className="size-10 sm:size-12 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition">
+                <FontAwesomeIcon icon={icon} className="text-base sm:text-lg" />
             </div>
             <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-gray-900">{title}</h3>
@@ -498,7 +500,7 @@ function ProfileTab({ profile, userInfo, onSaved, showToast }) {
 
     return (
         <div className="bg-white rounded-xl shadow-soft border border-gray-100 overflow-hidden">
-            <div className="flex items-center justify-between p-5 border-b border-gray-100">
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-gray-100">
                 <div>
                     <h2 className="text-lg font-semibold text-gray-900">Thông tin cá nhân</h2>
                     <p className="text-sm text-gray-500 mt-0.5">Cập nhật thông tin của bạn</p>
@@ -515,7 +517,7 @@ function ProfileTab({ profile, userInfo, onSaved, showToast }) {
                 )}
             </div>
 
-            <div className="p-5 space-y-4">
+            <div className="p-4 sm:p-5 space-y-4">
                 <Field
                     label="Họ và tên"
                     icon={faUser}
@@ -550,7 +552,7 @@ function ProfileTab({ profile, userInfo, onSaved, showToast }) {
             </div>
 
             {editing && (
-                <div className="flex items-center justify-end gap-2 p-5 border-t border-gray-100 bg-gray-50/50">
+                <div className="flex items-center justify-end gap-2 p-4 sm:p-5 border-t border-gray-100 bg-gray-50/50">
                     <button
                         type="button"
                         onClick={handleCancel}
@@ -623,12 +625,12 @@ function PasswordTab({ showToast, onChanged }) {
 
     return (
         <div className="bg-white rounded-xl shadow-soft border border-gray-100 overflow-hidden">
-            <div className="p-5 border-b border-gray-100">
+            <div className="p-4 sm:p-5 border-b border-gray-100">
                 <h2 className="text-lg font-semibold text-gray-900">Đổi mật khẩu</h2>
                 <p className="text-sm text-gray-500 mt-0.5">Sau khi đổi, bạn sẽ được đăng xuất và cần đăng nhập lại</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-5 space-y-4">
+            <form onSubmit={handleSubmit} className="p-4 sm:p-5 space-y-4">
                 <PasswordField
                     label="Mật khẩu hiện tại"
                     value={form.currentPassword}

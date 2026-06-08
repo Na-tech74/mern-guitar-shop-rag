@@ -131,26 +131,19 @@ const Header = memo(function Header() {
   };
 
   const scrollToCategory = useCallback((slug) => {
-    const scrollNow = () => {
-      const el = document.getElementById(`category-${slug}`);
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    const doScroll = (el) => {
+      const headerHeight = document.querySelector('header')?.offsetHeight || 0;
+      const top = el.getBoundingClientRect().top + window.scrollY - headerHeight - 16;
+      window.scrollTo({ top, behavior: 'smooth' });
     };
-    const el = document.getElementById(`category-${slug}`);
+    const el = document.getElementById(`fp-${slug}`)
+      || document.getElementById(`category-${slug}`);
     if (el) {
-      scrollNow();
+      doScroll(el);
       return;
     }
-    navigate("/");
-    let retries = 40;
-    const interval = setInterval(() => {
-      const el = document.getElementById(`category-${slug}`);
-      if (el) {
-        scrollNow();
-        clearInterval(interval);
-      } else if (--retries <= 0) {
-        clearInterval(interval);
-      }
-    }, 150);
+    sessionStorage.setItem('scrollToCategory', slug);
+    navigate("/", { state: { _st: Date.now() }, replace: true });
   }, [navigate]);
 
   return (
@@ -364,6 +357,14 @@ const Header = memo(function Header() {
               <button type="button" onClick={() => setIsSearchOpen(!isSearchOpen)}>
                 <FontAwesomeIcon icon={faSearch} className="text-xl text-gray-700" />
               </button>
+              <Link to="/wishlist" className="relative">
+                <FontAwesomeIcon icon={faHeart} className="text-xl text-gray-700" />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-amber-500 text-white text-[10px] size-4 flex items-center justify-center rounded-full">
+                    {wishlistCount}
+                  </span>
+                )}
+              </Link>
               <Link to="/cart" className="relative">
                 <FontAwesomeIcon icon={faCartShopping} className="text-xl text-gray-700" />
                 {cartCount > 0 && (
@@ -423,12 +424,12 @@ const Header = memo(function Header() {
                       onMouseLeave={() => { closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 300); }}>
                       <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('guitar-acoustic'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Guitar Acoustic</button>
                       <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('guitar-classic'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Guitar Classic</button>
-                      <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('guitar-electric'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Guitar Electric</button>
                       <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('guitar-bass'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Guitar Bass</button>
-                      <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('piano'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Piano</button>
+                      <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('guitar-electric'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Guitar Electric</button>
                       <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('ukulele'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Ukulele</button>
+                      <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('piano'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Piano</button>
                       <hr />
-                      <Link to="/products" onClick={() => setOpenDropdown(null)} className="block px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Tất cả sản phẩm</Link>
+                      <Link to="/products?all=1" onClick={() => setOpenDropdown(null)} className="block px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Tất cả sản phẩm</Link>
                     </div>
                   )}
                 </li>
@@ -499,13 +500,13 @@ const Header = memo(function Header() {
                   <Link to="/register" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 text-center py-2 border border-gray-300 text-gray-700 hover:border-amber-500 hover:text-amber-600 rounded text-sm transition">Đăng ký</Link>
                 </div>
               ) : (
-                <div className="flex items-center gap-3">
+                <Link to="/account" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 hover:bg-amber-50 p-2 -m-2 rounded-lg transition">
                   <UserAvatar user={userInfo} size="lg" />
                   <div className="min-w-0">
                     <p className="font-medium text-gray-800 truncate">{userInfo?.name}</p>
                     <p className="text-xs text-gray-500 truncate">{userInfo?.email}</p>
                   </div>
-                </div>
+                </Link>
               )}
             </div>
 
@@ -521,12 +522,12 @@ const Header = memo(function Header() {
                 <div className="bg-amber-50/50 pl-4">
                   <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-acoustic'); }} className="block w-full text-left px-4 py-2  text-gray-600 hover:text-amber-600">Guitar Acoustic</button>
                   <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-classic'); }} className="block w-full text-left px-4 py-2  text-gray-600 hover:text-amber-600">Guitar Classic</button>
-                  <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('guitar-electric'); }} className="block w-full text-left px-4 py-2  text-gray-600 hover:bg-amber-50 hover:text-amber-600">Guitar Electric</button>
-                  <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('guitar-bass'); }} className="block w-full text-left px-4 py-2  text-gray-600 hover:bg-amber-50 hover:text-amber-600">Guitar Bass</button>
-                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('piano'); }} className="block w-full text-left px-4 py-2  text-gray-600 hover:text-amber-600">Piano</button>
+                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-bass'); }} className="block w-full text-left px-4 py-2  text-gray-600 hover:bg-amber-50 hover:text-amber-600">Guitar Bass</button>
+                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-electric'); }} className="block w-full text-left px-4 py-2  text-gray-600 hover:bg-amber-50 hover:text-amber-600">Guitar Electric</button>
                   <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('ukulele'); }} className="block w-full text-left px-4 py-2  text-gray-600 hover:text-amber-600">Ukulele</button>
+                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('piano'); }} className="block w-full text-left px-4 py-2  text-gray-600 hover:text-amber-600">Piano</button>
                   <hr />
-                  <Link to="/products" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-2  text-gray-600 hover:text-amber-600">Tất cả sản phẩm</Link>
+                   <Link to="/products?all=1" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-2  text-gray-600 hover:text-amber-600">Tất cả sản phẩm</Link>
                   <hr />
                 </div>
               )}
@@ -536,6 +537,9 @@ const Header = memo(function Header() {
               </Link>
               <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
                 <span>GIỚI THIỆU</span>
+              </Link>
+              <Link to="/account" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
+                <span>TÀI KHOẢN</span>
               </Link>
               <Link to="/blog" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
                 <span>BÀI VIẾT</span>

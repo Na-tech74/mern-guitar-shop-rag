@@ -109,7 +109,7 @@ export default function FeaturedProducts({ products, categories, title, subtitle
                     const paginatedItems = category.items.slice(start, start + ITEMS_PER_PAGE);
 
                     return (
-                        <div key={category._id} id={`category-${category.slug || category.name.toLowerCase().replace(/\s+/g, "-")}`} className="scroll-mt-32">
+                        <div key={category._id} id={`fp-${category.slug || category.name.toLowerCase().replace(/\s+/g, "-")}`} className="scroll-mt-[140px]">
                             <div className="flex items-center justify-between mb-4 sm:mb-6 gap-2">
                                 <div className="flex items-center gap-2 sm:gap-4 min-w-0">
                                     <div className="w-1 h-7 sm:h-8 bg-amber-400 rounded-full shrink-0" />

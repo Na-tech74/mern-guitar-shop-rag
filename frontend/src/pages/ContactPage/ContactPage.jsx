@@ -15,7 +15,7 @@ export default function ContactPage() {
         <div className="min-h-screen bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 {/* Breadcrumb */}
-                <nav className="text-sm mb-8">
+                <nav className="text-sm mb-6 sm:mb-8">
                     <ol className="flex items-center gap-2 text-gray-400">
                         <li><Link to="/" className="hover:text-amber-500 transition">Trang chủ</Link></li>
                         <li className="text-gray-300">/</li>
@@ -24,20 +24,20 @@ export default function ContactPage() {
                 </nav>
 
                 {/* Header */}
-                <div className="text-center mb-12">
-                    <h1 className="text-4xl font-bold text-gray-800 mb-2">Liên hệ với chúng tôi</h1>
-                    <div className="w-16 h-1 bg-amber-400 rounded-full mx-auto mb-4" />
-                    <p className="text-lg text-gray-500">Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn</p>
+                <div className="text-center mb-8 sm:mb-12">
+                    <h1 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-2">Liên hệ với chúng tôi</h1>
+                    <div className="w-12 sm:w-16 h-1 bg-amber-400 rounded-full mx-auto mb-3 sm:mb-4" />
+                    <p className="text-sm sm:text-lg text-gray-500 px-4 sm:px-0">Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn</p>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-12">
+                <div className="grid md:grid-cols-2 gap-8 md:gap-12">
                     {/* Contact Info */}
-                    <div className="space-y-6">
+                    <div className="order-2 md:order-1 space-y-6">
                         <h2 className="text-xl font-semibold text-gray-800">Thông tin liên hệ</h2>
                         <div className="space-y-4">
                             {contactInfo.map((item) => (
-                                <div key={item.label} className="flex items-start gap-4 group">
-                                    <div className="size-11 rounded-xl bg-amber-50 flex items-center justify-center shrink-0 group-hover:bg-amber-100 transition-colors">
+                                    <div key={item.label} className="flex items-start gap-3 sm:gap-4 group">
+                                    <div className="size-10 sm:size-11 rounded-xl bg-amber-50 flex items-center justify-center shrink-0 group-hover:bg-amber-100 transition-colors">
                                         <FontAwesomeIcon icon={item.icon} className="text-amber-500" />
                                     </div>
                                     <div className="pt-1">
@@ -62,8 +62,8 @@ export default function ContactPage() {
                     </div>
 
                     {/* Contact Form */}
-                    <div className="bg-gray-50 rounded-2xl border border-gray-100 p-8 shadow-soft">
-                        <h2 className="text-xl font-semibold text-gray-800 mb-6">Gửi tin nhắn</h2>
+                    <div className="order-1 md:order-2 bg-gray-50 rounded-2xl border border-gray-100 p-5 sm:p-8 shadow-soft">
+                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 sm:mb-6">Gửi tin nhắn</h2>
                         <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Họ tên</label>
@@ -93,6 +93,7 @@ export default function ContactPage() {
                         src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d13390.654967441898!2d106.68795299527685!3d10.823414364813097!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1svi!2s!4v1779364882168!5m2!1svi!2s"
                         width="100%"
                         height="400"
+                        className="h-64 sm:h-[400px]"
                         style={{ border: 0 }}
                         allowFullScreen
                         loading="lazy"
