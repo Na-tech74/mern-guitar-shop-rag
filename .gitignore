@@ -2,6 +2,7 @@
 backend/node_modules/
 backend/.env
 backend/server-error.log
+backend/server.log
 backend/dev-stdout.log
 
 # frontend
