@@ -66,9 +66,8 @@ export const register = async (req, res) => {
     const accessToken = generateAccessToken(newUser);
     const refreshToken = generateRefreshToken(newUser);
 
-    // Lưu refresh token và access token vào database để track phiên
+    // Lưu refresh token vào database để track phiên
     newUser.refreshToken = refreshToken;
-    newUser.accessToken = accessToken;
 
     await newUser.save();
 

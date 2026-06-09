@@ -273,7 +273,7 @@ export const changePassword = async (req, res) => {
     }
 
     // Tìm người dùng trong database
-    const user = await usersModel.findById(userId);
+    const user = await usersModel.findById(userId).select("+password");
     if (!user) {
         throw appError("Không tìm thấy người dùng!", 404);
     }

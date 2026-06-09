@@ -29,7 +29,7 @@ router.post("/register", authLimiter(), asyncHandler(register));
  * Đăng nhập tài khoản
  * Public - Rate limited
  */
-router.post("/login", asyncHandler(login));
+router.post("/login", authLimiter(), asyncHandler(login));
 
 /**
  * POST /api/auth/logout

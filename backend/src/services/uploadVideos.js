@@ -4,7 +4,7 @@
  * Tự động xóa file tạm trên disk sau khi upload thành công hoặc thất bại.
  */
 
-import cloudinary from "../config/cloudinay.config.js";
+import cloudinary from "../config/cloudinary.config.js";
 import fs from "fs";
 
 /**

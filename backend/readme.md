@@ -31,7 +31,7 @@ backend/
 │   ├── app.js                     # Cấu hình Express app (tách riêng để dễ test)
 │   ├── config/
 │   │   ├── db.config.js           # Kết nối MongoDB
-│   │   ├── cloudinay.config.js    # Cấu hình Cloudinary
+│   │   ├── cloudinary.config.js    # Cấu hình Cloudinary
 │   │   └── middleware.config.js   # Global middleware (helmet, cors, rate-limit...)
 │   ├── middleware/
 │   │   ├── auth.middleware.js      # Xác thực JWT, phân quyền (protect, adminOnly)
@@ -90,7 +90,7 @@ backend/
 | Method | Endpoint | Mô tả |
 |--------|----------|-------|
 | POST | `/register` | Đăng ký tài khoản (rate-limited) |
-| POST | `/login` | Đăng nhập |
+| POST | `/login` | Đăng nhập (rate-limited) |
 | POST | `/logout` | Đăng xuất |
 | POST | `/refresh` | Refresh access token (rate-limited) |
 | POST | `/password/forgot` | Gửi OTP quên mật khẩu (rate-limited) |
@@ -101,6 +101,9 @@ backend/
 | Method | Endpoint | Quyền | Mô tả |
 |--------|----------|-------|-------|
 | GET | `/me` | User | Lấy thông tin cá nhân |
+| PUT | `/me` | User | Cập nhật thông tin cá nhân |
+| POST | `/me/avatar` | User | Upload avatar |
+| DELETE | `/me/avatar` | User | Xóa avatar |
 | PUT | `/password` | User | Đổi mật khẩu (rate-limited) |
 | GET | `/` | Admin | Danh sách người dùng |
 | GET | `/:id` | Admin | Chi tiết người dùng |

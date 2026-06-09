@@ -85,7 +85,7 @@ export const createProduct = async (req, res) => {
  * @returns {200} Danh sách sản phẩm với thông tin phân trang
  */
 export const getAllProducts = async (req, res) => {
-    const { page = 1, limit = 10, category, search, sortBy } = req.query;
+    const { page = 1, limit = 8, category, search, sortBy } = req.query;
 
     const query = {};
     if (category) query.category = category;
@@ -270,5 +270,38 @@ export const searchProductsTop = async (req, res) => {
         statusCode: 200,
         message: "Lấy sản phẩm nổi bật thành công!",
         data: { products }
+    });
+};
+
+/**
+ * Upload ảnh cho sản phẩm (Admin only)
+ * @param {string} id - ID sản phẩm từ params
+ * @param {File[]} images - Hình ảnh từ req.files
+ */
+export const uploadProductImages = async (req, res) => {
+    const { id } = req.params;
+    const imageFiles = req.files;
+
+    if (!isValidObjectId(id)) {
+        throw appError("ID sản phẩm không hợp lệ!", 400);
+    }
+
+    if (!imageFiles || imageFiles.length === 0) {
+        throw appError("Vui lòng tải lên hình ảnh sản phẩm!", 400);
+    }
+
+    const product = await Product.findById(id);
+    if (!product) {
+        throw appError("Sản phẩm không tồn tại!", 404);
+    }
+
+    const imageUrls = await uploadImages(imageFiles, "guitar-shop/products");
+    product.images = [...(product.images || []), ...imageUrls];
+    await product.save();
+
+    return appSuccess(res, {
+        statusCode: 200,
+        message: "Tải ảnh lên thành công!",
+        data: { images: product.images }
     });
 };

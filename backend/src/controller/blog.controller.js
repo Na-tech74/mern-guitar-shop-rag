@@ -106,9 +106,9 @@ export const updateBlog = async (req, res) => {
     if (title) blog.title = sanitizeText(title);
     if (excerpt !== undefined) blog.excerpt = sanitizeText(excerpt);
     if (content) blog.content = sanitizeText(content);
-    if (req.file) {
-        const [urls] = await uploadImages([req.file], "guitar-shop/blogs");
-        blog.images = urls;
+    if (req.files && req.files.length > 0) {
+        const imageUrls = await uploadImages(req.files, "guitar-shop/blogs");
+        blog.images = imageUrls;
     }
 
     await blog.save();

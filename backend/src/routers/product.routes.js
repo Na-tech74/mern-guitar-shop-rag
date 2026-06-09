@@ -11,7 +11,8 @@ import {
     getProductById,
     updateProducts,
     deleteProducts,
-    searchProductsTop
+    searchProductsTop,
+    uploadProductImages
 } from "../controller/products.controller.js";
 import { asyncHandler } from "../middleware/asyncHandler.js";
 import { protect, adminOnly } from "../middleware/auth.middleware.js";
@@ -105,6 +106,19 @@ router.put(
  * @return  {403} Không có quyền
  * @return  {404} Không tìm thấy sản phẩm
  */
+/**
+ * @route   POST /api/products/upload-images/:id
+ * @desc    Upload ảnh cho sản phẩm
+ * @access  Private (Admin only)
+ */
+router.post(
+    "/upload-images/:id",
+    protect,
+    adminOnly,
+    upload.array("images", 5),
+    asyncHandler(uploadProductImages)
+);
+
 router.delete("/:id", protect, adminOnly, asyncHandler(deleteProducts));
 
 export default router;
