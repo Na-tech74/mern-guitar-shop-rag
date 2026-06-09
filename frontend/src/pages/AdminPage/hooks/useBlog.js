@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { blogAPI } from "../../../api";
-import { useDialog } from "../../../components/ConfirmDialog";
+import { useDialog } from "../../../components/MessageDialog";
 
 export default function useBlog() {
     const { confirm, alert } = useDialog();

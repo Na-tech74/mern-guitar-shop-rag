@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { courseAPI, categoryAPI } from "../../../api";
-import { useDialog } from "../../../components/ConfirmDialog";
+import { useDialog } from "../../../components/MessageDialog";
 
 export default function useCourses() {
     const { confirm, alert } = useDialog();

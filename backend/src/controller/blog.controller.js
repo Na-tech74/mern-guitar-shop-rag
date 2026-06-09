@@ -36,7 +36,7 @@ export const createBlog = async (req, res) => {
     const newBlog = await Blog.create({
         title: sanitizeText(title),
         excerpt: sanitizeText(excerpt || ""),
-        content: sanitizeText(content),
+        content: content.trim(),
         author: req.user._id,
         images: imageUrls
     })
@@ -105,7 +105,7 @@ export const updateBlog = async (req, res) => {
 
     if (title) blog.title = sanitizeText(title);
     if (excerpt !== undefined) blog.excerpt = sanitizeText(excerpt);
-    if (content) blog.content = sanitizeText(content);
+    if (content) blog.content = content.trim();
     if (req.files && req.files.length > 0) {
         const imageUrls = await uploadImages(req.files, "guitar-shop/blogs");
         blog.images = imageUrls;

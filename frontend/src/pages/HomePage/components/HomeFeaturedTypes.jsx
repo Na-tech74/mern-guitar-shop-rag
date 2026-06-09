@@ -5,8 +5,8 @@ import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 export default function FeaturedTypes({ data }) {
     const items = data?.types || [];
     if (items.length === 0) return null;
-    const title = data?.title || "Bộ sưu tập";
-    const subtitle = data?.subtitle || "Khám phá các dòng guitar phổ biến nhất";
+    const title = data?.title ;
+    const subtitle = data?.subtitle;
 
     return (
         <section className="py-10 sm:py-16 bg-gray-50" style={{ contentVisibility: 'auto' }}>

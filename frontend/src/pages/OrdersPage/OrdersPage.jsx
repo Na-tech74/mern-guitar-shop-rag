@@ -9,7 +9,9 @@ import {
     faArrowRight, faXmark, faRotate, faReceipt
 } from "@fortawesome/free-solid-svg-icons";
 import { orderAPI } from "../../api";
-import { getOptimizedImage, getStatusColor, getStatusLabel, formatCurrency, formatDateTime } from "../../helpers/format";
+import { formatCurrency, formatDateTime } from "../../helpers/formatters";
+import { getStatusColor, getStatusLabel } from "../../helpers/status";
+import { getOptimizedImage } from "../../helpers/image";
 
 const STATUS_META = {
     pending:     { icon: faClock,           color: "amber"  },

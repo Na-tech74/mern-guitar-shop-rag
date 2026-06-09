@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar, faMusic, faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import { getOptimizedImage } from "../../../helpers/format";
+import { getOptimizedImage } from "../../../helpers/image";
 import Skeleton from "../../../components/Skeleton";
 import Pagination from "../../../components/Pagination";
 

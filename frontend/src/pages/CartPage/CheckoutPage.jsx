@@ -6,9 +6,10 @@ import {
     faTruck, faSpinner, faCheckCircle
 } from "@fortawesome/free-solid-svg-icons";
 import { orderAPI } from "../../api";
-import { getOptimizedImage } from "../../helpers/format";
+import { getOptimizedImage } from "../../helpers/image";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
+import { useDialog } from "../../components/MessageDialog";
 
 const initialForm = {
     fullName: "",
@@ -18,6 +19,7 @@ const initialForm = {
 };
 
 export default function CheckoutPage() {
+    const { alert } = useDialog();
     const navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
     const [form, setForm] = useState(initialForm);
@@ -106,7 +108,7 @@ export default function CheckoutPage() {
             });
         } catch (err) {
             const msg = err.response?.data?.message || "Đặt hàng thất bại, vui lòng thử lại!";
-            alert(msg);
+            await alert({ title: "Lỗi", message: msg, variant: "error" });
         } finally {
             setSubmitting(false);
         }

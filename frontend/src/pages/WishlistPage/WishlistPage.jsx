@@ -11,11 +11,14 @@ import {
     faCheck,
     faImage,
 } from "@fortawesome/free-solid-svg-icons";
-import { getOptimizedImage, formatCurrency } from "../../helpers/format";
+import { formatCurrency } from "../../helpers/formatters";
+import { getOptimizedImage } from "../../helpers/image";
 import Button from "../../components/Button";
 import useCart from "../ProductsPage/hooks/useCart";
+import { useDialog } from "../../components/MessageDialog";
 
 export default function WishlistPage() {
+    const { confirm } = useDialog();
     const [items, setItems] = useState([]);
     const { addToCart, addedMap } = useCart();
 
@@ -44,8 +47,8 @@ export default function WishlistPage() {
         });
     }, []);
 
-    const clearAll = useCallback(() => {
-        if (!window.confirm("Xóa tất cả sản phẩm yêu thích?")) return;
+    const clearAll = useCallback(async () => {
+        const ok = await confirm({ title: "Xóa tất cả", message: "Xóa tất cả sản phẩm yêu thích?" }); if (!ok) return;
         localStorage.setItem("wishlist", "[]");
         setItems([]);
         window.dispatchEvent(new Event("wishlist-updated"));

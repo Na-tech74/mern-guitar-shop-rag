@@ -14,17 +14,17 @@ import {
     faHouse,
     faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
-
+ 
+// mai fix để dùng chung
 function NavItem({ to, icon, name, end }) {
     return (
         <NavLink
             to={to}
             end={end}
             className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
-                    isActive
-                        ? "bg-amber-400 text-white"
-                        : "text-gray-700 hover:bg-amber-50 hover:text-amber-600"
+                `flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${isActive
+                    ? "bg-amber-400 text-white"
+                    : "text-gray-700 hover:bg-amber-50 hover:text-amber-600"
                 }`
             }
         >
@@ -106,20 +106,11 @@ export default function AdminSidebar({ isMobileOpen, setIsMobileOpen }) {
 
                 {/* FOOTER - Cài đặt */}
                 <div className="shrink-0 border-t border-gray-200 p-2">
-                    <NavLink
+                    <NavItem
                         to="/admin/settings"
-                        onClick={() => setIsMobileOpen(false)}
-                        className={({ isActive }) =>
-                            `flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
-                                isActive
-                                    ? "bg-amber-500 text-white"
-                                    : "text-gray-700 hover:bg-gray-100"
-                            }`
-                        }
-                    >
-                        <FontAwesomeIcon icon={faGear} className="text-base shrink-0" />
-                        <span className="truncate">Cài đặt</span>
-                    </NavLink>
+                        icon={faGear}
+                        name="Cài đặt"
+                    />
                 </div>
             </aside>
         </>

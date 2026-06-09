@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { forgotPasswordAPI, resetPasswordAPI } from "../../../api";
 import { useNavigate } from "react-router-dom";
+import { useDialog } from "../../../components/MessageDialog";
+
 export default function useForgotPassword() {
+    const { alert } = useDialog();
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -23,7 +26,7 @@ export default function useForgotPassword() {
         e.preventDefault();
 
         if (!form.email) {
-            return alert("Nhập email");
+            await alert({ title: "Lỗi", message: "Nhập email", variant: "warning" }); return;
         }
 
         setLoading(true);
@@ -33,10 +36,10 @@ export default function useForgotPassword() {
                 email: form.email.trim().toLowerCase()
             });
 
-            alert("OTP đã được gửi về email");
+            await alert({ title: "Thành công", message: "OTP đã được gửi về email", variant: "success" });
             setStep(2);
         } catch (err) {
-            alert(err.response?.data?.message || "Lỗi");
+            await alert({ title: "Lỗi", message: err.response?.data?.message || "Lỗi", variant: "error" });
         } finally {
             setLoading(false);
         }
@@ -46,11 +49,11 @@ export default function useForgotPassword() {
         e.preventDefault();
 
         if (!form.otp || !form.password) {
-            return alert("Nhập đầy đủ OTP và mật khẩu");
+            await alert({ title: "Lỗi", message: "Nhập đầy đủ OTP và mật khẩu", variant: "warning" }); return;
         }
 
         if (form.password.length < 8) {
-            return alert("Mật khẩu ít nhất 8 ký tự");
+            await alert({ title: "Lỗi", message: "Mật khẩu ít nhất 8 ký tự", variant: "warning" }); return;
         }
 
         setLoading(true);
@@ -62,11 +65,11 @@ export default function useForgotPassword() {
                 password: form.password
             });
 
-            alert("Đổi mật khẩu thành công");
+            await alert({ title: "Thành công", message: "Đổi mật khẩu thành công", variant: "success" });
             navigate("/login");
 
         } catch (err) {
-            alert(err.response?.data?.message || "Lỗi");
+            await alert({ title: "Lỗi", message: err.response?.data?.message || "Lỗi", variant: "error" });
         } finally {
             setLoading(false);
         }

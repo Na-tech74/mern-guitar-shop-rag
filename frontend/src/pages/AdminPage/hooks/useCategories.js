@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { categoryAPI } from "../../../api";
 import useDebounce from "../../../hooks/useDebounce";
-import { useDialog } from "../../../components/ConfirmDialog";
+import { useDialog } from "../../../components/MessageDialog";
 
 export const useCategories = () => {
     const { confirm, alert } = useDialog();

@@ -7,7 +7,7 @@ import {
     faCheckCircle, faCircle
 } from "@fortawesome/free-solid-svg-icons";
 import { courseAPI } from "../../api";
-import { formatCurrency } from "../../helpers/format";
+import { formatCurrency } from "../../helpers/formatters";
 import Button from "../../components/Button";
 
 export default function CourseDetailPage() {

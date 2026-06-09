@@ -5,10 +5,13 @@ import {
     faMinus, faPlus, faTrash, faShoppingCart, faArrowLeft,
     faShieldAlt, faTruck, faUndo, faTag, faGift
 } from "@fortawesome/free-solid-svg-icons";
-import { getOptimizedImage, formatCurrency } from "../../helpers/format";
+import { formatCurrency } from "../../helpers/formatters";
+import { getOptimizedImage } from "../../helpers/image";
 import Button from "../../components/Button";
+import { useDialog } from "../../components/MessageDialog";
 
 export default function CartPage() {
+    const { alert } = useDialog();
     const navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
     const [coupon, setCoupon] = useState("");
@@ -58,12 +61,12 @@ export default function CartPage() {
 
     const itemCount = cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
 
-    const handleApplyCoupon = () => {
+    const handleApplyCoupon = async () => {
         if (coupon.trim().toUpperCase() === "GUITAR10") {
             setCouponApplied(true);
         } else {
             setCouponApplied(false);
-            alert("Mã giảm giá không hợp lệ!");
+            await alert({ title: "Lỗi", message: "Mã giảm giá không hợp lệ!", variant: "warning" });
         }
     };
 

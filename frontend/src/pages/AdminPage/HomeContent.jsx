@@ -42,7 +42,7 @@ const MessageBanner = ({ message }) => {
 };
 
 const SectionTitle = ({ children, hint }) => (
-    <div className="mb-4">
+    <div className="mb-4 pl-3 border-l-4 border-amber-400">
         <h3 className="text-sm font-semibold text-gray-800">{children}</h3>
         {hint && <p className="text-xs text-gray-500 mt-1">{hint}</p>}
     </div>
@@ -271,13 +271,15 @@ export default function HomeContent() {
         <div className="space-y-4 sm:space-y-6">
             <div className="flex items-center justify-between flex-wrap gap-3">
                 <div className="min-w-0">
-                    <h1 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-2">
-                        <FontAwesomeIcon icon={faHouse} className="text-gray-700 shrink-0" />
-                        <span className="truncate">Quản lý Trang chủ</span>
-                    </h1>
-                    <p className="text-gray-500 text-xs sm:text-sm mt-0.5">
-                        Chỉnh sửa toàn bộ nội dung hiển thị trên trang chủ
-                    </p>
+                    <div>
+                        <h1 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-2">
+                            <FontAwesomeIcon icon={faHouse} className="text-amber-500 shrink-0" />
+                            <span className="truncate">Quản lý Trang chủ</span>
+                        </h1>
+                        <p className="text-gray-500 text-xs sm:text-sm mt-0.5">
+                            Chỉnh sửa toàn bộ nội dung hiển thị trên trang chủ
+                        </p>
+                    </div>
                 </div>
                 <Link
                     to="/"
@@ -303,12 +305,12 @@ export default function HomeContent() {
                                     setActiveTab(tab.id);
                                     setMessage(null);
                                 }}
-                                className={`flex items-center justify-center lg:justify-start gap-2 lg:gap-3 rounded-lg
+                                                className={`flex items-center justify-center lg:justify-start gap-2 lg:gap-3 rounded-lg
                                             px-3 lg:px-4 py-2 lg:py-3 text-xs lg:text-sm font-medium transition-all
                                             whitespace-nowrap
                                             ${activeTab === tab.id
-                                    ? "bg-gray-100 text-gray-800"
-                                    : "text-gray-600 hover:bg-gray-50"
+                                    ? "bg-amber-50 text-amber-700 border border-amber-200 shadow-sm"
+                                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
                                     }`}
                             >
                                 {tab.label}
@@ -383,9 +385,9 @@ const CarouselSection = ({ formData, handlers }) => {
             </div>
 
             {formData.carousel.slides.map((slide, index) => (
-                <div key={index} className="rounded-xl border border-gray-200 p-3 sm:p-4 space-y-3">
+                    <div key={index} className="rounded-xl border border-gray-200 p-3 sm:p-4 space-y-3">
                     <div className="flex items-center justify-between gap-2">
-                        <h4 className="font-semibold text-gray-700 text-sm sm:text-base">Slide {index + 1}</h4>
+                        <h4 className="font-semibold text-amber-700 text-sm sm:text-base flex items-center gap-2"><span className="size-2 rounded-full bg-amber-400"></span> Slide {index + 1}</h4>
                         <div className="flex gap-1 shrink-0">
                             <button
                                 type="button"
@@ -461,7 +463,7 @@ const FeaturesSection = ({ formData, handlers, iconOptions }) => {
             </SectionTitle>
             {formData.featuresBanner.features.map((feature, index) => (
                 <div key={index} className="rounded-xl border border-gray-200 p-3 sm:p-4 space-y-3">
-                    <h4 className="font-semibold text-gray-700 text-sm sm:text-base">Tính năng {index + 1}</h4>
+                    <h4 className="font-semibold text-blue-700 text-sm sm:text-base flex items-center gap-2"><span className="size-2 rounded-full bg-blue-400"></span> Tính năng {index + 1}</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -503,7 +505,7 @@ const HeadingsSection = ({ formData, handlers }) => {
                 Tiêu đề các section
             </SectionTitle>
             <div className="rounded-xl border border-gray-200 p-3 sm:p-4 space-y-3">
-                <h4 className="font-semibold text-gray-700 text-sm sm:text-base">Section danh mục</h4>
+                <h4 className="font-semibold text-emerald-700 text-sm sm:text-base flex items-center gap-2"><span className="size-2 rounded-full bg-emerald-400"></span> Section danh mục</h4>
                 <Input
                     label="Tiêu đề"
                     value={formData.categoriesSection.title}
@@ -516,7 +518,7 @@ const HeadingsSection = ({ formData, handlers }) => {
                 />
             </div>
             <div className="rounded-xl border border-gray-200 p-3 sm:p-4 space-y-3">
-                <h4 className="font-semibold text-gray-700 text-sm sm:text-base">Section sản phẩm nổi bật</h4>
+                <h4 className="font-semibold text-purple-700 text-sm sm:text-base flex items-center gap-2"><span className="size-2 rounded-full bg-purple-400"></span> Section sản phẩm nổi bật</h4>
                 <Input
                     label="Tiêu đề"
                     value={formData.featuredProducts.title}

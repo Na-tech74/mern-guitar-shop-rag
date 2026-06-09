@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { productAPI, categoryAPI } from "../../../api";
 import useDebounce from "../../../hooks/useDebounce";
-import { useDialog } from "../../../components/ConfirmDialog";
+import { useDialog } from "../../../components/MessageDialog";
 
 /**
  * useProducts

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faUser, faNewspaper, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { API } from "../../api";
-import { getOptimizedImage } from "../../helpers/format";
+import { getOptimizedImage } from "../../helpers/image";
 
 export default function BlogPage() {
     const [blogs, setBlogs] = useState([]);

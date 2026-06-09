@@ -85,7 +85,7 @@ export const createProduct = async (req, res) => {
  * @returns {200} Danh sách sản phẩm với thông tin phân trang
  */
 export const getAllProducts = async (req, res) => {
-    const { page = 1, limit = 8, category, search, sortBy } = req.query;
+    const { page = 1, limit = 9, category, search, sortBy } = req.query;
 
     const query = {};
     if (category) query.category = category;

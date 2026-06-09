@@ -3,7 +3,8 @@ import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faMinus, faPlus, faShoppingCart, faTruck, faShieldAlt, faUndo, faImage, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { productAPI } from "../../api";
-import { getOptimizedImage, formatCurrency } from "../../helpers/format";
+import { formatCurrency } from "../../helpers/formatters";
+import { getOptimizedImage } from "../../helpers/image";
 import Skeleton from "../../components/Skeleton";
 import useCart from "./hooks/useCart";
 

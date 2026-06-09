@@ -2,13 +2,11 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import AdminSidebar from "../pages/AdminPage/components/SideBar";
 import AdminHeader from "../pages/AdminPage/components/Header";
-import { DialogProvider } from "../components/ConfirmDialog";
 
 export default function AdminLayout() {
     const [isMobileOpen, setIsMobileOpen] = useState(false);
 
     return (
-        <DialogProvider>
             <div className="min-h-screen bg-gray-100 lg:flex">
                 <AdminSidebar
                     isMobileOpen={isMobileOpen}
@@ -24,6 +22,5 @@ export default function AdminLayout() {
                     </main>
                 </div>
             </div>
-        </DialogProvider>
     );
 }

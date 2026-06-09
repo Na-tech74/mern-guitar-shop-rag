@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faVideo, faUserGraduate, faClock, faImage, faPlay, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { courseAPI } from "../../api";
-import { formatCurrency } from "../../helpers/format";
+import { formatCurrency } from "../../helpers/formatters";
 
 export default function CoursesPage() {
     const [courses, setCourses] = useState([]);

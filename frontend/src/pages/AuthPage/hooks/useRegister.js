@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { registerAPI } from "../../../api";
 import { useNavigate } from "react-router-dom";
+import { useDialog } from "../../../components/MessageDialog";
 
 export default function useRegister() {
+    const { alert } = useDialog();
     const [form, setForm] = useState({
         name: "",
         email: "",
@@ -47,7 +49,7 @@ export default function useRegister() {
         setLoading(true);
         try {
             await registerAPI(form);
-            alert("Đăng ký thành công! Vui lòng đăng nhập.");
+            await alert({ title: "Thành công", message: "Đăng ký thành công! Vui lòng đăng nhập.", variant: "success" });
             navigate("/login");
         } catch (err) {
             setErrors({ general: err.response?.data?.message || "Đăng ký thất bại" });

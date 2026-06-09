@@ -3,6 +3,7 @@ import { lazy, Suspense } from "react";
 import MainLayout from "./layouts/MainLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { DialogProvider } from "./components/MessageDialog";
 import useSessionRecovery from "./hooks/useSessionRecovery";
 
 const Login = lazy(() => import("./pages/AuthPage/Login"));
@@ -48,6 +49,7 @@ function App() {
     useSessionRecovery();
     return (
       <BrowserRouter>
+      <DialogProvider>
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
           <Route path="/" element={<MainLayout />}>
@@ -93,6 +95,7 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
+      </DialogProvider>
     </BrowserRouter>
   );
 }

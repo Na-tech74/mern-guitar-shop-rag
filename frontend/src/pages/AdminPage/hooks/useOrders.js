@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { orderAPI } from "../../../api";
 import useDebounce from "../../../hooks/useDebounce";
-import { useDialog } from "../../../components/ConfirmDialog";
+import { useDialog } from "../../../components/MessageDialog";
 
 const STATUS_LIST = ["all", "pending", "processing", "shipped", "delivered", "cancelled"];
 

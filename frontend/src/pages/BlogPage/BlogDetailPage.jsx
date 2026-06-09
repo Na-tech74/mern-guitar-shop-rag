@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faUser, faNewspaper, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { API } from "../../api";
-import { getOptimizedImage } from "../../helpers/format";
+import { getOptimizedImage } from "../../helpers/image";
 
 export default function BlogDetailPage() {
     const { id } = useParams();

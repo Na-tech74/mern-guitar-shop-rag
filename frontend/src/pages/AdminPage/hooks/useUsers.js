@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { userAPI } from "../../../api";
 import useDebounce from "../../../hooks/useDebounce";
-import { useDialog } from "../../../components/ConfirmDialog";
+import { useDialog } from "../../../components/MessageDialog";
 
 export const useUsers = () => {
     const { confirm, alert } = useDialog();

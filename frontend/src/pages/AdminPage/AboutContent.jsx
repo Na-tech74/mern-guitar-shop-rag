@@ -39,7 +39,7 @@ const MessageBanner = ({ message }) => {
 };
 
 const SectionTitle = ({ children, hint }) => (
-    <div className="mb-4">
+    <div className="mb-4 pl-3 border-l-4 border-amber-400">
         <h3 className="text-sm font-semibold text-gray-800">{children}</h3>
         {hint && <p className="text-xs text-gray-500 mt-1">{hint}</p>}
     </div>
@@ -149,18 +149,18 @@ export default function AboutContent() {
     } = useAboutContent();
 
     if (loading) {
-        return <div className="p-6 text-center text-gray-500">Đang tải...</div>;
+        return <div className="p-6 text-center text-gray-500 text-sm">Đang tải...</div>;
     }
 
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                        <FontAwesomeIcon icon={faInfoCircle} className="text-gray-700" />
-                        Quản lý Trang Giới thiệu
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-2">
+                        <FontAwesomeIcon icon={faInfoCircle} className="text-amber-500" />
+                        <span className="truncate">Quản lý Trang Giới thiệu</span>
                     </h1>
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-gray-500 text-xs sm:text-sm mt-0.5">
                         Chỉnh sửa toàn bộ nội dung hiển thị trên trang /about
                     </p>
                 </div>
@@ -175,7 +175,7 @@ export default function AboutContent() {
 
             <MessageBanner message={message} />
 
-            <form onSubmit={handleSubmit} className="rounded-xl bg-white p-6 shadow-sm space-y-8">
+            <form onSubmit={handleSubmit} className="rounded-xl bg-white p-4 sm:p-6 shadow-sm space-y-6 sm:space-y-8">
                 <HeaderSection formData={formData} handlers={handlers} />
                 <IntroSection formData={formData} handlers={handlers} />
                 <StorySection formData={formData} handlers={handlers} />
@@ -269,7 +269,7 @@ const StatsSection = ({ formData, handlers }) => {
             <div className="grid md:grid-cols-2 gap-4">
                 {formData.stats.items.map((stat, index) => (
                     <div key={index} className="rounded-xl border border-gray-200 p-4 space-y-3">
-                        <h4 className="font-semibold text-gray-700">Số liệu {index + 1}</h4>
+                        <h4 className="font-semibold text-blue-700 text-sm sm:text-base flex items-center gap-2"><span className="size-2 rounded-full bg-blue-400"></span> Số liệu {index + 1}</h4>
                         <div className="grid grid-cols-2 gap-3">
                             <Input
                                 label="Giá trị (vd: 10+)"
@@ -310,7 +310,7 @@ const TeamSection = ({ formData, handlers }) => {
             </div>
             {formData.team.members.map((member, index) => (
                 <div key={index} className="rounded-xl border border-gray-200 p-4 space-y-3">
-                    <h4 className="font-semibold text-gray-700">Thành viên {index + 1}</h4>
+                    <h4 className="font-semibold text-purple-700 text-sm sm:text-base flex items-center gap-2"><span className="size-2 rounded-full bg-purple-400"></span> Thành viên {index + 1}</h4>
                     <div className="grid md:grid-cols-2 gap-3">
                         <Input
                             label="Họ và tên"
@@ -367,7 +367,7 @@ const CommitmentsSection = ({ formData, handlers, iconOptions }) => {
             </div>
             {formData.commitments.items.map((item, index) => (
                 <div key={index} className="rounded-xl border border-gray-200 p-4 space-y-3">
-                    <h4 className="font-semibold text-gray-700">Cam kết {index + 1}</h4>
+                    <h4 className="font-semibold text-emerald-700 text-sm sm:text-base flex items-center gap-2"><span className="size-2 rounded-full bg-emerald-400"></span> Cam kết {index + 1}</h4>
                     <div className="grid md:grid-cols-2 gap-3">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">

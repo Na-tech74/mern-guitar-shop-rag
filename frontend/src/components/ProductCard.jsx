@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage, faShoppingCart, faCheck, faFire, faEye } from "@fortawesome/free-solid-svg-icons";
-import { getOptimizedImage, formatCurrency } from "../helpers/format";
+import { formatCurrency } from "../helpers/formatters";
+import { getOptimizedImage } from "../helpers/image";
 
 export default function ProductCard({ product, viewMode = "grid", onAddToCart, isAdded }) {
     const inStock = product.stock === undefined || product.stock > 0;
