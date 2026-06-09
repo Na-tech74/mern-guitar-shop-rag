@@ -55,7 +55,7 @@ export default function ProductCard({ product, viewMode = "grid", onAddToCart, i
                     <h3 className="text-sm sm:text-base font-semibold text-gray-800 mb-1 sm:mb-2 line-clamp-2 leading-snug hover:text-amber-600 transition">
                         {product.name}
                     </h3>
-                </Link>
+                </Link> 
                 {viewMode === "list" && product.description && (
                     <p className="text-xs sm:text-sm text-gray-500 mb-2 sm:mb-3 line-clamp-2 leading-relaxed">
                         {product.description}

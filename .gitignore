@@ -13,3 +13,7 @@ node_modules/
 dist/
 build/
 docs/
+server-error.log
+dev-stdout.log
+dev-stderr.log
+dev-stdout.log
