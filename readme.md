@@ -215,26 +215,3 @@ npm run dev       # http://localhost:5173 (proxy /api → backend)
 
 Xem chi tiết tại `backend/readme.md` và `frontend/readme.md`.
 
-## Tài liệu liên quan
-
-| File | Mô tả |
-|------|-------|
-| `backend/readme.md` | Chi tiết backend (API endpoints, models, middleware, security) |
-| `frontend/readme.md` | Chi tiết frontend (components, hooks, routes, api modules) |
-| `docs/architecture.md` | Kiến trúc hệ thống |
-| `docs/deployment.md` | Hướng dẫn triển khai |
-| `docs/development.md` | Hướng dẫn phát triển |
-| `docs/rag.md` | Chatbot RAG |
-| `docs/backend/api.md` | API endpoints chi tiết |
-| `docs/backend/middleware.md` | Middleware |
-| `docs/backend/models.md` | Database models |
-| `docs/backend/services.md` | Services |
-| `docs/backend/utils.md` | Utilities |
-| `docs/backend/config.md` | Cấu hình |
-| `docs/backend/controllers.md` | Controllers |
-| `docs/frontend/components.md` | Components |
-| `docs/frontend/layouts.md` | Layouts |
-| `docs/frontend/api-client.md` | Axios client |
-| `docs/frontend/helpers.md` | Helper functions |
-| `docs/frontend/hooks.md` | Custom hooks |
-| `docs/frontend/pages.md` | Pages |
