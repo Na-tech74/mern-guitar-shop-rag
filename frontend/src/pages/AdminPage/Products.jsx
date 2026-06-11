@@ -148,7 +148,7 @@ export default function Products() {
                         </tbody>
                     </table>
                 </div>
-
+              
                 <div className="md:hidden p-2 space-y-2">
                     {loading ? (
                         <div className="py-16 text-center text-gray-500 text-sm">
@@ -181,7 +181,7 @@ export default function Products() {
                                                     </button>
                                                 </div>
                                             </div>
-                                            <p className="text-base font-bold text-gray-900 mt-1">{formatCurrency(product.price)}</p>
+                                            <p className="text-base font-bold text-gray-800 text-sm mt-1">{formatCurrency(product.price)}</p>
                                             <div className="flex items-center gap-2 mt-1">
                                                 <span className="inline-flex items-center gap-1 rounded-md bg-gray-50 px-1.5 py-0.5 text-[10px] font-medium text-gray-500">
                                                     <FontAwesomeIcon icon={faTag} className="text-[7px]" />
