@@ -56,12 +56,12 @@ export default function ContactPage() {
                                 const Icon = iconMap[item.icon] || faMapMarkerAlt;
                                 return (
                                     <div key={item.label} className="flex items-start gap-3 sm:gap-4 group">
-                                        <div className="size-10 sm:size-11 rounded-xl bg-amber-50 flex items-center justify-center shrink-0 group-hover:bg-amber-100 transition-colors">
-                                            <FontAwesomeIcon icon={Icon} className="text-amber-500" />
+                                        <div className="size-10 sm:size-11 rounded-xl  flex items-center justify-center shrink-0  transition-colors">
+                                            <FontAwesomeIcon icon={Icon} className="text-gray-500" />
                                         </div>
                                         <div className="pt-1">
-                                            <p className="text-sm text-gray-400">{item.label}</p>
-                                            <p className="font-medium text-gray-800">{item.value}</p>
+                                            <p className="text-sm text-gray-500">{item.label}</p>
+                                            <p className="font-medium ">{item.value}</p>
                                         </div>
                                     </div>
                                 );

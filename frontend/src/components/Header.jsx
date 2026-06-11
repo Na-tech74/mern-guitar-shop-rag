@@ -474,7 +474,7 @@ const Header = memo(function Header() {
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <>
-          <div className="fixed inset-0 bg-black/50 z-[1000]"
+          <div className="fixed inset-0 bg-black/50 z-[1000] lg:hidden"
             onClick={() => setIsMobileMenuOpen(false)}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
@@ -483,7 +483,7 @@ const Header = memo(function Header() {
               }
             }}
             role="button" tabIndex={0} />
-          <div className="fixed top-0 left-0 w-72 h-full bg-white z-[1001] shadow-pop overflow-y-auto">
+          <div className="fixed top-0 left-0 w-72 h-full bg-white z-[1001] shadow-pop overflow-y-auto lg:hidden">
             <div className="bg-white p-4 flex justify-between items-center border-b border-gray-100">
               <Link to="/" className="shrink-0">
                 <Logo />
@@ -519,15 +519,15 @@ const Header = memo(function Header() {
                 <FontAwesomeIcon icon={faChevronDown} className={`text-xs transition-transform ${openDropdown === 'SẢN PHẨM' ? 'rotate-180' : ''}`} />
               </button>
               {openDropdown === 'SẢN PHẨM' && (
-                <div className="bg-amber-50/50 pl-4">
-                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-acoustic'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Guitar Acoustic</button>
-                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-classic'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Guitar Classic</button>
+                <div className="pl-4">
+                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-acoustic'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-amber-50 hover:text-amber-600">Guitar Acoustic</button>
+                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-classic'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-amber-50 hover:text-amber-600">Guitar Classic</button>
                   <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-bass'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-amber-50 hover:text-amber-600">Guitar Bass</button>
                   <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-electric'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-amber-50 hover:text-amber-600">Guitar Electric</button>
-                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('ukulele'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Ukulele</button>
-                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('piano'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Piano</button>
+                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('ukulele'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-amber-50 hover:text-amber-600">Ukulele</button>
+                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('piano'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-amber-50 hover:text-amber-600">Piano</button>
                   <hr />
-                   <Link to="/products?all=1" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-600 hover:text-amber-600">Tất cả sản phẩm</Link>
+                   <Link to="/products?all=1" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-600 hover:bg-amber-50 hover:text-amber-600">Tất cả sản phẩm</Link>
                   <hr />
                 </div>
               )}

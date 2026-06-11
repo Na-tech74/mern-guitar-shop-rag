@@ -110,8 +110,8 @@ export default function WishlistPage() {
 
                 {items.length === 0 ? (
                     <div className="bg-white border border-gray-100 rounded-2xl shadow-sm py-12 sm:py-20 px-4 sm:px-6 text-center">
-                        <div className="size-16 sm:size-24 mx-auto mb-4 sm:mb-6 bg-amber-50 rounded-2xl flex items-center justify-center">
-                            <FontAwesomeIcon icon={faHeartBroken} className="text-2xl sm:text-4xl text-amber-400" />
+                        <div className="size-16 sm:size-24 mx-auto mb-4 sm:mb-6  rounded-2xl flex items-center justify-center">
+                            <FontAwesomeIcon icon={faHeartBroken} className="text-2xl sm:text-4xl text-gray-500" />
                         </div>
                         <h2 className="text-lg sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2">Chưa có sản phẩm yêu thích</h2>
                         <p className="text-xs sm:text-base text-gray-500 max-w-md mx-auto mb-4 sm:mb-6 px-2 sm:px-0">

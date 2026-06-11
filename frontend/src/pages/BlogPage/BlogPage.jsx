@@ -76,7 +76,7 @@ export default function BlogPage() {
                                     )}
                                 </div>
                                 <div className="p-5">
-                                    <h2 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2 leading-snug group-hover:text-amber-600 transition">
+                                    <h2 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2 leading-snug group-hover:text-amber-500 transition">
                                         {blog.title}
                                     </h2>
                                     <p className="text-sm text-gray-500 mb-4 line-clamp-2 leading-relaxed">

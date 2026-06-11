@@ -360,12 +360,12 @@ export default function Orders() {
             </div>
 
             {selectedOrder && (
-                <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setSelectedOrder(null)}>
+                <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40" onClick={() => setSelectedOrder(null)}>
                     <div className="w-full sm:max-w-2xl max-h-[90vh] overflow-y-auto rounded-t-xl sm:rounded-xl bg-white shadow-xl" onClick={e => e.stopPropagation()}>
                         <div className="sticky top-0 bg-white border-b border-gray-100 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between rounded-t-xl">
                             <div className="flex items-center gap-2 sm:gap-3">
-                                <div className="size-8 sm:size-9 rounded-lg bg-amber-100 flex items-center justify-center">
-                                    <FontAwesomeIcon icon={faBox} className="text-amber-600 text-xs sm:text-sm" />
+                                <div className="size-8 sm:size-9 rounded-lg bg-gray-100 flex items-center justify-center">
+                                    <FontAwesomeIcon icon={faBox} className="text-gray-600 text-xs sm:text-sm" />
                                 </div>
                                 <h2 className="text-sm sm:text-lg font-semibold text-gray-800">
                                     Đơn hàng #{selectedOrder._id.slice(-8).toUpperCase()}
@@ -378,9 +378,9 @@ export default function Orders() {
 
                         <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
                             <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                                <div className="bg-gray-100 rounded-xl p-3 sm:p-4">
+                                <div className="bg-gray-50 rounded-xl p-3 sm:p-4">
                                     <p className="text-[10px] sm:text-xs text-gray-500 mb-0.5 sm:mb-1">Tổng tiền</p>
-                                    <p className="text-base sm:text-xl font-bold text-gray-700">{formatCurrency(selectedOrder.total)}</p>
+                                    <p className="text-base sm:text-xl font-bold text-gray-800">{formatCurrency(selectedOrder.total)}</p>
                                 </div>
                                 <div>
                                     <p className="text-[10px] sm:text-xs text-gray-500 mb-0.5 sm:mb-1">Trạng thái</p>
@@ -396,7 +396,7 @@ export default function Orders() {
 
                             <div>
                                 <div className="flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3">
-                                    <FontAwesomeIcon icon={faMapMarkerAlt} className="text-gray-700 text-xs sm:text-sm" />
+                                    <FontAwesomeIcon icon={faMapMarkerAlt} className="text-gray-500 text-xs sm:text-sm" />
                                     <h3 className="font-semibold text-gray-800 text-sm">Thông tin giao hàng</h3>
                                 </div>
                                 <div className="bg-gray-50 rounded-xl p-3 sm:p-4 space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
@@ -412,7 +412,7 @@ export default function Orders() {
 
                             <div>
                                 <div className="flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3">
-                                    <FontAwesomeIcon icon={faCreditCard} className="text-gray-700 text-xs sm:text-sm" />
+                                    <FontAwesomeIcon icon={faCreditCard} className="text-gray-500 text-xs sm:text-sm" />
                                     <h3 className="font-semibold text-gray-800 text-sm">Phương thức thanh toán</h3>
                                 </div>
                                 <div className="bg-gray-50 rounded-xl p-3 sm:p-4 flex items-center gap-2 sm:gap-3">
@@ -426,7 +426,7 @@ export default function Orders() {
                             {selectedOrder.note && (
                                 <div>
                                     <h3 className="font-semibold text-gray-800 text-sm mb-1.5 sm:mb-2">Ghi chú</h3>
-                                    <div className="bg-gray-50 rounded-xl p-3 sm:p-4 text-xs sm:text-sm text-gray-700">
+                                    <div className="bg-amber-50 rounded-xl p-3 sm:p-4 text-xs sm:text-sm text-gray-700">
                                         {selectedOrder.note}
                                     </div>
                                 </div>
@@ -458,7 +458,7 @@ export default function Orders() {
 
                             <div className="border-t pt-3 sm:pt-4 flex justify-between items-center">
                                 <p className="text-xs sm:text-sm text-gray-600">Tổng cộng</p>
-                                <p className="text-base sm:text-xl font-bold text-gray-700">{formatCurrency(selectedOrder.total)}</p>
+                                <p className="text-base sm:text-xl font-bold text-gray-800">{formatCurrency(selectedOrder.total)}</p>
                             </div>
                         </div>
 

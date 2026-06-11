@@ -25,12 +25,7 @@ function NavItem({ to, icon, name, end }) {
         <NavLink
             to={to}
             end={end}
-            className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${isActive
-                    ? "bg-amber-400 text-white"
-                    : "text-gray-700 hover:bg-amber-50 hover:text-amber-600"
-                }`
-            }
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors text-gray-700 hover:bg-amber-50 hover:text-amber-600"
         >
             <FontAwesomeIcon icon={icon} className="text-base shrink-0" />
             <span className="truncate">{name}</span>
