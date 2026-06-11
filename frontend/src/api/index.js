@@ -9,3 +9,5 @@ export { courseAPI } from "./courses";
 export { blogAPI } from "./blog";
 export { homeContentAPI } from "./homeContent";
 export { aboutContentAPI } from "./aboutContent";
+export { footerContentAPI } from "./footerContent";
+export { contactContentAPI } from "./contactContent";

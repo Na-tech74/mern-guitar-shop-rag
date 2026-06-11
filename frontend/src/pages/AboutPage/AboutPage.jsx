@@ -215,15 +215,17 @@ export default function AboutPage() {
                                 return (
                                     <div
                                         key={idx}
-                                        className="bg-white rounded-2xl p-8 border border-gray-100 shadow-soft hover:shadow-pop hover:border-amber-200 transition-all duration-300"
+                                        className="bg-white rounded-2xl p-5 sm:p-6 border border-gray-100 shadow-soft hover:shadow-pop hover:border-amber-200 transition-all duration-300"
                                     >
-                                        <div className="size-14 rounded-2xl bg-amber-50 flex items-center justify-center mb-5">
-                                            <FontAwesomeIcon icon={Icon} className="text-amber-500 text-xl" />
+                                        <div className="flex items-start gap-3 mb-2">
+                                            <div className="size-8 flex items-center justify-center shrink-0 mt-0.5">
+                                                <FontAwesomeIcon icon={Icon} className="text-gray-900 text-base" />
+                                            </div>
+                                            <h3 className="text-sm sm:text-base font-semibold text-gray-800">
+                                                {c.title || ""}
+                                            </h3>
                                         </div>
-                                        <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                                            {c.title || ""}
-                                        </h3>
-                                        <p className="text-gray-500 leading-relaxed">
+                                        <p className="text-xs sm:text-sm text-gray-500 leading-relaxed">
                                             {c.description || ""}
                                         </p>
                                     </div>
@@ -233,10 +235,10 @@ export default function AboutPage() {
                         <div className="text-center mt-12">
                             <Link
                                 to="/products"
-                                className="inline-flex items-center gap-2 px-6 py-3 bg-amber-400 hover:bg-amber-500 text-white rounded-full font-medium transition shadow-sm hover:shadow-md"
+                                className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-400 hover:bg-amber-500 text-white rounded-lg font-medium transition shadow-sm hover:shadow-md text-sm"
                             >
                                 Khám phá sản phẩm
-                                <FontAwesomeIcon icon={faArrowRight} className="text-sm" />
+                                <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
                             </Link>
                         </div>
                     </div>

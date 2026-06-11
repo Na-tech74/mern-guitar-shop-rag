@@ -2,19 +2,38 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkerAlt, faPhone, faEnvelope, faClock, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { faFacebook, faInstagram, faYoutube } from "@fortawesome/free-brands-svg-icons";
+import { useEffect, useState } from "react";
+import { contactContentAPI } from "../../api";
 
-const contactInfo = [
-    { icon: faMapMarkerAlt, label: "Địa chỉ", value: "537/1 An Phú Đông, Q12, TP. Hồ Chí Minh" },
-    { icon: faPhone, label: "Điện thoại", value: "037.862.3181" },
-    { icon: faEnvelope, label: "Email", value: "namn98561@gmail.com" },
-    { icon: faClock, label: "Giờ làm việc", value: "T2 - CN: 8:00 - 22:00" },
-];
+const iconMap = {
+    map: faMapMarkerAlt,
+    phone: faPhone,
+    email: faEnvelope,
+    clock: faClock,
+};
 
 export default function ContactPage() {
+    const [content, setContent] = useState(null);
+
+    useEffect(() => {
+        contactContentAPI.get()
+            .then(res => setContent(res.data?.data?.content))
+            .catch(() => {});
+    }, []);
+
+    const header = content?.header || {};
+    const contactInfo = content?.contactInfo || [
+        { icon: "map", label: "Địa chỉ", value: "537/1 An Phú Đông, Q12, TP. Hồ Chí Minh" },
+        { icon: "phone", label: "Điện thoại", value: "037.862.3181" },
+        { icon: "email", label: "Email", value: "namn98561@gmail.com" },
+        { icon: "clock", label: "Giờ làm việc", value: "T2 - CN: 8:00 - 22:00" },
+    ];
+    const socialLinks = content?.socialLinks || {};
+    const mapUrl = content?.mapEmbedUrl || "https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d13390.654967441898!2d106.68795299527685!3d10.823414364813097!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1svi!2s!4v1779364882168!5m2!1svi!2s";
+
     return (
         <div className="min-h-screen bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                {/* Breadcrumb */}
                 <nav className="text-sm mb-6 sm:mb-8">
                     <ol className="flex items-center gap-2 text-gray-400">
                         <li><Link to="/" className="hover:text-amber-500 transition">Trang chủ</Link></li>
@@ -23,45 +42,51 @@ export default function ContactPage() {
                     </ol>
                 </nav>
 
-                {/* Header */}
                 <div className="text-center mb-8 sm:mb-12">
-                    <h1 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-2">Liên hệ với chúng tôi</h1>
+                    <h1 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-2">{header.title || "Liên hệ với chúng tôi"}</h1>
                     <div className="w-12 sm:w-16 h-1 bg-amber-400 rounded-full mx-auto mb-3 sm:mb-4" />
-                    <p className="text-sm sm:text-lg text-gray-500 px-4 sm:px-0">Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn</p>
+                    <p className="text-sm sm:text-lg text-gray-500 px-4 sm:px-0">{header.subtitle || "Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn"}</p>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-8 md:gap-12">
-                    {/* Contact Info */}
                     <div className="order-2 md:order-1 space-y-6">
                         <h2 className="text-xl font-semibold text-gray-800">Thông tin liên hệ</h2>
                         <div className="space-y-4">
-                            {contactInfo.map((item) => (
+                            {contactInfo.map((item) => {
+                                const Icon = iconMap[item.icon] || faMapMarkerAlt;
+                                return (
                                     <div key={item.label} className="flex items-start gap-3 sm:gap-4 group">
-                                    <div className="size-10 sm:size-11 rounded-xl bg-amber-50 flex items-center justify-center shrink-0 group-hover:bg-amber-100 transition-colors">
-                                        <FontAwesomeIcon icon={item.icon} className="text-amber-500" />
+                                        <div className="size-10 sm:size-11 rounded-xl bg-amber-50 flex items-center justify-center shrink-0 group-hover:bg-amber-100 transition-colors">
+                                            <FontAwesomeIcon icon={Icon} className="text-amber-500" />
+                                        </div>
+                                        <div className="pt-1">
+                                            <p className="text-sm text-gray-400">{item.label}</p>
+                                            <p className="font-medium text-gray-800">{item.value}</p>
+                                        </div>
                                     </div>
-                                    <div className="pt-1">
-                                        <p className="text-sm text-gray-400">{item.label}</p>
-                                        <p className="font-medium text-gray-800">{item.value}</p>
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
 
                         <div className="flex gap-3 pt-4">
-                            {[
-                                { icon: faFacebook, hover: "hover:bg-blue-500" },
-                                { icon: faInstagram, hover: "hover:bg-pink-500" },
-                                { icon: faYoutube, hover: "hover:bg-red-500" },
-                            ].map(({ icon, hover }) => (
-                                <a key={hover} href="#" className={`size-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 ${hover} hover:text-white transition-all`}>
-                                    <FontAwesomeIcon icon={icon} />
+                            {socialLinks.facebook && (
+                                <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="size-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-blue-500 hover:text-white transition-all">
+                                    <FontAwesomeIcon icon={faFacebook} />
                                 </a>
-                            ))}
+                            )}
+                            {socialLinks.instagram && (
+                                <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="size-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-pink-500 hover:text-white transition-all">
+                                    <FontAwesomeIcon icon={faInstagram} />
+                                </a>
+                            )}
+                            {socialLinks.youtube && (
+                                <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="size-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-red-500 hover:text-white transition-all">
+                                    <FontAwesomeIcon icon={faYoutube} />
+                                </a>
+                            )}
                         </div>
                     </div>
 
-                    {/* Contact Form */}
                     <div className="order-1 md:order-2 bg-gray-50 rounded-2xl border border-gray-100 p-5 sm:p-8 shadow-soft">
                         <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 sm:mb-6">Gửi tin nhắn</h2>
                         <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
@@ -86,22 +111,23 @@ export default function ContactPage() {
                 </div>
             </div>
 
-            {/* Map */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-                <div className="rounded-2xl overflow-hidden shadow-soft border border-gray-100">
-                    <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d13390.654967441898!2d106.68795299527685!3d10.823414364813097!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1svi!2s!4v1779364882168!5m2!1svi!2s"
-                        width="100%"
-                        height="400"
-                        className="h-64 sm:h-[400px]"
-                        style={{ border: 0 }}
-                        allowFullScreen
-                        loading="lazy"
-                        referrerPolicy="no-referrer-when-downgrade"
-                        title="Google Maps"
-                    />
+            {mapUrl && (
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+                    <div className="rounded-2xl overflow-hidden shadow-soft border border-gray-100">
+                        <iframe
+                            src={mapUrl}
+                            width="100%"
+                            height="400"
+                            className="h-64 sm:h-[400px]"
+                            style={{ border: 0 }}
+                            allowFullScreen
+                            loading="lazy"
+                            referrerPolicy="no-referrer-when-downgrade"
+                            title="Google Maps"
+                        />
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 }

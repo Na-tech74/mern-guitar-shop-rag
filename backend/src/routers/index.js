@@ -1,8 +1,3 @@
-/**
- * routers/index.js
- * Tập trung mount tất cả API routes vào Express app.
- */
-
 import mongoose from 'mongoose';
 
 import authRoutes from './auth.routes.js';
@@ -14,13 +9,10 @@ import orderRoutes from './order.routes.js';
 import courseRoutes from './course.routes.js';
 import homeContentRoutes from './homeContent.routes.js';
 import aboutContentRoutes from './aboutContent.routes.js';
+import footerContentRoutes from './footerContent.routes.js';
+import contactContentRoutes from './contactContent.routes.js';
 
-/**
- * Mount toàn bộ routes (bao gồm health check) vào Express app
- * @param {import('express').Express} app
- */
 export const mountRoutes = (app) => {
-    // Health check
     app.get('/', (req, res) => {
         res.json({ message: "Server healthy!" });
     });
@@ -35,7 +27,6 @@ export const mountRoutes = (app) => {
         });
     });
 
-    // API routes
     app.use('/api/auth', authRoutes);
     app.use('/api/users', userRoutes);
     app.use('/api/categories', categoriseRoutes);
@@ -45,4 +36,6 @@ export const mountRoutes = (app) => {
     app.use('/api/courses', courseRoutes);
     app.use('/api/home-content', homeContentRoutes);
     app.use('/api/about-content', aboutContentRoutes);
+    app.use('/api/footer-content', footerContentRoutes);
+    app.use('/api/contact-content', contactContentRoutes);
 };

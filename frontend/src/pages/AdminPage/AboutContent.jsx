@@ -8,7 +8,6 @@ import {
     faArrowDown,
     faEye,
     faUpload,
-    faTimes,
     faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
@@ -73,10 +72,6 @@ const ImageUploader = ({ value, onChange, alt = "", height = "h-32" }) => {
         }
     };
 
-    const handleRemove = () => {
-        onChange("");
-    };
-
     if (uploading) {
         return (
             <div className={`flex ${height} w-full items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-100 text-gray-800 text-sm`}>
@@ -105,21 +100,13 @@ const ImageUploader = ({ value, onChange, alt = "", height = "h-32" }) => {
 
     return (
         <div>
-            <div className="relative">
+            <div>
                 <img
                     src={value}
                     alt={alt}
-                    className={`${height} w-200 h-200 rounded-lg object-cover border border-gray-200`}
+                    className={`${height} w-full max-w-60 rounded-lg object-cover border border-gray-200`}
                     loading="lazy"
                 />
-                <button
-                    type="button"
-                    onClick={handleRemove}
-                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 shadow"
-                    title="Xóa ảnh"
-                >
-                    <FontAwesomeIcon icon={faTimes} className="text-xs" />
-                </button>
             </div>
             <label className="mt-2 inline-flex items-center gap-1 text-xs text-gray-700 hover:text-gray-800 cursor-pointer">
                 <FontAwesomeIcon icon={faUpload} />
@@ -245,7 +232,7 @@ const StorySection = ({ formData, handlers }) => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                     4 ảnh (grid 2x2)
                 </label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid lg:grid-cols-4 grid-cols-2 gap-1">
                     {formData.story.images.map((image, index) => (
                         <ImageUploader
                             key={index}
@@ -270,7 +257,7 @@ const StatsSection = ({ formData, handlers }) => {
                 {formData.stats.items.map((stat, index) => (
                     <div key={index} className="rounded-xl border border-gray-200 p-4 space-y-3">
                         <h4 className="font-semibold text-blue-700 text-sm sm:text-base flex items-center gap-2"><span className="size-2 rounded-full bg-blue-400"></span> Số liệu {index + 1}</h4>
-                        <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2">
                             <Input
                                 label="Giá trị (vd: 10+)"
                                 value={stat.value}

@@ -40,7 +40,9 @@ frontend/
 │   │   ├── courses.js               # Khóa học API
 │   │   ├── users.js                 # Người dùng API
 │   │   ├── homeContent.js           # Nội dung trang chủ API
-│   │   └── aboutContent.js          # Nội dung trang giới thiệu API
+│   │   ├── aboutContent.js          # Nội dung trang giới thiệu API
+│   │   ├── footerContent.js         # Nội dung footer API
+│   │   └── contactContent.js        # Nội dung trang liên hệ API
 │   ├── assets/
 │   │   ├── css/
 │   │   │   ├── style.globals.css    # Tailwind directives
@@ -97,6 +99,8 @@ frontend/
 │           ├── Settings.jsx         # Cài đặt cá nhân
 │           ├── HomeContent.jsx      # Chỉnh sửa nội dung trang chủ
 │           ├── AboutContent.jsx     # Chỉnh sửa nội dung trang giới thiệu
+│           ├── FooterContent.jsx    # Chỉnh sửa nội dung footer
+│           ├── ContactContent.jsx   # Chỉnh sửa nội dung trang liên hệ
 │           ├── components/
 │           │   ├── SideBar.jsx      # Sidebar admin
 │           │   └── Header.jsx       # Header admin
@@ -110,7 +114,9 @@ frontend/
 │               ├── useCourses.js
 │               ├── useSettings.js
 │               ├── useHomeContent.js
-│               └── useAboutContent.js
+│               ├── useAboutContent.js
+│               ├── useFooterContent.js
+│               └── useContactContent.js
 ```
 
 ## Routes
@@ -157,6 +163,8 @@ frontend/
 | `/admin/blog` | Quản lý bài viết |
 | `/admin/home-content` | Chỉnh sửa nội dung trang chủ |
 | `/admin/about-content` | Chỉnh sửa nội dung trang giới thiệu |
+| `/admin/footer-content` | Chỉnh sửa nội dung footer |
+| `/admin/contact-content` | Chỉnh sửa nội dung trang liên hệ |
 | `/admin/settings` | Cài đặt cá nhân |
 
 ## Tính năng chính
@@ -184,6 +192,8 @@ frontend/
 - **Khóa học**: CRUD, quản lý bài học động (thêm/xoá/sắp xếp), xuất bản/draft
 - **Nội dung trang chủ**: Chỉnh sửa carousel, features, categories section, sản phẩm nổi bật, clip, bộ sưu tập, CTA
 - **Nội dung trang giới thiệu**: Chỉnh sửa story, stats, team, commitments
+- **Nội dung footer**: Chỉnh sửa mô tả, liên kết, mạng xã hội, thông tin liên hệ
+- **Nội dung trang liên hệ**: Chỉnh sửa thông tin liên hệ, mạng xã hội, Google Maps
 - **Cài đặt**: Thông tin cá nhân, đổi mật khẩu
 
 ## Quản lý State
@@ -206,7 +216,7 @@ frontend/
 - `client.js`: Axios instance với `baseURL` từ env `VITE_API_URL`, `withCredentials: true`
 - Request interceptor: gắn `Authorization: Bearer` header, tự động xử lý `Content-Type` cho FormData
 - Response interceptor: queue xử lý concurrent 401, refresh token tự động, redirect `/login` nếu hết hạn
-- Các module API riêng: `auth.js`, `products.js`, `categories.js`, `orders.js`, `users.js`, `blog.js`, `courses.js`, `homeContent.js`, `aboutContent.js`
+- Các module API riêng: `auth.js`, `products.js`, `categories.js`, `orders.js`, `users.js`, `blog.js`, `courses.js`, `homeContent.js`, `aboutContent.js`, `footerContent.js`, `contactContent.js`
 - Export tập trung qua `index.js`
 
 ## Hiệu năng
@@ -276,10 +286,10 @@ Xem thêm trong thư mục `docs/frontend/`:
 |------|-------|
 | `components.md` | 14 components (Button, Input, Textarea, Header, Footer, Carousel, Logo, ProductCard, CategorySidebar, SortDropdown, Pagination, Skeleton, ConfirmDialog, ProtectedRoute) |
 | `layouts.md` | MainLayout, AdminLayout (SideBar + Header) |
-| `api-client.md` | Axios instance, interceptors, token refresh queue, 9 API modules |
+| `api-client.md` | Axios instance, interceptors, token refresh queue, 11 API modules |
 | `helpers.md` | formatDate, formatCurrency, getStatusColor, getOptimizedImage |
-| `hooks.md` | 14 custom hooks (useDebounce, useInView, useSessionRecovery, useUserInfo + 10 admin hooks) |
-| `pages.md` | Tất cả pages (Home, Products, Auth, Cart, Admin gồm home-content, about-content) |
+| `hooks.md` | 16 custom hooks (useDebounce, useInView, useSessionRecovery, useUserInfo + 12 admin hooks) |
+| `pages.md` | Tất cả pages (Home, Products, Auth, Cart, Admin gồm home-content, about-content, footer-content, contact-content) |
 
 ## Yêu cầu hệ thống
 

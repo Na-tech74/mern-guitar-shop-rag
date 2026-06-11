@@ -2,16 +2,19 @@ import { Navigate } from "react-router-dom";
 
 export default function ProtectedRoute({ children, roleRequired }) {
     const token = sessionStorage.getItem("token");
-   
-    const userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
-    const role = userInfo?.role; 
 
-    //  chưa login
+    let userInfo = null;
+    try {
+        userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+    } catch {
+        userInfo = null;
+    }
+    const role = userInfo?.role;
+
     if (!token) {
         return <Navigate to="/login" replace />;
     }
 
-    //  sai quyền
     if (roleRequired && role !== roleRequired) {
         return <Navigate to="/" replace />;
     }

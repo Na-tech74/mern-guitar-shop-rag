@@ -96,12 +96,12 @@ export default function CartPage() {
 
                 {cartItems.length === 0 ? (
                     <div className="text-center py-12 sm:py-20 bg-white rounded-2xl border border-gray-100 shadow-soft max-w-lg mx-auto px-4 sm:px-6">
-                        <div className="size-16 sm:size-24 mx-auto mb-4 sm:mb-6 bg-amber-50 rounded-2xl flex items-center justify-center">
-                            <FontAwesomeIcon icon={faShoppingCart} className="text-2xl sm:text-4xl text-amber-400" />
+                        <div className="size-16 sm:size-24 mx-auto mb-4 sm:mb-6 bg-gray-100 rounded-2xl flex items-center justify-center">
+                            <FontAwesomeIcon icon={faShoppingCart} className="text-2xl sm:text-4xl text-gray-400" />
                         </div>
                         <p className="text-gray-700 text-base sm:text-lg font-medium mb-1 sm:mb-2">Giỏ hàng của bạn đang trống</p>
-                        <p className="text-gray-400 text-xs sm:text-sm mb-6 sm:mb-8">Hãy khám phá các sản phẩm của chúng tôi</p>
-                        <Link to="/products" className="inline-flex items-center gap-2 px-6 py-3 bg-amber-400 hover:bg-amber-500 text-white rounded-full font-medium transition shadow-sm">
+                        <p className="text-gray-400 text-xs sm:text-sm mb-5 sm:mb-6">Hãy khám phá các sản phẩm của chúng tôi</p>
+                        <Link to="/products" className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-400 hover:bg-amber-500 text-white rounded-lg font-medium transition shadow-sm text-sm">
                             <FontAwesomeIcon icon={faArrowLeft} />
                             Tiếp tục mua sắm
                         </Link>
@@ -228,22 +228,22 @@ export default function CartPage() {
                                     Tiến hành thanh toán
                                 </Button>
 
-                                <div className="mt-5 space-y-3 text-xs text-gray-400">
+                                <div className="mt-5 space-y-3 text-sm text-gray-500 ">
                                     <div className="flex items-center gap-2.5">
-                                        <div className="size-7 rounded-lg bg-amber-50 flex items-center justify-center">
-                                            <FontAwesomeIcon icon={faShieldAlt} className="text-amber-500 text-[10px]" />
+                                        <div className="size-7 rounded-lg  flex items-center justify-center">
+                                            <FontAwesomeIcon icon={faShieldAlt}  />
                                         </div>
                                         Sản phẩm chính hãng 100%
                                     </div>
                                     <div className="flex items-center gap-2.5">
-                                        <div className="size-7 rounded-lg bg-amber-50 flex items-center justify-center">
-                                            <FontAwesomeIcon icon={faUndo} className="text-amber-500 text-[10px]" />
+                                        <div className="size-7 rounded-lg flex items-center justify-center">
+                                            <FontAwesomeIcon icon={faUndo}  />
                                         </div>
                                         Đổi trả trong 7 ngày
                                     </div>
                                     <div className="flex items-center gap-2.5">
-                                        <div className="size-7 rounded-lg bg-amber-50 flex items-center justify-center">
-                                            <FontAwesomeIcon icon={faGift} className="text-amber-500 text-[10px]" />
+                                        <div className="size-7 rounded-lg  flex items-center justify-center">
+                                            <FontAwesomeIcon icon={faGift} />
                                         </div>
                                         Quà tặng hấp dẫn
                                     </div>

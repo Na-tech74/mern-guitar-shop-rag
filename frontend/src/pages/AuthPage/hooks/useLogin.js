@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { loginAPI } from "../../../api";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 export default function useLogin() {
     const [form, setForm] = useState({
@@ -10,7 +10,6 @@ export default function useLogin() {
 
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
     const validate = () => {
@@ -56,7 +55,7 @@ export default function useLogin() {
             const redirectParam = searchParams.get("redirect");
             const fallbackRedirect = data.user.role === "admin" ? "/admin" : "/";
             const redirect = isSafeRedirect(redirectParam) ? redirectParam : fallbackRedirect;
-            navigate(redirect);
+            window.location.href = redirect;
 
             setForm({ email: "", password: "" });
         } catch (err) {

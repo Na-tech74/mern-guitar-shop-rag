@@ -210,27 +210,27 @@ export default function ProductDetailPage() {
                     </div>
 
                     <div className="pt-4 sm:pt-6 border-t border-gray-100 space-y-2 sm:grid sm:grid-cols-3 sm:gap-3 sm:space-y-0">
-                        <div className="flex items-center gap-3 p-3 rounded-xl bg-amber-50 text-sm">
-                            <div className="size-9 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
-                                <FontAwesomeIcon icon={faTruck} className="text-amber-500 text-sm" />
+                        <div className="flex items-center gap-3 p-3 rounded-xl text-sm">
+                            <div className="size-9 rounded-lg flex items-center justify-center shrink-0">
+                                <FontAwesomeIcon icon={faTruck} />
                             </div>
                             <div>
                                 <p className="font-medium text-gray-800">Miễn phí giao hàng</p>
                                 <p className="text-gray-400 text-xs">Cho đơn trên 500k</p>
                             </div>
                         </div>
-                        <div className="flex items-center gap-3 p-3 rounded-xl bg-amber-50 text-sm">
-                            <div className="size-9 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
-                                <FontAwesomeIcon icon={faShieldAlt} className="text-amber-500 text-sm" />
+                        <div className="flex items-center gap-3 p-3 rounded-xl text-sm">
+                            <div className="size-9 rounded-lgflex items-center justify-center shrink-0">
+                                <FontAwesomeIcon icon={faShieldAlt}  />
                             </div>
                             <div>
                                 <p className="font-medium text-gray-800">Bảo hành 12 tháng</p>
                                 <p className="text-gray-400 text-xs">Chính hãng 100%</p>
                             </div>
                         </div>
-                        <div className="flex items-center gap-3 p-3 rounded-xl bg-amber-50 text-sm">
-                            <div className="size-9 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
-                                <FontAwesomeIcon icon={faUndo} className="text-amber-500 text-sm" />
+                        <div className="flex items-center gap-3 p-3 rounded-xl text-sm">
+                            <div className="size-9 rounded-lg flex items-center justify-center shrink-0">
+                                <FontAwesomeIcon icon={faUndo}  />
                             </div>
                             <div>
                                 <p className="font-medium text-gray-800">Đổi trả 7 ngày</p>

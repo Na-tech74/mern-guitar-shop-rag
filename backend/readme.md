@@ -2,7 +2,7 @@
 
 ## Giới thiệu
 
-Backend REST API cho website bán đàn guitar **Nam Acoustic**, xây dựng bằng **Node.js + Express 5** và **MongoDB (Mongoose 9)**. Hỗ trợ quản lý sản phẩm, danh mục, đơn hàng, người dùng, blog, khóa học, nội dung trang chủ/giới thiệu và xác thực JWT dual-token.
+Backend REST API cho website bán đàn guitar **Nam Acoustic**, xây dựng bằng **Node.js + Express 5** và **MongoDB (Mongoose 9)**. Hỗ trợ quản lý sản phẩm, danh mục, đơn hàng, người dùng, blog, khóa học, nội dung trang chủ/giới thiệu/footer/liên hệ và xác thực JWT dual-token.
 
 ## Công nghệ sử dụng
 
@@ -48,7 +48,9 @@ backend/
 │   │   ├── order.model.js         # Đơn hàng + OrderItem
 │   │   ├── course.model.js        # Khóa học + Lesson
 │   │   ├── homeContent.model.js   # Nội dung trang chủ (singleton)
-│   │   └── aboutContent.model.js  # Nội dung trang giới thiệu (singleton)
+│   │   ├── aboutContent.model.js  # Nội dung trang giới thiệu (singleton)
+│   │   ├── footerContent.model.js # Nội dung footer (singleton)
+│   │   └── contactContent.model.js# Nội dung trang liên hệ (singleton)
 │   ├── routers/                   # Định tuyến
 │   │   ├── index.js               # Mount tất cả routes
 │   │   ├── auth.routes.js
@@ -59,7 +61,9 @@ backend/
 │   │   ├── order.routes.js
 │   │   ├── course.routes.js
 │   │   ├── homeContent.routes.js
-│   │   └── aboutContent.routes.js
+│   │   ├── aboutContent.routes.js
+│   │   ├── footerContent.routes.js
+│   │   └── contactContent.routes.js
 │   ├── controller/                # Xử lý nghiệp vụ
 │   │   ├── auth.controller.js
 │   │   ├── users.controller.js
@@ -69,7 +73,9 @@ backend/
 │   │   ├── order.controller.js
 │   │   ├── course.controller.js
 │   │   ├── homeContent.controller.js
-│   │   └── aboutContent.controller.js
+│   │   ├── aboutContent.controller.js
+│   │   ├── footerContent.controller.js
+│   │   └── contactContent.controller.js
 │   ├── services/
 │   │   ├── generateToken.js       # Tạo JWT access + refresh
 │   │   ├── sendEmail.js           # Gửi email (Gmail SMTP)
@@ -175,13 +181,19 @@ backend/
 | POST | `/upload` | Admin | Upload ảnh (carousel, featuredTypes...) |
 | POST | `/upload-video` | Admin | Upload video (clip khuyến mãi) |
 
-### About Content (`/api/about-content`)
+### Footer Content (`/api/footer-content`)
 
 | Method | Endpoint | Quyền | Mô tả |
 |--------|----------|-------|-------|
-| GET | `/` | Public | Lấy nội dung trang giới thiệu (singleton) |
-| PUT | `/` | Admin | Cập nhật nội dung trang giới thiệu |
-| POST | `/upload` | Admin | Upload ảnh (story, team...) |
+| GET | `/` | Public | Lấy nội dung footer (singleton) |
+| PUT | `/` | Admin | Cập nhật nội dung footer |
+
+### Contact Content (`/api/contact-content`)
+
+| Method | Endpoint | Quyền | Mô tả |
+|--------|----------|-------|-------|
+| GET | `/` | Public | Lấy nội dung trang liên hệ (singleton) |
+| PUT | `/` | Admin | Cập nhật nội dung trang liên hệ |
 
 ## Health Check
 
@@ -246,11 +258,11 @@ Xem thêm trong thư mục `docs/backend/`:
 |------|-------|
 | `api.md` | API endpoints chi tiết (params, body, response, errors) |
 | `middleware.md` | Auth (protect, adminOnly, rate limit), error handler, upload, asyncHandler |
-| `models.md` | 8 Mongoose models (Users, Product, Category, Blog, Order, Course, HomeContent, AboutContent) |
+| `models.md` | 11 Mongoose models (Users, Product, Category, Blog, Order, Course, HomeContent, AboutContent, FooterContent, ContactContent) |
 | `services.md` | generateToken, sendEmail, uploadImages, uploadVideos |
 | `utils.md` | appResponse, valid, format, cookier |
 | `config.md` | Kết nối DB, cấu hình Cloudinary, global middleware |
-| `controllers.md` | Chi tiết 9 controllers (logic, validation, errors) |
+| `controllers.md` | Chi tiết 11 controllers (logic, validation, errors) |
 
 ## Môi trường
 

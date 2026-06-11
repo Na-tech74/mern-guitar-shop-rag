@@ -18,7 +18,7 @@ User (Browser)
        │        ├── Auth (JWT dual-token)
        │        ├── Products / Categories / Orders
        │        ├── Users / Blog / Courses
-       │        ├── HomeContent / AboutContent
+       │        ├── HomeContent / AboutContent / FooterContent / ContactContent
        │        ▼
        │     MongoDB
        │
@@ -84,9 +84,9 @@ User (Browser)
 │   │   ├── app.js              # Express app (tách riêng để test)
 │   │   ├── config/             # DB, Cloudinary, global middleware
 │   │   ├── middleware/         # Auth, error, upload, sanitize, notFound, asyncHandler
-│   │   ├── models/             # 8 Mongoose models
-│   │   ├── routers/            # Route definitions (9 modules)
-│   │   ├── controller/         # Business logic (9 controllers)
+│   │   ├── models/             # 11 Mongoose models
+│   │   ├── routers/            # Route definitions (11 modules)
+│   │   ├── controller/         # Business logic (11 controllers)
 │   │   ├── services/           # generateToken, sendEmail, uploadImages, uploadVideos
 │   │   └── utils/              # appResponse, valid, format, cookier
 │   └── readme.md
@@ -95,12 +95,12 @@ User (Browser)
 │   ├── src/
 │   │   ├── main.jsx            # Entry point
 │   │   ├── App.jsx             # Root + Router (lazy loading)
-│   │   ├── api/                # Axios client + interceptors + 9 API modules
+│   │   ├── api/                # Axios client + interceptors + 11 API modules
 │   │   ├── components/         # 14 shared components
-│   │   ├── hooks/              # 4 custom hooks
+│   │   ├── hooks/              # 6 custom hooks
 │   │   ├── helpers/            # Format utilities
 │   │   ├── layouts/            # MainLayout, AdminLayout
-│   │   └── pages/              # 14 page groups (14 user + 10 admin + 2 admin components + 10 admin hooks)
+│   │   └── pages/              # 14 page groups (14 user + 12 admin + 2 admin components + 12 admin hooks)
 │   └── readme.md
 │
 ├── docs/                       # Tài liệu chi tiết (đang cập nhật)
@@ -134,6 +134,8 @@ User (Browser)
 - **Khóa học**: CRUD, quản lý bài học động (thêm/xoá/sắp xếp), xuất bản/draft
 - **Nội dung trang chủ**: Chỉnh sửa carousel, features, danh mục, sản phẩm nổi bật, clip, bộ sưu tập, CTA
 - **Nội dung trang giới thiệu**: Chỉnh sửa story, stats, team, commitments
+- **Nội dung footer**: Chỉnh sửa mô tả, liên kết, mạng xã hội, thông tin liên hệ
+- **Nội dung trang liên hệ**: Chỉnh sửa thông tin liên hệ, mạng xã hội, Google Maps
 - **Cài đặt**: Thông tin cá nhân, đổi mật khẩu
 
 ### Chatbot AI (RAG) - đang phát triển
@@ -169,9 +171,9 @@ User chọn sản phẩm → localStorage cart
 ### Quản lý nội dung (Singleton)
 
 ```
-Admin chỉnh sửa → PUT /api/home-content (hoặc about-content)
+Admin chỉnh sửa → PUT /api/home-content (hoặc about-content / footer-content / contact-content)
   → Backend cập nhật document duy nhất
-  → Frontend GET → render trang chủ / giới thiệu
+  → Frontend GET → render trang chủ / giới thiệu / footer / liên hệ
 ```
 
 ### Chatbot RAG (kế hoạch)
@@ -213,5 +215,9 @@ npm run dev       # http://localhost:5173 (proxy /api → backend)
 
 ### Biến môi trường
 
+<<<<<<< HEAD
 Xem chi tiết tại `backend/readme.md` và `frontend/readme.md`.
 
+=======
+Xem chi tiết tại `backend/readme.md` và `frontend/readme.md`.
+>>>>>>> 6320a4b ( create contactContent and FooterContent , update ux/ui frontend)

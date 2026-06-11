@@ -1,7 +1,7 @@
 import logo from "../assets/images/logo.jpg"
-export default function Logo({ title }) {
+export default function Logo({ title, className = "" }) {
     return (
-        <div className="text-center p-2">
+        <div className={`text-center p-2 ${className}`}>
             {title && <h2 className="text-lg font-semibold text-gray-700 mb-2">{title}</h2>}
             <div className="w-52 h-16 overflow-hidden">
                 <img src={logo} alt="Nam Acoustic" width="1793" height="576" className="w-full h-full object-cover object-center" />
