@@ -217,7 +217,3 @@ npm run dev       # http://localhost:5173 (proxy /api → backend)
 
 <<<<<<< HEAD
 Xem chi tiết tại `backend/readme.md` và `frontend/readme.md`.
-
-=======
-Xem chi tiết tại `backend/readme.md` và `frontend/readme.md`.
->>>>>>> 6320a4b ( create contactContent and FooterContent , update ux/ui frontend)
