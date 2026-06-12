@@ -4,6 +4,7 @@ import { faMapMarkerAlt, faPhone, faEnvelope, faClock, faPaperPlane } from "@for
 import { faFacebook, faInstagram, faYoutube } from "@fortawesome/free-brands-svg-icons";
 import { useEffect, useState } from "react";
 import { contactContentAPI } from "../../api";
+import Breadcrumb from "../../components/Breadcrumb";
 
 const iconMap = {
     map: faMapMarkerAlt,
@@ -34,13 +35,7 @@ export default function ContactPage() {
     return (
         <div className="min-h-screen bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <nav className="text-sm mb-6 sm:mb-8">
-                    <ol className="flex items-center gap-2 text-gray-400">
-                        <li><Link to="/" className="hover:text-amber-500 transition">Trang chủ</Link></li>
-                        <li className="text-gray-300">/</li>
-                        <li className="text-gray-600 font-medium">Liên hệ</li>
-                    </ol>
-                </nav>
+                <Breadcrumb items={[{ label: "Trang chủ", href: "/" }, { label: "Liên hệ" }]} />
 
                 <div className="text-center mb-8 sm:mb-12">
                     <h1 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-2">{header.title || "Liên hệ với chúng tôi"}</h1>

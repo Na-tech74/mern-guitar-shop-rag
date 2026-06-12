@@ -4,7 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faUser, faNewspaper, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { API } from "../../api";
 import { getOptimizedImage } from "../../helpers/image";
-
+import { formatDate } from "../../helpers/formatters";
+import Breadcrumb from "../../components/Breadcrumb";
 export default function BlogPage() {
     const [blogs, setBlogs] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -14,23 +15,12 @@ export default function BlogPage() {
             .then((res) => setBlogs(res.data?.data?.blogs || []))
             .catch(() => {})
             .finally(() => setLoading(false));
-    }, []);
-
-    const formatDate = (date) =>
-        new Date(date).toLocaleDateString("vi-VN", {
-            day: "2-digit", month: "2-digit", year: "numeric",
-        });
+    }, []); 
 
     return (
         <div className="min-h-screen bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <nav className="text-sm mb-8">
-                    <ol className="flex items-center gap-2 text-gray-400">
-                        <li><Link to="/" className="hover:text-amber-500 transition">Trang chủ</Link></li>
-                        <li className="text-gray-300">/</li>
-                        <li className="text-gray-600 font-medium">Bài viết</li>
-                    </ol>
-                </nav>
+                <Breadcrumb items={[{ label: "Trang chủ", href: "/" }, { label: "Bài viết" }]} />
 
                 <div className="text-center mb-12">
                     <h1 className="text-4xl font-bold text-gray-900 mb-2">Blogs Guitar</h1>

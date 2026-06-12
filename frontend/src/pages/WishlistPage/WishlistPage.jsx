@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { Link } from "react-router-dom";
+import Breadcrumb from "../../components/Breadcrumb";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faHeart,
@@ -61,15 +62,8 @@ export default function WishlistPage() {
     return (
         <div className="min-h-screen bg-gray-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <nav className="text-sm mb-4">
-                    <ol className="flex items-center gap-2 text-gray-400">
-                        <li>
-                            <Link to="/" className="hover:text-amber-600 transition">Trang chủ</Link>
-                        </li>
-                        <li>/</li>
-                        <li className="text-gray-700 font-medium">Yêu thích</li>
-                    </ol>
-                </nav>
+            
+                <Breadcrumb items={[{ label: "Trang chủ", href: "/" }, { label: "Yêu thích" }]} />
 
                 <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-4 sm:p-5 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-3">

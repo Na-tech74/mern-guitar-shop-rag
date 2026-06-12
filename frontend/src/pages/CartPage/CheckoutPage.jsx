@@ -1,180 +1,34 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import Breadcrumb from "../../components/Breadcrumb";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faArrowLeft, faMapMarkerAlt, faCreditCard, faMoneyBillWave,
-    faTruck, faCheckCircle, faWallet
+    faCheckCircle, faWallet
 } from "@fortawesome/free-solid-svg-icons";
-import { orderAPI } from "../../api";
-import { getOptimizedImage } from "../../helpers/image";
-import { formatCurrency } from "../../helpers/formatters";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
 import Textarea from "../../components/Textarea";
-import { useDialog } from "../../components/MessageDialog";
-
-const initialForm = {
-    fullName: "",
-    phone: "",
-    address: "",
-    city: "",
-};
+import useCheckoutPage from "./hooks/useCheckoutPage";
+import OrderSummaryContent from "./components/OrderSummaryContent";
 
 export default function CheckoutPage() {
-    const { alert } = useDialog();
-    const navigate = useNavigate();
-    const [cartItems, setCartItems] = useState([]);
-    const [form, setForm] = useState(initialForm);
-    const [paymentMethod, setPaymentMethod] = useState("cod");
-    const [note, setNote] = useState("");
-    const [submitting, setSubmitting] = useState(false);
-    const [errors, setErrors] = useState({});
-
-    useEffect(() => {
-        const token = sessionStorage.getItem("token");
-        if (!token) {
-            navigate("/login?redirect=/checkout", { replace: true });
-            return;
-        }
-
-        const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-        if (cart.length === 0) {
-            navigate("/cart", { replace: true });
-            return;
-        }
-        setCartItems(cart);
-
-        const userInfo = JSON.parse(sessionStorage.getItem("userInfo") || "{}");
-        if (userInfo?.name) {
-            setForm(prev => ({ ...prev, fullName: userInfo.name }));
-        }
-    }, [navigate]);
-
-    const subtotal = cartItems.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
-    const itemCount = cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
-    const total = subtotal;
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setForm(prev => ({ ...prev, [name]: value }));
-        if (errors[name]) {
-            setErrors(prev => ({ ...prev, [name]: "" }));
-        }
-    };
-
-    const validate = () => {
-        const newErrors = {};
-        if (!form.fullName.trim()) newErrors.fullName = "Vui lòng nhập họ tên";
-        if (!form.phone.trim()) newErrors.phone = "Vui lòng nhập số điện thoại";
-        else if (!/^(0|\+84)[3-9][0-9]{8}$/.test(form.phone.trim())) {
-            newErrors.phone = "Số điện thoại không hợp lệ";
-        }
-        if (!form.address.trim()) newErrors.address = "Vui lòng nhập địa chỉ";
-        if (!form.city.trim()) newErrors.city = "Vui lòng nhập thành phố";
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!validate()) return;
-
-        setSubmitting(true);
-        try {
-            const items = cartItems.map(item => ({
-                product: item.name,
-                productId: item._id,
-                quantity: item.quantity,
-            }));
-
-            const res = await orderAPI.create({
-                items,
-                shippingAddress: {
-                    fullName: form.fullName.trim(),
-                    phone: form.phone.trim(),
-                    address: form.address.trim(),
-                    city: form.city.trim(),
-                },
-                paymentMethod,
-                note: note.trim(),
-            });
-
-            localStorage.setItem("cart", "[]");
-            window.dispatchEvent(new Event("cart-updated"));
-
-            const orderData = res.data?.data?.order || {};
-            navigate("/order-success", {
-                state: {
-                    orderId: orderData._id,
-                    total: orderData.total || total,
-                }
-            });
-        } catch (err) {
-            const msg = err.response?.data?.message || "Đặt hàng thất bại, vui lòng thử lại!";
-            await alert({ title: "Lỗi", message: msg, variant: "error" });
-        } finally {
-            setSubmitting(false);
-        }
-    };
-
-    const OrderSummaryContent = () => (
-        <>
-            <div className="max-h-64 overflow-y-auto space-y-3">
-                {cartItems.map((item) => (
-                    <div key={item._id} className="flex gap-3 p-2 rounded-xl hover:bg-gray-50 transition">
-                        <div className="size-12 sm:size-14 rounded-xl bg-gray-100 overflow-hidden shrink-0">
-                            <img
-                                src={getOptimizedImage(item.images?.[0], 100) || ""}
-                                alt={item.name}
-                                loading="lazy"
-                                decoding="async"
-                                className="w-full h-full object-cover"
-                            />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-800 truncate">{item.name}</p>
-                            <p className="text-xs text-gray-400">x{item.quantity}</p>
-                            <p className="text-sm font-semibold text-amber-600">
-                                {formatCurrency(item.price * item.quantity)}
-                            </p>
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            <div className="border-t border-gray-100 mt-4 pt-4 space-y-2 text-sm">
-                <div className="flex justify-between text-gray-500">
-                    <span>Tạm tính ({itemCount} sản phẩm)</span>
-                    <span className="font-medium text-gray-700">{formatCurrency(subtotal)}</span>
-                </div>
-                <div className="flex justify-between text-gray-500">
-                    <span className="flex items-center gap-1">
-                        <FontAwesomeIcon icon={faTruck} className=" text-xs" />
-                        Phí vận chuyển
-                    </span>
-                    <span className="text-emerald-600 font-medium">Miễn phí</span>
-                </div>
-                <div className="border-t border-gray-100 pt-2 flex justify-between font-bold text-base sm:text-lg">
-                    <span className="text-gray-800">Tổng cộng</span>
-                    <span className="text-amber-600">{formatCurrency(total)}</span>
-                </div>
-            </div>
-        </>
-    );
+    const {
+        cartItems,
+        form, errors, handleChange,
+        paymentMethod, setPaymentMethod, getPaymentBorderClass,
+        note, setNote,
+        submitting,
+        subtotal, itemCount, total,
+        handleSubmit,
+    } = useCheckoutPage();
 
     return (
         <div className="min-h-screen bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-                <nav className="text-sm mb-5 sm:mb-6">
-                    <ol className="flex items-center gap-2 text-gray-400">
-                        <li><Link to="/" className="hover:text-amber-500 transition">Trang chủ</Link></li>
-                        <li className="text-gray-300">/</li>
-                        <li><Link to="/cart" className="hover:text-amber-500 transition">Giỏ hàng</Link></li>
-                        <li className="text-gray-300">/</li>
-                        <li className="text-gray-600 font-medium">Thanh toán</li>
-                    </ol>
-                </nav>
+                {/* Breadcrumb */}
+                <Breadcrumb items={[{ label: "Trang chủ", href: "/" }, { label: "Giỏ hàng", href: "/cart" }, { label: "Thanh toán" }]} />
 
+                {/* Tiêu đề trang */}
                 <div className="mb-6 sm:mb-8">
                     <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Thanh toán</h1>
                     <div className="w-12 h-1 bg-amber-400 rounded-full mt-2" />
@@ -183,9 +37,11 @@ export default function CheckoutPage() {
                 <form onSubmit={handleSubmit}>
                     <div className="grid lg:grid-cols-3 gap-6">
                         <div className="lg:col-span-2 space-y-5 sm:space-y-6">
+
+                            {/* Đơn hàng (mobile) */}
                             <div className="lg:hidden bg-white rounded-2xl border border-gray-100 p-4 sm:p-6 shadow-soft">
                                 <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-4">Đơn hàng</h3>
-                                <OrderSummaryContent />
+                                <OrderSummaryContent cartItems={cartItems} subtotal={subtotal} itemCount={itemCount} total={total} />
                                 <Button
                                     type="submit"
                                     variant="primary"
@@ -208,6 +64,7 @@ export default function CheckoutPage() {
                                 </Link>
                             </div>
 
+                            {/* Thông tin giao hàng */}
                             <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6 shadow-soft">
                                 <div className="flex items-center gap-3 mb-4 sm:mb-5">
                                     <div className="size-9 sm:size-10 rounded-xl bg-amber-50 flex items-center justify-center">
@@ -216,6 +73,7 @@ export default function CheckoutPage() {
                                     <h2 className="text-base sm:text-lg font-semibold text-gray-800">Thông tin giao hàng</h2>
                                 </div>
 
+                                {/* Form nhập họ tên, sđt, địa chỉ, thành phố */}
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                                     <Input
                                         label="Họ và tên"
@@ -257,8 +115,10 @@ export default function CheckoutPage() {
                                     />
                                 </div>
                             </div>
-
+                       
+                            {/* Phương thức thanh toán */}
                             <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6 shadow-soft">
+
                                 <div className="flex items-center gap-3 mb-4 sm:mb-5">
                                     <div className="size-9 sm:size-10 rounded-xl bg-amber-50 flex items-center justify-center">
                                         <FontAwesomeIcon icon={faCreditCard} className="text-amber-500 text-sm sm:text-base" />
@@ -267,9 +127,8 @@ export default function CheckoutPage() {
                                 </div>
 
                                 <div className="space-y-3">
-                                    <label className={`flex items-center gap-3 p-3 sm:p-4 rounded-xl border-2 cursor-pointer transition ${
-                                        paymentMethod === "cod" ? "border-emerald-400 bg-emerald-50" : "border-gray-200 hover:border-gray-300"
-                                    }`}>
+                                    {/* COD */}
+                                    <label className={`flex items-center gap-3 p-3 sm:p-4 rounded-xl border-2 cursor-pointer transition ${getPaymentBorderClass("cod")}`}>
                                         <input
                                             type="radio"
                                             name="paymentMethod"
@@ -285,9 +144,8 @@ export default function CheckoutPage() {
                                         </div>
                                     </label>
 
-                                    <label className={`flex items-center gap-3 p-3 sm:p-4 rounded-xl border-2 cursor-pointer transition ${
-                                        paymentMethod === "banking" ? "border-blue-400 bg-blue-50" : "border-gray-200 hover:border-gray-300"
-                                    }`}>
+                                    {/* Chuyển khoản ngân hàng */}
+                                    <label className={`flex items-center gap-3 p-3 sm:p-4 rounded-xl border-2 cursor-pointer transition ${getPaymentBorderClass("banking")}`}>
                                         <input
                                             type="radio"
                                             name="paymentMethod"
@@ -303,26 +161,27 @@ export default function CheckoutPage() {
                                         </div>
                                     </label>
 
-                                      <label className={`flex items-center gap-3 p-3 sm:p-4 rounded-xl border-2 cursor-pointer transition ${
-                                        paymentMethod === "wallet" ? "border-rose-400 bg-rose-50" : "border-gray-200 hover:border-gray-300"
-                                    }`}>
+                                      {/* MoMo */}
+                                      <label className={`flex items-center gap-3 p-3 sm:p-4 rounded-xl border-2 cursor-pointer transition ${getPaymentBorderClass("momo")}`}>
                                         <input
                                             type="radio"
                                             name="paymentMethod"
-                                            value="wallet"
-                                            checked={paymentMethod === "wallet"}
-                                            onChange={() => setPaymentMethod("wallet")}
+                                            value="momo"
+                                            checked={paymentMethod === "momo"}
+                                            onChange={() => setPaymentMethod("momo")}
                                             className="text-rose-500 focus:ring-rose-400/30 shrink-0"
                                         />
                                         <FontAwesomeIcon icon={faWallet} className="text-rose-500 text-lg sm:text-xl shrink-0" />
                                         <div className="min-w-0">
-                                            <p className="font-medium text-gray-800 text-sm sm:text-base">Ví điện tử</p>
-                                            <p className="text-xs text-gray-400">Thanh toán qua ví điện tử Momo, VNPay, ZaloPay</p>
+                                            <p className="font-medium text-gray-800 text-sm sm:text-base">Ví MoMo</p>
+                                            <p className="text-xs text-gray-400">Thanh toán qua ví MoMo</p>
                                         </div>
                                     </label>
+                                    
                                 </div>
                             </div>
-
+                         
+                            {/* Ghi chú đơn hàng */}
                             <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6 shadow-soft">
                                 <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">Ghi chú</h2>
                                 <Textarea
@@ -335,10 +194,11 @@ export default function CheckoutPage() {
                             </div>
                         </div>
 
+                        {/* Sidebar: Đơn hàng (desktop) */}
                         <div className="hidden lg:block space-y-4">
                             <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-soft sticky top-6">
                                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Đơn hàng</h3>
-                                <OrderSummaryContent />
+                                <OrderSummaryContent cartItems={cartItems} subtotal={subtotal} itemCount={itemCount} total={total} />
                                 <Button
                                     type="submit"
                                     variant="primary"

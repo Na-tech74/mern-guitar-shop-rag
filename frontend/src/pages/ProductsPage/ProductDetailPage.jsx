@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
+import Breadcrumb from "../../components/Breadcrumb";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faMinus, faPlus, faShoppingCart, faTruck, faShieldAlt, faUndo, faImage, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { productAPI } from "../../api";
@@ -74,15 +75,7 @@ export default function ProductDetailPage() {
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-            <nav className="text-sm mb-4 sm:mb-8">
-                <ol className="flex items-center gap-2 text-gray-400">
-                    <li><Link to="/" className="hover:text-amber-500 transition">Trang chủ</Link></li>
-                    <li className="text-gray-300">/</li>
-                    <li><Link to="/products" className="hover:text-amber-500 transition">Sản phẩm</Link></li>
-                    <li className="text-gray-300">/</li>
-                    <li className="text-gray-600 font-medium truncate max-w-[120px] sm:max-w-[200px]">{product.name}</li>
-                </ol>
-            </nav>
+            <Breadcrumb items={[{ label: "Trang chủ", href: "/" }, { label: "Sản phẩm", href: "/products" }, { label: product.name }]} />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">
                 <div>

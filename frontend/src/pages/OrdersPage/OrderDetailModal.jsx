@@ -9,6 +9,7 @@ import {
 import { formatCurrency, formatDateTime } from "../../helpers/formatters";
 import { getOptimizedImage } from "../../helpers/image";
 import InfoBlock from "./InfoBlock";
+import Button from "../../components/Button";
 
 const STATUS_META = {
     pending:     { icon: faClock,           color: "amber"  },
@@ -21,13 +22,13 @@ const STATUS_META = {
 function StatusTimeline({ status }) {
     const colors = {
         pending:    { bg: "bg-amber-500",  ring: "ring-amber-100", text: "text-amber-700" },
-        processing: { bg: "bg-blue-500",   ring: "ring-blue-100",  text: "text-blue-700"  },
-        shipped:    { bg: "bg-purple-500", ring: "ring-purple-100",text: "text-purple-700" },
-        delivered:  { bg: "bg-green-500",  ring: "ring-green-100", text: "text-green-700" },
+        processing: { bg: "bg-sky-500",    ring: "ring-sky-100",   text: "text-sky-700"   },
+        shipped:    { bg: "bg-violet-500", ring: "ring-violet-100",text: "text-violet-700" },
+        delivered:  { bg: "bg-emerald-500",ring: "ring-emerald-100",text: "text-emerald-700"},
     };
     const steps = [
-        { id: "pending",    label: "Đã đặt",     icon: faCircleCheck },
-        { id: "processing", label: "Xử lý",      icon: faBoxOpen     },
+        { id: "pending",    label: "Chờ xử lý",  icon: faCircleCheck },
+        { id: "processing", label: "Đang xử lý", icon: faBoxOpen     },
         { id: "shipped",    label: "Đang giao",  icon: faTruck       },
         { id: "delivered",  label: "Hoàn thành", icon: faCircleCheck },
     ];
@@ -201,8 +202,15 @@ export default function OrderDetailModal({ order, onClose }) {
                             title="Thanh toán"
                         >
                             <p className="text-sm text-gray-700">
-                                {order.paymentMethod === "cod" ? "COD" : "Chuyển khoản"}
+                                {order.paymentMethod === "cod" ? "COD" : order.paymentMethod === "momo" ? "Ví MoMo" : "Chuyển khoản ngân hàng"}
                             </p>
+                            {order.paymentMethod !== "cod" && (
+                                <span className={`inline-block mt-1 text-xs font-medium ${
+                                    order.paymentStatus === "paid" ? "text-emerald-600" : "text-red-500"
+                                }`}>
+                                    {order.paymentStatus === "paid" ? "✓ Đã thanh toán" : "⏳ Chưa thanh toán"}
+                                </span>
+                            )}
                         </InfoBlock>
                     </div>
 
@@ -233,13 +241,9 @@ export default function OrderDetailModal({ order, onClose }) {
                         <FontAwesomeIcon icon={faPhone} className="text-xs" />
                         Hỗ trợ
                     </Link>
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="flex-1 px-4 py-2.5 rounded-lg bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold transition"
-                    >
+                    <Button variant="primary" size="md" className="flex-1" onClick={onClose}>
                         Đóng
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

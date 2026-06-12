@@ -79,12 +79,13 @@ export const useOrders = () => {
         setStatusFilter(status);
     }, []);
 
-    const updateStatus = useCallback(async (orderId, status) => {
+    const updateStatus = useCallback(async (orderId, data) => {
         try {
-            await orderAPI.updateStatus(orderId, status);
-            setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status } : o));
+            const res = await orderAPI.updateStatus(orderId, data);
+            const updated = res.data?.data?.order || {};
+            setOrders(prev => prev.map(o => o._id === orderId ? { ...o, ...updated } : o));
             if (selectedOrder?._id === orderId) {
-                setSelectedOrder(prev => ({ ...prev, status }));
+                setSelectedOrder(prev => ({ ...prev, ...updated }));
             }
         } catch (err) {
             setError(err);
@@ -120,7 +121,7 @@ export const useOrders = () => {
             variant: status === "cancelled" ? "danger" : "warning",
         });
         if (!ok) return false;
-        await updateStatus(orderId, status);
+        await updateStatus(orderId, { status });
         return true;
     }, [confirm, updateStatus]);
 

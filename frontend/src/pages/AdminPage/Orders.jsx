@@ -4,7 +4,7 @@ import {
     faEye, faCheck, faXmark, faTruck, faSearch, faTrash,
     faBox, faClock, faShippingFast, faCheckDouble, faBan,
     faPhone, faMapMarkerAlt, faCreditCard, faMoneyBillWave,
-    faImage, faSpinner
+    faImage, faSpinner, faCircleCheck
 } from "@fortawesome/free-solid-svg-icons";
 import { useOrders } from "./hooks/useOrders";
 import { formatCurrency, formatDateTime } from "../../helpers/formatters";
@@ -32,11 +32,11 @@ const STATUS_STYLES = {
 
 export default function Orders() {
     const {
-        orders, loading, refetching, error, pagination, confirmUpdateStatus, deleteOrder,
+        orders, loading, refetching, error, pagination, confirmUpdateStatus, updateStatus, deleteOrder,
         selectedOrder, setSelectedOrder, statusFilter, handleStatusFilterChange,
         searchTerm, setSearchTerm, handlePageChange, stats, statusCounts, STATUS_LIST
     } = useOrders();
-    const { alert } = useDialog();
+    const { alert, confirm } = useDialog();
 
     const [confirmDelete, setConfirmDelete] = useState(null);
 
@@ -186,6 +186,7 @@ export default function Orders() {
                                         <th className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-500">Sản phẩm</th>
                                         <th className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-500">Tổng tiền</th>
                                         <th className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-500">Trạng thái</th>
+                                        <th className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-500">Thanh toán</th>
                                         <th className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-500">Ngày đặt</th>
                                         <th className="py-3 px-4 text-right text-[10px] font-semibold uppercase tracking-wider text-gray-500">Thao tác</th>
                                     </tr>
@@ -226,6 +227,15 @@ export default function Orders() {
                                                     <FontAwesomeIcon icon={STATUS_ICONS[order.status] || faBox} className="text-[10px]" />
                                                     {getStatusLabel(order.status)}
                                                 </span>
+                                            </td>
+                                            <td className="py-3 px-4">
+                                                {order.paymentMethod !== "cod" && (
+                                                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                                                        order.paymentStatus === "paid" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+                                                    }`}>
+                                                        {order.paymentStatus === "paid" ? "Đã thanh toán" : "Chưa thanh toán"}
+                                                    </span>
+                                                )}
                                             </td>
                                             <td className="py-3 px-4 text-sm text-gray-500">{formatDateTime(order.createdAt)}</td>
                                             <td className="py-3 px-4">
@@ -279,6 +289,13 @@ export default function Orders() {
                                                     <FontAwesomeIcon icon={STATUS_ICONS[order.status] || faBox} className="text-[8px]" />
                                                     {getStatusLabel(order.status)}
                                                 </span>
+                                                {order.paymentMethod !== "cod" && (
+                                                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
+                                                        order.paymentStatus === "paid" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+                                                    }`}>
+                                                        {order.paymentStatus === "paid" ? "Đã TT" : "Chưa TT"}
+                                                    </span>
+                                                )}
                                             </div>
                                             <div className="flex gap-0.5 shrink-0">
                                                 <button onClick={() => setSelectedOrder(order)} className="size-7 rounded-lg hover:bg-blue-50 text-blue-600 flex items-center justify-center">
@@ -416,11 +433,21 @@ export default function Orders() {
                                     <h3 className="font-semibold text-gray-800 text-sm">Phương thức thanh toán</h3>
                                 </div>
                                 <div className="bg-gray-50 rounded-xl p-3 sm:p-4 flex items-center gap-2 sm:gap-3">
-                                    <FontAwesomeIcon icon={selectedOrder.paymentMethod === "banking" ? faCreditCard : faMoneyBillWave} className="text-base sm:text-xl text-gray-500" />
+                                    <FontAwesomeIcon icon={selectedOrder.paymentMethod === "cod" ? faMoneyBillWave : faCreditCard} className="text-base sm:text-xl text-gray-500" />
                                     <span className="font-medium text-gray-800 text-xs sm:text-sm">
-                                        {selectedOrder.paymentMethod === "banking" ? "Chuyển khoản ngân hàng" : "Thanh toán khi nhận hàng (COD)"}
+                                        {selectedOrder.paymentMethod === "cod" ? "Thanh toán khi nhận hàng (COD)" : selectedOrder.paymentMethod === "momo" ? "Ví MoMo" : "Chuyển khoản ngân hàng"}
                                     </span>
                                 </div>
+                                {selectedOrder.paymentMethod !== "cod" && (
+                                    <div className="mt-2 flex items-center gap-2">
+                                        <span className="text-xs text-gray-500">TT:</span>
+                                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+                                            selectedOrder.paymentStatus === "paid" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+                                        }`}>
+                                            {selectedOrder.paymentStatus === "paid" ? "Đã thanh toán" : "Chưa thanh toán"}
+                                        </span>
+                                    </div>
+                                )}
                             </div>
 
                             {selectedOrder.note && (
@@ -466,6 +493,18 @@ export default function Orders() {
                             <Button variant="secondary" size="sm" onClick={() => setSelectedOrder(null)}>
                                 Đóng
                             </Button>
+                            {selectedOrder.paymentMethod !== "cod" && selectedOrder.paymentStatus === "unpaid" && (
+                                <Button variant="success" size="sm" onClick={async () => {
+                                    const ok = await confirm({ title: "Xác nhận", message: "Xác nhận đã nhận được tiền thanh toán?", variant: "warning" });
+                                    if (ok) {
+                                        await updateStatus(selectedOrder._id, { paymentStatus: "paid" });
+                                        setSelectedOrder(null);
+                                    }
+                                }}>
+                                    <FontAwesomeIcon icon={faCircleCheck} />
+                                    Đã nhận tiền
+                                </Button>
+                            )}
                             {selectedOrder.status === "pending" && (
                                 <>
                                     <Button variant="danger" size="sm" onClick={() => { handleStatusUpdate(selectedOrder._id, "cancelled"); setSelectedOrder(null); }}>

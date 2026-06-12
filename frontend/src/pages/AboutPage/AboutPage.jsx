@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Breadcrumb from "../../components/Breadcrumb";
 import {
     faMusic,
     faAward,
@@ -56,13 +57,7 @@ export default function AboutPage() {
             {/* Hero */}
             <section className="border-b border-gray-100">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16">
-                    <nav className="text-sm mb-10">
-                        <ol className="flex items-center gap-2 text-gray-400">
-                            <li><Link to="/" className="hover:text-amber-500 transition">Trang chủ</Link></li>
-                            <li className="text-gray-300">/</li>
-                            <li className="text-gray-600 font-medium">{header.breadcrumbLabel || "Giới thiệu"}</li>
-                        </ol>
-                    </nav>
+                    <Breadcrumb items={[{ label: "Trang chủ", href: "/" }, { label: header.breadcrumbLabel || "Giới thiệu" }]} />
                     <div className="max-w-3xl">
                         <span className="inline-block text-xs font-semibold tracking-widest uppercase text-amber-500 mb-4">
                             About us

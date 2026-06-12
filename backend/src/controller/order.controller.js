@@ -10,6 +10,7 @@ import User from "../models/users.model.js";
 import Category from "../models/categories.model.js";
 import { appError, appSuccess } from "../utils/appResponse.js";
 import { isValidObjectId } from "../utils/valid.js";
+import { createMomoPayment, verifyMomoCallback } from "../services/momo.service.js";
 
 /**
  * Tạo đơn hàng mới từ giỏ hàng
@@ -239,15 +240,10 @@ export const getOrderById = async (req, res) => {
  */
 export const updateOrderStatus = async (req, res) => {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, paymentStatus } = req.body;
 
     if (!isValidObjectId(id)) {
         throw appError("ID đơn hàng không hợp lệ!", 400);
-    }
-
-    const validStatuses = ["pending", "processing", "shipped", "delivered", "cancelled"];
-    if (!validStatuses.includes(status)) {
-        throw appError("Trạng thái không hợp lệ!", 400);
     }
 
     const order = await Order.findById(id);
@@ -255,15 +251,31 @@ export const updateOrderStatus = async (req, res) => {
         throw appError("Đơn hàng không tồn tại!", 404);
     }
 
-    if (status === "cancelled" && order.status !== "pending") {
-        throw appError("Chỉ có thể hủy đơn hàng ở trạng thái chờ xử lý!", 400);
+    if (status) {
+        const validStatuses = ["pending", "processing", "shipped", "delivered", "cancelled"];
+        if (!validStatuses.includes(status)) {
+            throw appError("Trạng thái không hợp lệ!", 400);
+        }
+
+        if (status === "cancelled" && order.status !== "pending") {
+            throw appError("Chỉ có thể hủy đơn hàng ở trạng thái chờ xử lý!", 400);
+        }
+
+        if (order.status === "cancelled" || order.status === "delivered") {
+            throw appError("Không thể thay đổi trạng thái đơn hàng đã kết thúc!", 400);
+        }
+
+        order.status = status;
     }
 
-    if (order.status === "cancelled" || order.status === "delivered") {
-        throw appError("Không thể thay đổi trạng thái đơn hàng đã kết thúc!", 400);
+    if (paymentStatus) {
+        const validPaymentStatuses = ["unpaid", "paid", "failed"];
+        if (!validPaymentStatuses.includes(paymentStatus)) {
+            throw appError("Trạng thái thanh toán không hợp lệ!", 400);
+        }
+        order.paymentStatus = paymentStatus;
     }
 
-    order.status = status;
     await order.save();
 
     return appSuccess(res, {
@@ -271,6 +283,81 @@ export const updateOrderStatus = async (req, res) => {
         message: "Cập nhật trạng thái đơn hàng thành công!",
         data: { order }
     });
+};
+
+/**
+ * Tạo link thanh toán MoMo
+ */
+export const requestMomoPayment = async (req, res) => {
+    const { orderId } = req.body;
+
+    const order = await Order.findById(orderId);
+    if (!order) throw appError("Đơn hàng không tồn tại!", 404);
+    if (order.user.toString() !== req.user._id.toString()) {
+        throw appError("Bạn không có quyền thanh toán đơn hàng này!", 403);
+    }
+
+    const redirectUrl = `${req.protocol}://${req.get("host")}/api/orders/momo-return`;
+    const ipnUrl = `${req.protocol}://${req.get("host")}/api/orders/momo-callback`;
+
+    const result = await createMomoPayment({
+        amount: Math.round(order.total).toString(),
+        orderId: order._id.toString(),
+        orderInfo: `Thanh toan don hang #${order._id.toString().slice(-8).toUpperCase()}`,
+        redirectUrl,
+        ipnUrl,
+    });
+
+    if (result.resultCode === 0) {
+        return appSuccess(res, {
+            statusCode: 200,
+            message: "Tạo link thanh toán thành công!",
+            data: { payUrl: result.payUrl, orderId: order._id }
+        });
+    }
+
+    throw appError(result.message || "Tạo link thanh toán thất bại!", 500);
+};
+
+/**
+ * MoMo callback (IPN) - MoMo gọi khi có kết quả thanh toán
+ */
+export const momoCallback = async (req, res) => {
+    const {
+        partnerCode, orderId, requestId, amount, orderInfo, orderType,
+        transId, resultCode, message, payType, responseTime, extraData, signature
+    } = req.body;
+
+    const isValid = verifyMomoCallback({
+        partnerCode, orderId, requestId, amount, orderInfo, orderType,
+        transId, resultCode, message, payType, responseTime, extraData, signature
+    });
+
+    if (!isValid) {
+        return res.status(400).json({ message: "Invalid signature" });
+    }
+
+    if (resultCode === 0) {
+        await Order.findByIdAndUpdate(orderId, { paymentStatus: "paid" });
+    } else {
+        await Order.findByIdAndUpdate(orderId, { paymentStatus: "failed" });
+    }
+
+    res.status(200).json({ message: "Callback received" });
+};
+
+/**
+ * MoMo redirect - MoMo chuyển hướng người dùng về đây sau khi thanh toán
+ */
+export const momoReturn = async (req, res) => {
+    const { orderId, resultCode } = req.query;
+
+    if (resultCode === "0") {
+        await Order.findByIdAndUpdate(orderId, { paymentStatus: "paid" });
+        return res.redirect(`${process.env.CORS_ORIGIN?.split(",")[0] || "http://localhost:5173"}/order-success?orderId=${orderId}`);
+    }
+
+    res.redirect(`${process.env.CORS_ORIGIN?.split(",")[0] || "http://localhost:5173"}/checkout?payment=failed`);
 };
 
 /**

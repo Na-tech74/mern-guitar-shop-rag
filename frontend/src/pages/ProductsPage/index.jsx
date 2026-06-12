@@ -8,6 +8,7 @@ import Carousel from "../../components/Carousel";
 import Skeleton from "../../components/Skeleton";
 import Pagination from "../../components/Pagination";
 import Button from "../../components/Button";
+import Breadcrumb from "../../components/Breadcrumb";
 import ProductCard from "../../components/ProductCard";
 import SortDropdown from "../../components/SortDropdown";
 import CategorySidebar, { MobileFilterDrawer } from "../../components/CategorySidebar";
@@ -80,14 +81,10 @@ export default function ProductsPage() {
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-                {/* Breadcrumb */}
-                <nav className="text-sm mb-6">
-                    <ol className="flex items-center gap-2 text-gray-400">
-                        <li><Link to="/" className="hover:text-amber-500 transition">Trang chủ</Link></li>
-                        <li className="text-gray-300">/</li>
-                        <li className="text-gray-600 font-medium">Sản phẩm</li>
-                    </ol>
-                </nav>
+                <Breadcrumb items={[
+                    { label: "Trang chủ", href: "/" },
+                    { label: "Sản phẩm" },
+                ]} />
 
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">

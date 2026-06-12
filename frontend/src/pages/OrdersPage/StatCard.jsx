@@ -2,8 +2,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const accents = {
     amber: "bg-amber-50 text-amber-600",
-    blue: "bg-blue-50 text-blue-600",
-    green: "bg-green-50 text-green-600",
+    blue: "bg-sky-50 text-sky-600",
+    green: "bg-emerald-50 text-emerald-600",
     rose: "bg-rose-50 text-rose-600",
 };
 

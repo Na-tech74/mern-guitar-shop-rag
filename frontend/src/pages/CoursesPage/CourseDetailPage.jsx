@@ -9,6 +9,7 @@ import {
 import { courseAPI } from "../../api";
 import { formatCurrency } from "../../helpers/formatters";
 import Button from "../../components/Button";
+import Breadcrumb from "../../components/Breadcrumb";
 
 export default function CourseDetailPage() {
     const { slug } = useParams();
@@ -20,7 +21,7 @@ export default function CourseDetailPage() {
     useEffect(() => {
         courseAPI.getBySlug(slug)
             .then(res => setCourse(res.data?.data?.course))
-            .catch(() => {})
+            .catch(() => { })
             .finally(() => setLoading(false));
     }, [slug]);
 
@@ -60,15 +61,11 @@ export default function CourseDetailPage() {
         <div className="min-h-screen bg-white">
             <div className="border-b border-gray-100 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                    <nav className="text-sm mb-4">
-                        <ol className="flex items-center gap-2 text-gray-400">
-                            <li><Link to="/" className="hover:text-amber-500 transition">Trang chủ</Link></li>
-                            <li className="text-gray-300">/</li>
-                            <li><Link to="/courses" className="hover:text-amber-500 transition">Khóa học</Link></li>
-                            <li className="text-gray-300">/</li>
-                            <li className="text-gray-600 font-medium truncate max-w-[200px]">{course.title}</li>
-                        </ol>
-                    </nav>
+                    <Breadcrumb items={[
+                        { label: "Trang chủ", href: "/" },
+                        { label: "Khóa học", href: "/courses" },
+                        { label: course.title },
+                    ]} />
                     <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
                         <div className="flex-1 min-w-0">
                             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{course.title}</h1>
@@ -164,25 +161,22 @@ export default function CourseDetailPage() {
                                                 key={l._id || idx}
                                                 type="button"
                                                 onClick={() => setCurrentLesson(idx)}
-                                                className={`w-full text-left p-3 rounded-xl transition flex items-start gap-3 ${
-                                                    currentLesson === idx
+                                                className={`w-full text-left p-3 rounded-xl transition flex items-start gap-3 ${currentLesson === idx
                                                         ? "bg-amber-50 border border-amber-200"
                                                         : "hover:bg-gray-50 border border-transparent"
-                                                }`}
+                                                    }`}
                                             >
                                                 <span className="mt-0.5 shrink-0">
                                                     <FontAwesomeIcon
                                                         icon={currentLesson === idx ? faPlay : idx < currentLesson ? faCheckCircle : faCircle}
-                                                        className={`text-sm ${
-                                                            currentLesson === idx ? "text-amber-500" :
-                                                            idx < currentLesson ? "text-emerald-500" : "text-gray-300"
-                                                        }`}
+                                                        className={`text-sm ${currentLesson === idx ? "text-amber-500" :
+                                                                idx < currentLesson ? "text-emerald-500" : "text-gray-300"
+                                                            }`}
                                                     />
                                                 </span>
                                                 <div className="min-w-0 flex-1">
-                                                    <p className={`text-sm font-medium truncate ${
-                                                        currentLesson === idx ? "text-amber-700" : "text-gray-700"
-                                                    }`}>
+                                                    <p className={`text-sm font-medium truncate ${currentLesson === idx ? "text-amber-700" : "text-gray-700"
+                                                        }`}>
                                                         {l.title || `Bài ${idx + 1}`}
                                                     </p>
                                                     {l.duration && (

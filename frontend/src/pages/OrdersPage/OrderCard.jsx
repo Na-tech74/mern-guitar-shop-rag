@@ -7,16 +7,17 @@ import {
     faArrowRight, faRotate, faLocationDot,
 } from "@fortawesome/free-solid-svg-icons";
 import { formatCurrency, formatDateTime } from "../../helpers/formatters";
-import { getStatusColor, getStatusLabel } from "../../helpers/status";
+import { getStatusLabel } from "../../helpers/status";
 import { getOptimizedImage } from "../../helpers/image";
 import InfoBlock from "./InfoBlock";
+import Button from "../../components/Button";
 
 const STATUS_META = {
-    pending:     { icon: faClock,           color: "amber"  },
-    processing:  { icon: faBoxOpen,         color: "blue"   },
-    shipped:     { icon: faTruck,           color: "purple" },
-    delivered:   { icon: faCircleCheck,     color: "green"  },
-    cancelled:   { icon: faBan,             color: "red"    },
+    pending:     { icon: faClock,       iconBg: "bg-amber-100 text-amber-600" },
+    processing:  { icon: faBoxOpen,     iconBg: "bg-sky-100 text-sky-600"   },
+    shipped:     { icon: faTruck,       iconBg: "bg-violet-100 text-violet-600" },
+    delivered:   { icon: faCircleCheck, iconBg: "bg-emerald-100 text-emerald-600" },
+    cancelled:   { icon: faBan,         iconBg: "bg-red-100 text-red-600" },
 };
 
 function OrderItems({ items }) {
@@ -76,7 +77,7 @@ export default function OrderCard({ order, expanded, onToggle, onViewDetail, for
                 className="w-full p-4 sm:p-5 flex items-center gap-4 text-left"
             >
                 {/* Status icon */}
-                <div className={`size-11 shrink-0 rounded-lg flex items-center justify-center ${getStatusColor(order.status)}`}>
+                <div className={`size-11 shrink-0 rounded-lg flex items-center justify-center ${meta.iconBg}`}>
                     <FontAwesomeIcon icon={meta.icon} className="text-base" />
                 </div>
 
@@ -86,7 +87,13 @@ export default function OrderCard({ order, expanded, onToggle, onViewDetail, for
                         <span className="font-semibold text-gray-900 text-sm sm:text-base">
                             Đơn #{order._id.slice(-8).toUpperCase()}
                         </span>
-                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${getStatusColor(order.status)}`}>
+                        <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${
+                            order.status === "pending" ? "bg-amber-100 text-amber-700" :
+                            order.status === "processing" ? "bg-sky-100 text-sky-700" :
+                            order.status === "shipped" ? "bg-violet-100 text-violet-700" :
+                            order.status === "delivered" ? "bg-emerald-100 text-emerald-700" :
+                            "bg-red-100 text-red-700"
+                        }`}>
                             {getStatusLabel(order.status)}
                         </span>
                     </div>
@@ -101,14 +108,14 @@ export default function OrderCard({ order, expanded, onToggle, onViewDetail, for
                         </span>
                         <span className="inline-flex items-center gap-1">
                             <FontAwesomeIcon icon={faCreditCard} className="text-[10px]" />
-                            {order.paymentMethod === "cod" ? "COD" : "Chuyển khoản"}
+                            {order.paymentMethod === "cod" ? "COD" : order.paymentMethod === "momo" ? "Ví MoMo" : "Chuyển khoản"}
                         </span>
                     </div>
                 </div>
 
                 {/* Total */}
                 <div className="text-right shrink-0">
-                    <p className={`font-bold text-base sm:text-lg ${isCancelled ? "text-gray-400 line-through" : "text-amber-600"}`}>
+                    <p className={`font-bold text-base sm:text-lg ${isCancelled ? "text-gray-400 line-through" : "text-gray-900"}`}>
                         {formatCurrency(order.total)}
                     </p>
                     <p className="text-[10px] text-gray-400 mt-0.5 hidden sm:block">Tổng tiền</p>
@@ -140,8 +147,15 @@ export default function OrderCard({ order, expanded, onToggle, onViewDetail, for
                             title="Thanh toán"
                         >
                             <p className="text-sm text-gray-700">
-                                {order.paymentMethod === "cod" ? "Thanh toán khi nhận hàng (COD)" : "Chuyển khoản ngân hàng"}
+                                {order.paymentMethod === "cod" ? "Thanh toán khi nhận hàng (COD)" : order.paymentMethod === "momo" ? "Ví MoMo" : "Chuyển khoản ngân hàng"}
                             </p>
+                            {order.paymentMethod !== "cod" && (
+                                <span className={`inline-block mt-1 text-xs font-medium ${
+                                    order.paymentStatus === "paid" ? "text-emerald-600" : "text-red-500"
+                                }`}>
+                                    {order.paymentStatus === "paid" ? "✓ Đã thanh toán" : "⏳ Chưa thanh toán"}
+                                </span>
+                            )}
                             {order.note && (
                                 <p className="text-xs text-gray-500 mt-1 italic">"{order.note}"</p>
                             )}
@@ -158,23 +172,19 @@ export default function OrderCard({ order, expanded, onToggle, onViewDetail, for
                             Liên hệ hỗ trợ
                         </Link>
                         <div className="flex items-center gap-2">
+                            <Button size="sm" variant="primary" onClick={(e) => { e.stopPropagation(); onViewDetail(); }}>
+                                Xem chi tiết
+                                <FontAwesomeIcon icon={faArrowRight} className="text-[10px]" />
+                            </Button>
                             {order.status === "delivered" && (
                                 <button
                                     type="button"
-                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 transition"
+                                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 hover:bg-amber-100 transition"
                                 >
                                     <FontAwesomeIcon icon={faRotate} className="text-[10px]" />
                                     Mua lại
                                 </button>
                             )}
-                            <button
-                                type="button"
-                                onClick={(e) => { e.stopPropagation(); onViewDetail(); }}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-amber-400 hover:bg-amber-500 transition"
-                            >
-                                Xem chi tiết
-                                <FontAwesomeIcon icon={faArrowRight} className="text-[10px]" />
-                            </button>
                         </div>
                     </div>
                 </div>

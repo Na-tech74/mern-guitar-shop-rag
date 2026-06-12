@@ -11,23 +11,24 @@ import StatCard from "./StatCard";
 import EmptyState from "./EmptyState";
 import OrderCard from "./OrderCard";
 import OrderDetailModal from "./OrderDetailModal";
+import Breadcrumb from "../../components/Breadcrumb";
 
 const FILTERS = [
-    { id: "all",        label: "Tất cả" },
-    { id: "pending",    label: "Chờ xử lý" },
+    { id: "all", label: "Tất cả" },
+    { id: "pending", label: "Chờ xử lý" },
     { id: "processing", label: "Đang xử lý" },
-    { id: "shipped",    label: "Đang giao" },
-    { id: "delivered",  label: "Hoàn thành" },
-    { id: "cancelled",  label: "Đã hủy" },
+    { id: "shipped", label: "Đang giao" },
+    { id: "delivered", label: "Hoàn thành" },
+    { id: "cancelled", label: "Đã hủy" },
 ];
 
 const COLOR_MAP = {
-    all:        { active: "bg-gray-800 text-white shadow-soft",            inactive: "bg-gray-100 text-gray-600 hover:bg-gray-200" },
-    pending:    { active: "bg-amber-500 text-white shadow-soft",           inactive: "bg-amber-50 text-amber-700 hover:bg-amber-100" },
-    processing: { active: "bg-blue-500 text-white shadow-soft",            inactive: "bg-blue-50 text-blue-700 hover:bg-blue-100" },
-    shipped:    { active: "bg-purple-500 text-white shadow-soft",          inactive: "bg-purple-50 text-purple-700 hover:bg-purple-100" },
-    delivered:  { active: "bg-emerald-500 text-white shadow-soft",         inactive: "bg-emerald-50 text-emerald-700 hover:bg-emerald-100" },
-    cancelled:  { active: "bg-red-500 text-white shadow-soft",             inactive: "bg-red-50 text-red-700 hover:bg-red-100" },
+    all: { active: "bg-gray-600 text-white shadow-soft", inactive: "bg-gray-100 text-gray-600 hover:bg-gray-200" },
+    pending: { active: "bg-amber-500 text-white shadow-soft", inactive: "bg-amber-50 text-amber-700 hover:bg-amber-100" },
+    processing: { active: "bg-sky-500 text-white shadow-soft", inactive: "bg-sky-50 text-sky-700 hover:bg-sky-100" },
+    shipped: { active: "bg-violet-500 text-white shadow-soft", inactive: "bg-violet-50 text-violet-700 hover:bg-violet-100" },
+    delivered: { active: "bg-emerald-500 text-white shadow-soft", inactive: "bg-emerald-50 text-emerald-700 hover:bg-emerald-100" },
+    cancelled: { active: "bg-red-500 text-white shadow-soft", inactive: "bg-red-50 text-red-700 hover:bg-red-100" },
 };
 
 export default function OrdersPage() {
@@ -76,16 +77,12 @@ export default function OrdersPage() {
         <div className="min-h-screen bg-gray-50/50">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
 
-                {/* Breadcrumb */}
-                <nav className="text-sm mb-6">
-                    <ol className="flex items-center gap-2 text-gray-500">
-                        <li><Link to="/" className="hover:text-amber-600 transition">Trang chủ</Link></li>
-                        <li className="text-gray-300">/</li>
-                        <li><Link to="/account" className="hover:text-amber-600 transition">Tài khoản</Link></li>
-                        <li className="text-gray-300">/</li>
-                        <li className="text-gray-800 font-medium">Đơn hàng</li>
-                    </ol>
-                </nav>
+                {/* Breadcrumb*/}
+                <Breadcrumb items={[
+                    { label: "Trang chủ", href: "/" },
+                    { label: "Tài khoản", href: "/account" },
+                    { label: "Đơn hàng" },
+                ]} />
 
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
@@ -93,6 +90,7 @@ export default function OrdersPage() {
                         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Đơn hàng của tôi</h1>
                         <p className="text-sm text-gray-500 mt-1">Theo dõi và quản lý tất cả đơn hàng của bạn</p>
                     </div>
+
                     <Link
                         to="/products"
                         className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-400 hover:bg-amber-500 text-white text-sm font-semibold transition shadow-soft w-fit"
@@ -100,6 +98,7 @@ export default function OrdersPage() {
                         <FontAwesomeIcon icon={faBagShopping} className="text-xs" />
                         Tiếp tục mua sắm
                     </Link>
+                    
                 </div>
 
                 {/* Stats */}
@@ -123,14 +122,12 @@ export default function OrdersPage() {
                                         key={f.id}
                                         type="button"
                                         onClick={() => setActiveFilter(f.id)}
-                                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap ${
-                                            active ? c.active : c.inactive
-                                        }`}
+                                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap ${active ? c.active : c.inactive
+                                            }`}
                                     >
                                         {f.label}
-                                        <span className={`text-xs px-1.5 py-0.5 rounded-full ${
-                                            active ? "bg-white/20" : "bg-gray-100 text-gray-500"
-                                        }`}>
+                                        <span className={`text-xs px-1.5 py-0.5 rounded-full ${active ? "bg-white/20" : "bg-gray-100 text-gray-500"
+                                            }`}>
                                             {count}
                                         </span>
                                     </button>
