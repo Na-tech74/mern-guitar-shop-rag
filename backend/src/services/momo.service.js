@@ -1,11 +1,11 @@
 import crypto from "crypto";
 import https from "https";
 
-const PARTNER_CODE = "MOMO";
-const ACCESS_KEY = "F8BBA842ECF85";
-const SECRET_KEY = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
-const MOMO_API_URL = "test-payment.momo.vn";
-const MOMO_API_PATH = "/v2/gateway/api/create";
+const PARTNER_CODE = process.env.MOMO_PARTNER_CODE;
+const ACCESS_KEY = process.env.MOMO_ACCESS_KEY;
+const SECRET_KEY = process.env.MOMO_SECRET_KEY;
+const MOMO_API_URL = process.env.MOMO_API_URL;
+const MOMO_API_PATH = process.env.MOMO_API_PATH;
 
 export const createMomoPayment = async ({ amount, orderId, orderInfo, redirectUrl, ipnUrl }) => {
     const requestId = orderId;
