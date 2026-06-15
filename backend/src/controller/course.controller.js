@@ -14,6 +14,10 @@ import { sanitizeText } from "../utils/format.js";
 /**
  * Tạo khóa học mới (admin). Hỗ trợ upload thumbnail và thêm lessons.
  * Lessons được parse từ JSON string (nếu gửi từ form-data).
+ * @param {Object} req - Request object chứa thông tin khóa học trong body và file thumbnail trong req.file
+ * @param {Object} res - Response object
+ * @throws {400} Thiếu thông tin | Khóa học đã tồn tại
+ * @returns {201} Khóa học đã tạo
  */
 export const createCourse = async (req, res) => {
     const { title, description, price, instructor, category, lessons, isPublished } = req.body;
@@ -56,6 +60,10 @@ export const createCourse = async (req, res) => {
 
 /**
  * Lấy tất cả khóa học (admin). Bao gồm cả chưa xuất bản.
+ * Hỗ trợ phân trang, lọc theo danh mục và tìm kiếm theo tên.
+ * @param {Object} req - Request object chứa query params: page, limit, category, search
+ * @param {Object} res - Response object
+ * @returns {200} Danh sách khóa học kèm thông tin phân trang
  */
 export const getAllCourses = async (req, res) => {
     const { page = 1, limit = 10, category, search } = req.query;
@@ -89,6 +97,10 @@ export const getAllCourses = async (req, res) => {
 /**
  * Lấy danh sách khóa học đã xuất bản (công khai).
  * Chỉ trả về các khóa học có isPublished: true.
+ * Hỗ trợ phân trang, lọc theo danh mục và tìm kiếm.
+ * @param {Object} req - Request object chứa query params: page, limit, category, search
+ * @param {Object} res - Response object
+ * @returns {200} Danh sách khóa học đã xuất bản kèm phân trang
  */
 export const getPublishedCourses = async (req, res) => {
     const { page = 1, limit = 10, category, search } = req.query;
@@ -121,6 +133,10 @@ export const getPublishedCourses = async (req, res) => {
 
 /**
  * Lấy chi tiết khóa học đã xuất bản theo slug (công khai).
+ * @param {Object} req - Request object chứa slug trong params
+ * @param {Object} res - Response object
+ * @throws {404} Khóa học không tồn tại
+ * @returns {200} Chi tiết khóa học
  */
 export const getCourseBySlug = async (req, res) => {
     const { slug } = req.params;
@@ -140,6 +156,11 @@ export const getCourseBySlug = async (req, res) => {
 /**
  * Lấy chi tiết khóa học theo ID (admin).
  * Bao gồm cả khóa học chưa xuất bản.
+ * @param {Object} req - Request object chứa id trong params
+ * @param {Object} res - Response object
+ * @throws {400} ID không hợp lệ
+ * @throws {404} Khóa học không tồn tại
+ * @returns {200} Chi tiết khóa học
  */
 export const getCourseById = async (req, res) => {
     const { id } = req.params;
@@ -162,6 +183,12 @@ export const getCourseById = async (req, res) => {
 
 /**
  * Cập nhật khóa học (admin). Cho phép thay đổi thumbnail và lessons.
+ * Lessons được parse từ JSON string (nếu gửi từ form-data).
+ * @param {Object} req - Request object chứa id trong params và dữ liệu cập nhật trong body
+ * @param {Object} res - Response object
+ * @throws {400} ID không hợp lệ
+ * @throws {404} Khóa học không tồn tại
+ * @returns {200} Khóa học đã cập nhật
  */
 export const updateCourse = async (req, res) => {
     const { id } = req.params;
@@ -205,6 +232,11 @@ export const updateCourse = async (req, res) => {
 
 /**
  * Xóa khóa học (admin).
+ * @param {Object} req - Request object chứa id trong params
+ * @param {Object} res - Response object
+ * @throws {400} ID không hợp lệ
+ * @throws {404} Khóa học không tồn tại
+ * @returns {200} Thông báo xóa thành công
  */
 export const deleteCourse = async (req, res) => {
     const { id } = req.params;

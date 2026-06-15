@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 import authRoutes from './auth.routes.js';
 import userRoutes from './users.routes.js';
-import categoriseRoutes from './categories.routes.js';
+import categoriesRoutes from './categories.routes.js';
 import productRoutes from './product.routes.js';
 import blogRoutes from './blog.routes.js';
 import orderRoutes from './order.routes.js';
@@ -29,7 +29,7 @@ export const mountRoutes = (app) => {
 
     app.use('/api/auth', authRoutes);
     app.use('/api/users', userRoutes);
-    app.use('/api/categories', categoriseRoutes);
+    app.use('/api/categories', categoriesRoutes);
     app.use('/api/products', productRoutes);
     app.use('/api/blogs', blogRoutes);
     app.use('/api/orders', orderRoutes);

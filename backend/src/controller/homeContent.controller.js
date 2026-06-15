@@ -13,6 +13,9 @@ import { uploadVideos } from "../services/uploadVideos.js";
 
 /**
  * Lấy nội dung trang chủ. Nếu chưa có document thì tạo mới với dữ liệu mặc định.
+ * @param {Object} req - Request object
+ * @param {Object} res - Response object
+ * @returns {200} Nội dung trang chủ
  */
 export const getHomeContent = async (req, res) => {
     let content = await HomeContent.findOne();
@@ -28,7 +31,11 @@ export const getHomeContent = async (req, res) => {
 
 /**
  * Cập nhật nội dung trang chủ (admin).
- * Chấp nhận JSON body để cập nhật các section, hoặc multipart để upload ảnh carousel/featuredTypes.
+ * Chấp nhận JSON body để cập nhật các section: carousel, featuresBanner, categoriesSection, 
+ * featuredProducts, clip, featuredTypes, ctaSection.
+ * @param {Object} req - Request object chứa dữ liệu cập nhật trong body
+ * @param {Object} res - Response object
+ * @returns {200} Nội dung đã cập nhật
  */
 export const updateHomeContent = async (req, res) => {
     let content = await HomeContent.findOne();
@@ -38,7 +45,6 @@ export const updateHomeContent = async (req, res) => {
 
     const body = req.body || {};
 
-    // Carousel
     if (body.carousel) {
         if (typeof body.carousel.brand === "string") {
             content.carousel.brand = body.carousel.brand;
@@ -55,7 +61,6 @@ export const updateHomeContent = async (req, res) => {
         }
     }
 
-    // Features banner
     if (body.featuresBanner && Array.isArray(body.featuresBanner.features)) {
         content.featuresBanner.features = body.featuresBanner.features.map((f) => ({
             icon: f.icon || "truck",
@@ -64,7 +69,6 @@ export const updateHomeContent = async (req, res) => {
         }));
     }
 
-    // Categories section
     if (body.categoriesSection) {
         if (typeof body.categoriesSection.title === "string") {
             content.categoriesSection.title = body.categoriesSection.title;
@@ -74,7 +78,6 @@ export const updateHomeContent = async (req, res) => {
         }
     }
 
-    // Featured products section
     if (body.featuredProducts) {
         if (typeof body.featuredProducts.title === "string") {
             content.featuredProducts.title = body.featuredProducts.title;
@@ -84,7 +87,6 @@ export const updateHomeContent = async (req, res) => {
         }
     }
 
-    // Clip section
     if (body.clip) {
         const c = body.clip;
         if (typeof c.title === "string") content.clip.title = c.title;
@@ -94,7 +96,6 @@ export const updateHomeContent = async (req, res) => {
         if (typeof c.videoUrl === "string") content.clip.videoUrl = c.videoUrl;
     }
 
-    // Featured types
     if (body.featuredTypes) {
         if (typeof body.featuredTypes.title === "string") {
             content.featuredTypes.title = body.featuredTypes.title;
@@ -112,7 +113,6 @@ export const updateHomeContent = async (req, res) => {
         }
     }
 
-    // CTA section
     if (body.ctaSection) {
         const c = body.ctaSection;
         if (typeof c.badgeText === "string") content.ctaSection.badgeText = c.badgeText;
@@ -137,6 +137,10 @@ export const updateHomeContent = async (req, res) => {
 /**
  * Upload 1 ảnh cho trang chủ (admin).
  * Trả về URL ảnh đã upload lên Cloudinary.
+ * @param {Object} req - Request object chứa file ảnh trong req.file (field name: "image")
+ * @param {Object} res - Response object
+ * @throws {400} Không có file ảnh
+ * @returns {201} URL ảnh đã upload
  */
 export const uploadHomeImage = async (req, res) => {
     const file = req.file;
@@ -154,6 +158,10 @@ export const uploadHomeImage = async (req, res) => {
 /**
  * Upload 1 video cho trang chủ (admin) - dùng cho clip khuyến mãi / CTA hỗ trợ.
  * Trả về URL video đã upload lên Cloudinary.
+ * @param {Object} req - Request object chứa file video trong req.file (field name: "video")
+ * @param {Object} res - Response object
+ * @throws {400} Không có file video
+ * @returns {201} URL video đã upload
  */
 export const uploadHomeVideo = async (req, res) => {
     const file = req.file;

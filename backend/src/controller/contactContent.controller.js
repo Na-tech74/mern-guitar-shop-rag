@@ -1,7 +1,19 @@
+/**
+ * contactContent.controller.js
+ * Xử lý các API liên quan đến nội dung trang liên hệ: lấy, cập nhật, upload hình ảnh
+ */
+
 import ContactContent from "../models/contactContent.model.js";
 import { appError, appSuccess } from "../utils/appResponse.js";
 import { uploadImages } from "../services/uploadImages.js";
 
+/**
+ * Lấy nội dung trang liên hệ (singleton - tự động tạo nếu chưa có)
+ * @param {Object} req - Request object
+ * @param {Object} res - Response object
+ * @throws {404} Không tìm thấy nội dung
+ * @returns {200} Nội dung trang liên hệ
+ */
 export const getContactContent = async (req, res) => {
     let content = await ContactContent.findOne();
     if (!content) {
@@ -14,6 +26,12 @@ export const getContactContent = async (req, res) => {
     });
 };
 
+/**
+ * Cập nhật nội dung trang liên hệ
+ * @param {Object} req - Request object chứa dữ liệu cập nhật trong body
+ * @param {Object} res - Response object
+ * @returns {200} Nội dung đã cập nhật
+ */
 export const updateContactContent = async (req, res) => {
     let content = await ContactContent.findOne();
     if (!content) {
@@ -55,6 +73,13 @@ export const updateContactContent = async (req, res) => {
     });
 };
 
+/**
+ * Upload hình ảnh cho trang liên hệ
+ * @param {Object} req - Request object chứa file ảnh trong req.file (field name: "image")
+ * @param {Object} res - Response object
+ * @throws {400} Không có file ảnh
+ * @returns {201} URL ảnh đã upload
+ */
 export const uploadContactImage = async (req, res) => {
     const file = req.file;
     if (!file) {

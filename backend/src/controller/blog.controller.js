@@ -12,6 +12,10 @@ import { isValidObjectId } from "../utils/valid.js";
 
 /**
  * Tạo bài viết mới (admin). Hỗ trợ upload banner image.
+ * @param {Object} req - Request object chứa title, excerpt, content trong body và file ảnh trong req.files
+ * @param {Object} res - Response object
+ * @throws {400} Thiếu thông tin | Bài viết đã tồn tại | Không có ảnh
+ * @returns {201} Bài viết đã tạo
  */
 export const createBlog = async (req, res) => {
     const { title, excerpt, content } = req.body;
@@ -30,7 +34,6 @@ export const createBlog = async (req, res) => {
         throw appError("Bài viết này đã tồn tại!", 400)
     }
 
-    // Upload ảnh lên Cloudinary (thư mục: guitar-shop/blogs)
     const imageUrls = await uploadImages(imageFiles, "guitar-shop/blogs");
 
     const newBlog = await Blog.create({
@@ -41,7 +44,6 @@ export const createBlog = async (req, res) => {
         images: imageUrls
     })
 
-    // Populate author để trả về thông tin tên, email thay vì ObjectId
     const populatedBlog = await Blog.findById(newBlog._id).populate("author", "name email")
 
     return appSuccess(res, {
@@ -53,6 +55,9 @@ export const createBlog = async (req, res) => {
 
 /**
  * Lấy danh sách tất cả bài viết (công khai).
+ * @param {Object} req - Request object
+ * @param {Object} res - Response object
+ * @returns {200} Danh sách bài viết
  */
 export const getAllBlogs = async (req, res) => {
     const blogs = await Blog.find()
@@ -67,6 +72,11 @@ export const getAllBlogs = async (req, res) => {
 
 /**
  * Lấy chi tiết bài viết theo ID.
+ * @param {Object} req - Request object chứa id trong params
+ * @param {Object} res - Response object
+ * @throws {400} ID không hợp lệ
+ * @throws {404} Bài viết không tồn tại
+ * @returns {200} Chi tiết bài viết
  */
 export const getBlogsById = async (req, res) => {
     const { id } = req.params;
@@ -89,6 +99,11 @@ export const getBlogsById = async (req, res) => {
 
 /**
  * Cập nhật bài viết (admin). Hỗ trợ thay đổi banner image.
+ * @param {Object} req - Request object chứa id trong params và dữ liệu cập nhật trong body
+ * @param {Object} res - Response object
+ * @throws {400} ID không hợp lệ
+ * @throws {404} Bài viết không tồn tại
+ * @returns {200} Bài viết đã cập nhật
  */
 export const updateBlog = async (req, res) => {
     const { id } = req.params;
@@ -124,6 +139,11 @@ export const updateBlog = async (req, res) => {
 
 /**
  * Xóa bài viết (admin).
+ * @param {Object} req - Request object chứa id trong params
+ * @param {Object} res - Response object
+ * @throws {400} ID không hợp lệ
+ * @throws {404} Bài viết không tồn tại
+ * @returns {200} Thông báo xóa thành công
  */
 export const deleteBlog = async (req, res) => {
     const { id } = req.params;

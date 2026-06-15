@@ -9,6 +9,13 @@
  * - Fallback (500): lỗi máy chủ không xác định
  */
 
+/**
+ * Global error handler middleware - xử lý và trả về lỗi tập trung
+ * @param {Error} err - Error object
+ * @param {Object} req - Request object
+ * @param {Object} res - Response object
+ * @param {Function} next - Next middleware function
+ */
 export const errorHandler = (err, req, res, next) => {
     let statusCode = err.statusCode || 500;
     let message = err.message || "Lỗi máy chủ!";

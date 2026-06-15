@@ -1,38 +1,34 @@
+/**
+ * blogs.model.js
+ * Schema cho bài viết blog
+ * Lưu trữ tiêu đề, đoạn trích, nội dung, tác giả và danh sách ảnh
+ */
+
 import mongoose from "mongoose";
 
-/**
- * Schema bài viết blog
- */
 const blogSchema = new mongoose.Schema({
-    // Tiêu đề bài viết (bắt buộc)
     title: {
         type: String,
         required: true,
         trim: true
     },
-    // Đoạn trích / mô tả ngắn
     excerpt: {
         type: String,
         trim: true
     },
-    // Nội dung đầy đủ (bắt buộc)
     content: {
         type: String,
         required: true
     },
-
-    // Tham chiếu đến người dùng đã viết bài
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Users",
     },
-    // Danh sách URL ảnh của bài viết
     images: {
         type: [String],
         default: []
     },
 }, {
-    // Tự động quản lý createdAt / updatedAt
     timestamps: true
 });
 

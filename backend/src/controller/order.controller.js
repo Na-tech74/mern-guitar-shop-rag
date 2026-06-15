@@ -15,6 +15,11 @@ import { createMomoPayment, verifyMomoCallback } from "../services/momo.service.
 /**
  * Tạo đơn hàng mới từ giỏ hàng
  * Kiểm tra tồn kho, cập nhật stock và sold của từng sản phẩm
+ * @param {Object} req - Request object chứa items, shippingAddress, paymentMethod, note trong body
+ * @param {Object} res - Response object
+ * @throws {400} Giỏ hàng trống | Thiếu thông tin giao hàng | ID sản phẩm không hợp lệ | Không đủ hàng
+ * @throws {404} Sản phẩm không tồn tại
+ * @returns {201} Đơn hàng đã tạo
  */
 export const createOrder = async (req, res) => {
     const { items, shippingAddress, paymentMethod, note } = req.body;
@@ -89,6 +94,9 @@ export const createOrder = async (req, res) => {
 
 /**
  * Lấy danh sách đơn hàng của người dùng hiện tại (có phân trang)
+ * @param {Object} req - Request object chứa query params: page, limit
+ * @param {Object} res - Response object
+ * @returns {200} Danh sách đơn hàng kèm phân trang
  */
 export const getMyOrders = async (req, res) => {
     const { page = 1, limit = 10 } = req.query;
@@ -116,6 +124,9 @@ export const getMyOrders = async (req, res) => {
 
 /**
  * Lấy tất cả đơn hàng (admin). Có phân trang và lọc theo trạng thái.
+ * @param {Object} req - Request object chứa query params: page, limit, status
+ * @param {Object} res - Response object
+ * @returns {200} Danh sách đơn hàng kèm phân trang
  */
 export const getAllOrders = async (req, res) => {
     const { page = 1, limit = 10, status } = req.query;
@@ -148,6 +159,9 @@ export const getAllOrders = async (req, res) => {
  * Lấy thống kê cho admin dashboard.
  * Chạy đồng thời nhiều truy vấn bằng Promise.all:
  * tổng sản phẩm/user/category/order, phân bố trạng thái, doanh thu, 5 đơn gần nhất.
+ * @param {Object} req - Request object
+ * @param {Object} res - Response object
+ * @returns {200} Thống kê dashboard
  */
 export const getDashboardStats = async (req, res) => {
     const [
@@ -208,6 +222,12 @@ export const getDashboardStats = async (req, res) => {
 /**
  * Lấy chi tiết đơn hàng.
  * Admin xem được tất cả, user chỉ xem được đơn của mình.
+ * @param {Object} req - Request object chứa id trong params
+ * @param {Object} res - Response object
+ * @throws {400} ID không hợp lệ
+ * @throws {404} Đơn hàng không tồn tại
+ * @throws {403} Không có quyền xem
+ * @returns {200} Chi tiết đơn hàng
  */
 export const getOrderById = async (req, res) => {
     const { id } = req.params;
@@ -237,6 +257,11 @@ export const getOrderById = async (req, res) => {
  * Cập nhật trạng thái đơn hàng (admin).
  * Kiểm tra workflow hợp lệ: pending→processing→shipped→delivered,
  * chỉ hủy được từ pending, không thay đổi đơn đã kết thúc.
+ * @param {Object} req - Request object chứa id trong params và status/paymentStatus trong body
+ * @param {Object} res - Response object
+ * @throws {400} ID không hợp lệ | Trạng thái không hợp lệ | Workflow không hợp lệ
+ * @throws {404} Đơn hàng không tồn tại
+ * @returns {200} Đơn hàng đã cập nhật
  */
 export const updateOrderStatus = async (req, res) => {
     const { id } = req.params;
@@ -287,6 +312,12 @@ export const updateOrderStatus = async (req, res) => {
 
 /**
  * Tạo link thanh toán MoMo
+ * @param {Object} req - Request object chứa orderId trong body
+ * @param {Object} res - Response object
+ * @throws {404} Đơn hàng không tồn tại
+ * @throws {403} Không có quyền thanh toán
+ * @throws {500} Tạo link thanh toán thất bại
+ * @returns {200} Link thanh toán MoMo
  */
 export const requestMomoPayment = async (req, res) => {
     const { orderId } = req.body;
@@ -321,6 +352,9 @@ export const requestMomoPayment = async (req, res) => {
 
 /**
  * MoMo callback (IPN) - MoMo gọi khi có kết quả thanh toán
+ * @param {Object} req - Request object chứa dữ liệu callback từ MoMo trong body
+ * @param {Object} res - Response object
+ * @returns {200} Xác nhận đã nhận callback
  */
 export const momoCallback = async (req, res) => {
     const {
@@ -348,6 +382,9 @@ export const momoCallback = async (req, res) => {
 
 /**
  * MoMo redirect - MoMo chuyển hướng người dùng về đây sau khi thanh toán
+ * @param {Object} req - Request object chứa orderId, resultCode trong query
+ * @param {Object} res - Response object
+ * @returns {302} Chuyển hướng đến trang kết quả
  */
 export const momoReturn = async (req, res) => {
     const { orderId, resultCode } = req.query;
@@ -362,6 +399,11 @@ export const momoReturn = async (req, res) => {
 
 /**
  * Xóa đơn hàng (admin).
+ * @param {Object} req - Request object chứa id trong params
+ * @param {Object} res - Response object
+ * @throws {400} ID không hợp lệ
+ * @throws {404} Đơn hàng không tồn tại
+ * @returns {200} Thông báo xóa thành công
  */
 export const deleteOrder = async (req, res) => {
     const { id } = req.params;

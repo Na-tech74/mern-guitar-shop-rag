@@ -382,7 +382,7 @@ export const refreshAccessToken = async (req, res) => {
     // Trả về access token mới cho client
     return appSuccess(res, {
         statusCode: 200,
-        message: "Refesh token thành công!",
+        message: "Refresh token thành công!",
         data: { accessToken: newAccessToken }
     });
 
