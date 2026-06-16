@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import Breadcrumb from "../../components/Breadcrumb";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faUser, faNewspaper, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { API } from "../../api";
 import { getOptimizedImage } from "../../helpers/image";
+import { formatDate } from "../../helpers/formatters";
 
 export default function BlogDetailPage() {
+
     const { id } = useParams();
     const [blog, setBlog] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -16,12 +19,6 @@ export default function BlogDetailPage() {
             .catch(() => {})
             .finally(() => setLoading(false));
     }, [id]);
-
-    const formatDate = (date) =>
-        new Date(date).toLocaleDateString("vi-VN", {
-            day: "2-digit", month: "2-digit", year: "numeric",
-            hour: "2-digit", minute: "2-digit",
-        });
 
     if (loading) {
         return (
@@ -49,15 +46,7 @@ export default function BlogDetailPage() {
     return (
         <div className="min-h-screen bg-white">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <nav className="text-sm mb-8">
-                    <ol className="flex items-center gap-2 text-gray-400">
-                        <li><Link to="/" className="hover:text-amber-500 transition">Trang chủ</Link></li>
-                        <li className="text-gray-300">/</li>
-                        <li><Link to="/blog" className="hover:text-amber-500 transition">Bài viết</Link></li>
-                        <li className="text-gray-300">/</li>
-                        <li className="text-gray-600 font-medium line-clamp-1">{blog.title}</li>
-                    </ol>
-                </nav>
+                <Breadcrumb items={[{ label: "Trang chủ", href: "/" }, { label: "Bài viết", href: "/blog" }, { label: blog.title }]} />
 
                 <Link to="/blog" className="inline-flex items-center gap-2 text-amber-500 hover:text-amber-600 font-medium mb-8 transition">
                     <FontAwesomeIcon icon={faArrowLeft} className="text-sm" />

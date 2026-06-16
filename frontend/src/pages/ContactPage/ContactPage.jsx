@@ -4,6 +4,7 @@ import { faMapMarkerAlt, faPhone, faEnvelope, faClock, faPaperPlane } from "@for
 import { faFacebook, faInstagram, faYoutube } from "@fortawesome/free-brands-svg-icons";
 import { useEffect, useState } from "react";
 import { contactContentAPI } from "../../api";
+import Breadcrumb from "../../components/Breadcrumb";
 
 const iconMap = {
     map: faMapMarkerAlt,
@@ -34,13 +35,7 @@ export default function ContactPage() {
     return (
         <div className="min-h-screen bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <nav className="text-sm mb-6 sm:mb-8">
-                    <ol className="flex items-center gap-2 text-gray-400">
-                        <li><Link to="/" className="hover:text-amber-500 transition">Trang chủ</Link></li>
-                        <li className="text-gray-300">/</li>
-                        <li className="text-gray-600 font-medium">Liên hệ</li>
-                    </ol>
-                </nav>
+                <Breadcrumb items={[{ label: "Trang chủ", href: "/" }, { label: "Liên hệ" }]} />
 
                 <div className="text-center mb-8 sm:mb-12">
                     <h1 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-2">{header.title || "Liên hệ với chúng tôi"}</h1>
@@ -56,12 +51,12 @@ export default function ContactPage() {
                                 const Icon = iconMap[item.icon] || faMapMarkerAlt;
                                 return (
                                     <div key={item.label} className="flex items-start gap-3 sm:gap-4 group">
-                                        <div className="size-10 sm:size-11 rounded-xl bg-amber-50 flex items-center justify-center shrink-0 group-hover:bg-amber-100 transition-colors">
-                                            <FontAwesomeIcon icon={Icon} className="text-amber-500" />
+                                        <div className="size-10 sm:size-11 rounded-xl  flex items-center justify-center shrink-0  transition-colors">
+                                            <FontAwesomeIcon icon={Icon} className="text-gray-500" />
                                         </div>
                                         <div className="pt-1">
-                                            <p className="text-sm text-gray-400">{item.label}</p>
-                                            <p className="font-medium text-gray-800">{item.value}</p>
+                                            <p className="text-sm text-gray-500">{item.label}</p>
+                                            <p className="font-medium ">{item.value}</p>
                                         </div>
                                     </div>
                                 );

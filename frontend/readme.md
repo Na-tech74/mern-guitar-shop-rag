@@ -42,7 +42,10 @@ frontend/
 │   │   ├── homeContent.js           # Nội dung trang chủ API
 │   │   ├── aboutContent.js          # Nội dung trang giới thiệu API
 │   │   ├── footerContent.js         # Nội dung footer API
-│   │   └── contactContent.js        # Nội dung trang liên hệ API
+│   │   ├── contactContent.js        # Nội dung trang liên hệ API
+│   │   ├── coupons.js               # Mã giảm giá API
+│   │   ├── termsContent.js          # Nội dung điều khoản API
+│   │   └── notifications.js         # Thông báo admin API
 │   ├── assets/
 │   │   ├── css/
 │   │   │   ├── style.globals.css    # Tailwind directives
@@ -63,7 +66,11 @@ frontend/
 │   │   ├── Pagination.jsx           # Phân trang
 │   │   ├── Skeleton.jsx             # Loading skeleton
 │   │   ├── ConfirmDialog.jsx        # Dialog xác nhận
-│   │   └── UserAvatar.jsx           # Avatar người dùng
+│   │   ├── UserAvatar.jsx           # Avatar người dùng
+│   │   ├── Breadcrumb.jsx           # Breadcrumb navigation
+│   │   ├── CouponBell.jsx           # Chuông mã giảm giá (public)
+│   │   ├── AdminNotificationBell.jsx# Chuông thông báo (admin)
+│   │   └── MessageDialog.jsx        # Context provider dialog
 │   ├── hooks/
 │   │   ├── useDebounce.js           # Debounce giá trị (search)
 │   │   ├── useInView.js             # Intersection Observer
@@ -87,6 +94,7 @@ frontend/
 │       ├── OrdersPage/              # Lịch sử đơn hàng
 │       ├── AboutPage/               # Giới thiệu
 │       ├── ContactPage/             # Liên hệ
+│       ├── TermsPage/               # Điều khoản
 │       ├── NotFoundPage/            # 404
 │       └── AdminPage/
 │           ├── Dashboard.jsx        # Thống kê dashboard
@@ -101,6 +109,8 @@ frontend/
 │           ├── AboutContent.jsx     # Chỉnh sửa nội dung trang giới thiệu
 │           ├── FooterContent.jsx    # Chỉnh sửa nội dung footer
 │           ├── ContactContent.jsx   # Chỉnh sửa nội dung trang liên hệ
+│           ├── Coupons.jsx          # Quản lý mã giảm giá
+│           ├── TermsContent.jsx     # Chỉnh sửa nội dung điều khoản
 │           ├── components/
 │           │   ├── SideBar.jsx      # Sidebar admin
 │           │   └── Header.jsx       # Header admin
@@ -116,7 +126,9 @@ frontend/
 │               ├── useHomeContent.js
 │               ├── useAboutContent.js
 │               ├── useFooterContent.js
-│               └── useContactContent.js
+│               ├── useContactContent.js
+│               ├── useCoupons.js
+│               └── useTermsContent.js
 ```
 
 ## Routes
@@ -141,6 +153,7 @@ frontend/
 | `/wishlist` | Yêu thích |
 | `/account` | Tài khoản |
 | `/orders` | Đơn hàng của tôi |
+| `/terms` | Điều khoản & Chính sách |
 
 ### Auth (no layout)
 
@@ -165,6 +178,9 @@ frontend/
 | `/admin/about-content` | Chỉnh sửa nội dung trang giới thiệu |
 | `/admin/footer-content` | Chỉnh sửa nội dung footer |
 | `/admin/contact-content` | Chỉnh sửa nội dung trang liên hệ |
+| `/admin/contact-content` | Chỉnh sửa nội dung trang liên hệ |
+| `/admin/coupons` | Quản lý mã giảm giá |
+| `/admin/terms-content` | Chỉnh sửa nội dung điều khoản |
 | `/admin/settings` | Cài đặt cá nhân |
 
 ## Tính năng chính
@@ -173,8 +189,8 @@ frontend/
 - **Trang chủ**: Hero carousel, danh mục, sản phẩm nổi bật, video quảng cáo
 - **Sản phẩm**: Danh sách có phân trang, lọc danh mục, sắp xếp, tìm kiếm
 - **Chi tiết sản phẩm**: Gallery ảnh, chọn số lượng, thêm vào giỏ/yêu thích
-- **Giỏ hàng**: localStorage, cập nhật số lượng, mã giảm giá (GUITAR10)
-- **Thanh toán**: Form địa chỉ, chọn phương thức (COD/banking)
+- **Giỏ hàng**: localStorage, cập nhật số lượng, mã giảm giá (validate qua API)
+- **Thanh toán**: Form địa chỉ, chọn phương thức (COD/banking/MoMo)
 - **Yêu thích**: localStorage, thêm/xoá/thêm tất cả vào giỏ
 - **Khóa học**: Danh sách, chi tiết với video player & danh sách bài học
 - **Blog**: Danh sách & chi tiết bài viết
@@ -194,6 +210,9 @@ frontend/
 - **Nội dung trang giới thiệu**: Chỉnh sửa story, stats, team, commitments
 - **Nội dung footer**: Chỉnh sửa mô tả, liên kết, mạng xã hội, thông tin liên hệ
 - **Nội dung trang liên hệ**: Chỉnh sửa thông tin liên hệ, mạng xã hội, Google Maps
+- **Mã giảm giá**: Quản lý mã (percentage/fixed/free_shipping), kích hoạt/vô hiệu, phân trang
+- **Nội dung điều khoản**: CMS điều khoản & chính sách với sections động
+- **Thông báo admin**: Chuông thông báo real-time khi có đơn hàng mới/người dùng mới
 - **Cài đặt**: Thông tin cá nhân, đổi mật khẩu
 
 ## Quản lý State
@@ -216,7 +235,7 @@ frontend/
 - `client.js`: Axios instance với `baseURL` từ env `VITE_API_URL`, `withCredentials: true`
 - Request interceptor: gắn `Authorization: Bearer` header, tự động xử lý `Content-Type` cho FormData
 - Response interceptor: queue xử lý concurrent 401, refresh token tự động, redirect `/login` nếu hết hạn
-- Các module API riêng: `auth.js`, `products.js`, `categories.js`, `orders.js`, `users.js`, `blog.js`, `courses.js`, `homeContent.js`, `aboutContent.js`, `footerContent.js`, `contactContent.js`
+- Các module API riêng: `auth.js`, `products.js`, `categories.js`, `orders.js`, `users.js`, `blog.js`, `courses.js`, `homeContent.js`, `aboutContent.js`, `footerContent.js`, `contactContent.js`, `coupons.js`, `termsContent.js`, `notifications.js`
 - Export tập trung qua `index.js`
 
 ## Hiệu năng
@@ -284,11 +303,11 @@ Xem thêm trong thư mục `docs/frontend/`:
 
 | File | Mô tả |
 |------|-------|
-| `components.md` | 14 components (Button, Input, Textarea, Header, Footer, Carousel, Logo, ProductCard, CategorySidebar, SortDropdown, Pagination, Skeleton, ConfirmDialog, ProtectedRoute) |
+| `components.md` | 18 components (Button, Input, Textarea, Header, Footer, Carousel, Logo, ProductCard, CategorySidebar, SortDropdown, Pagination, Skeleton, ConfirmDialog, ProtectedRoute, UserAvatar, Breadcrumb, CouponBell, AdminNotificationBell) |
 | `layouts.md` | MainLayout, AdminLayout (SideBar + Header) |
-| `api-client.md` | Axios instance, interceptors, token refresh queue, 11 API modules |
+| `api-client.md` | Axios instance, interceptors, token refresh queue, 14 API modules |
 | `helpers.md` | formatDate, formatCurrency, getStatusColor, getOptimizedImage |
-| `hooks.md` | 16 custom hooks (useDebounce, useInView, useSessionRecovery, useUserInfo + 12 admin hooks) |
+| `hooks.md` | 18 custom hooks (useDebounce, useInView, useSessionRecovery, useUserInfo + 14 admin hooks) |
 | `pages.md` | Tất cả pages (Home, Products, Auth, Cart, Admin gồm home-content, about-content, footer-content, contact-content) |
 
 ## Yêu cầu hệ thống

@@ -14,7 +14,10 @@ import {
     getDashboardStats,
     getOrderById,
     updateOrderStatus,
-    deleteOrder
+    deleteOrder,
+    requestMomoPayment,
+    momoCallback,
+    momoReturn,
 } from "../controller/order.controller.js";
 
 const router = Router();
@@ -60,6 +63,25 @@ router.get("/:id", protect, asyncHandler(getOrderById));
  * Admin only
  */
 router.put("/:id/status", protect, adminOnly, asyncHandler(updateOrderStatus));
+
+/**
+ * POST /api/orders/momo-payment
+ * Tạo link thanh toán MoMo
+ * User (cần đăng nhập)
+ */
+router.post("/momo-payment", protect, asyncHandler(requestMomoPayment));
+
+/**
+ * POST /api/orders/momo-callback
+ * MoMo IPN callback (không cần auth, MoMo gọi)
+ */
+router.post("/momo-callback", asyncHandler(momoCallback));
+
+/**
+ * GET /api/orders/momo-return
+ * MoMo redirect user về sau khi thanh toán
+ */
+router.get("/momo-return", asyncHandler(momoReturn));
 
 /**
  * DELETE /api/orders/:id

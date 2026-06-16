@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { Link } from "react-router-dom";
+import Breadcrumb from "../../components/Breadcrumb";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faHeart,
@@ -61,15 +62,8 @@ export default function WishlistPage() {
     return (
         <div className="min-h-screen bg-gray-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <nav className="text-sm mb-4">
-                    <ol className="flex items-center gap-2 text-gray-400">
-                        <li>
-                            <Link to="/" className="hover:text-amber-600 transition">Trang chủ</Link>
-                        </li>
-                        <li>/</li>
-                        <li className="text-gray-700 font-medium">Yêu thích</li>
-                    </ol>
-                </nav>
+            
+                <Breadcrumb items={[{ label: "Trang chủ", href: "/" }, { label: "Yêu thích" }]} />
 
                 <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-4 sm:p-5 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
@@ -110,8 +104,8 @@ export default function WishlistPage() {
 
                 {items.length === 0 ? (
                     <div className="bg-white border border-gray-100 rounded-2xl shadow-sm py-12 sm:py-20 px-4 sm:px-6 text-center">
-                        <div className="size-16 sm:size-24 mx-auto mb-4 sm:mb-6 bg-amber-50 rounded-2xl flex items-center justify-center">
-                            <FontAwesomeIcon icon={faHeartBroken} className="text-2xl sm:text-4xl text-amber-400" />
+                        <div className="size-16 sm:size-24 mx-auto mb-4 sm:mb-6  rounded-2xl flex items-center justify-center">
+                            <FontAwesomeIcon icon={faHeartBroken} className="text-2xl sm:text-4xl text-gray-500" />
                         </div>
                         <h2 className="text-lg sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2">Chưa có sản phẩm yêu thích</h2>
                         <p className="text-xs sm:text-base text-gray-500 max-w-md mx-auto mb-4 sm:mb-6 px-2 sm:px-0">

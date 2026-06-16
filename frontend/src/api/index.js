@@ -11,3 +11,6 @@ export { homeContentAPI } from "./homeContent";
 export { aboutContentAPI } from "./aboutContent";
 export { footerContentAPI } from "./footerContent";
 export { contactContentAPI } from "./contactContent";
+export { couponAPI } from "./coupons";
+export { termsContentAPI } from "./termsContent";
+export { notificationAPI } from "./notifications";

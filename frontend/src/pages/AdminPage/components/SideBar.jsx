@@ -17,6 +17,8 @@ import {
     faCopyright,
     faChevronDown,
     faEnvelope,
+    faTicket,
+    faFileContract,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 
@@ -25,12 +27,7 @@ function NavItem({ to, icon, name, end }) {
         <NavLink
             to={to}
             end={end}
-            className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${isActive
-                    ? "bg-amber-400 text-white"
-                    : "text-gray-700 hover:bg-amber-50 hover:text-amber-600"
-                }`
-            }
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors text-gray-700 hover:bg-amber-50 hover:text-amber-600"
         >
             <FontAwesomeIcon icon={icon} className="text-base shrink-0" />
             <span className="truncate">{name}</span>
@@ -118,6 +115,9 @@ export default function AdminSidebar({ isMobileOpen, setIsMobileOpen }) {
                             <li>
                                 <NavItem to="/admin/contact-content" icon={faEnvelope} name="Liên hệ" />
                             </li>
+                            <li>
+                                <NavItem to="/admin/terms-content" icon={faFileContract} name="Điều khoản" />
+                            </li>
                         </NavSection>
                         <li>
                             <NavItem to="/admin/products" icon={faBox} name="Sản phẩm" />
@@ -130,6 +130,9 @@ export default function AdminSidebar({ isMobileOpen, setIsMobileOpen }) {
                         </li>
                         <li>
                             <NavItem to="/admin/categories" icon={faTag} name="Danh mục" />
+                        </li>
+                        <li>
+                            <NavItem to="/admin/coupons" icon={faTicket} name="Mã giảm giá" />
                         </li>
                     </ul>
                 </nav>

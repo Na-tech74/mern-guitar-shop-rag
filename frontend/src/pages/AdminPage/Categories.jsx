@@ -156,7 +156,7 @@ export default function Categories() {
                                         />
                                         <label
                                             htmlFor="category-image"
-                                            className="inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 text-xs sm:text-sm cursor-pointer transition-colors"
+                                            className="inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 bg-amber-400 text-white rounded-lg hover:bg-amber-500 text-xs sm:text-sm cursor-pointer transition-colors"
                                         >
                                             <FontAwesomeIcon icon={faImage} />
                                             Chọn ảnh

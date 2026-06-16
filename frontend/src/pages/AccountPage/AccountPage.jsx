@@ -8,6 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { formatDate } from "../../helpers/formatters";
 import UserAvatar from "../../components/UserAvatar.jsx";
+import Breadcrumb from "../../components/Breadcrumb.jsx";
 import useAccount from "./hooks/useAccount";
 import ProfileTab from "./ProfileTab";
 import PasswordTab from "./PasswordTab";
@@ -41,13 +42,10 @@ export default function AccountPage() {
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-amber-50/30 to-gray-50">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
 
-                <nav className="text-sm mb-6">
-                    <ol className="flex items-center gap-2 text-gray-500">
-                        <li><Link to="/" className="hover:text-amber-600 transition">Trang chủ</Link></li>
-                        <li className="text-gray-300">/</li>
-                        <li className="text-gray-800 font-medium">Tài khoản</li>
-                    </ol>
-                </nav>
+                <Breadcrumb items={[
+                    { label: "Trang chủ", href: "/" },
+                    { label: "Tài khoản" },
+                ]} />
 
                 <div className="bg-white rounded-xl shadow-soft border border-gray-100 p-4 sm:p-8 mb-6">
                     <div className="flex flex-col sm:flex-row items-center sm:items-center gap-4 sm:gap-5">
@@ -178,8 +176,8 @@ export default function AccountPage() {
                                     type="button"
                                     onClick={() => setActiveTab("profile")}
                                     className={`flex items-center gap-1.5 sm:gap-2.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition ${activeTab === "profile"
-                                            ? "bg-amber-50 text-amber-700"
-                                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                                        ? "bg-amber-50 text-amber-700"
+                                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                                         }`}
                                 >
                                     Thông tin cá nhân
@@ -188,8 +186,8 @@ export default function AccountPage() {
                                     type="button"
                                     onClick={() => setActiveTab("password")}
                                     className={`flex items-center gap-1.5 sm:gap-2.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition ${activeTab === "password"
-                                            ? "bg-amber-50 text-amber-700"
-                                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                                        ? "bg-amber-50 text-amber-700"
+                                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                                         }`}
                                 >
                                     Đổi mật khẩu
@@ -241,8 +239,8 @@ export default function AccountPage() {
             {toast && (
                 <div className="fixed bottom-6 right-6 z-50 animate-[slideIn_0.3s_ease-out]">
                     <div className={`flex items-center gap-3 px-4 py-3 rounded-xl shadow-lift ${toast.type === "success"
-                            ? "bg-green-50 border border-green-200 text-green-800"
-                            : "bg-red-50 border border-red-200 text-red-800"
+                        ? "bg-green-50 border border-green-200 text-green-800"
+                        : "bg-red-50 border border-red-200 text-red-800"
                         }`}>
                         <FontAwesomeIcon
                             icon={toast.type === "success" ? faCircleCheck : faCircleExclamation}

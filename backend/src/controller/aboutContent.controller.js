@@ -12,6 +12,9 @@ import { uploadImages } from "../services/uploadImages.js";
 
 /**
  * Lấy nội dung trang Giới thiệu. Nếu chưa có document thì tạo mới với dữ liệu mặc định.
+ * @param {Object} req - Request object
+ * @param {Object} res - Response object
+ * @returns {200} Nội dung trang giới thiệu
  */
 export const getAboutContent = async (req, res) => {
     let content = await AboutContent.findOne();
@@ -27,7 +30,10 @@ export const getAboutContent = async (req, res) => {
 
 /**
  * Cập nhật nội dung trang Giới thiệu (admin).
- * Chấp nhận JSON body để cập nhật các section.
+ * Chấp nhận JSON body để cập nhật các section: header, intro, story, stats, team, commitments.
+ * @param {Object} req - Request object chứa dữ liệu cập nhật trong body
+ * @param {Object} res - Response object
+ * @returns {200} Nội dung đã cập nhật
  */
 export const updateAboutContent = async (req, res) => {
     let content = await AboutContent.findOne();
@@ -37,17 +43,14 @@ export const updateAboutContent = async (req, res) => {
 
     const body = req.body || {};
 
-    // Header
     if (body.header && typeof body.header.breadcrumbLabel === "string") {
         content.header.breadcrumbLabel = body.header.breadcrumbLabel;
     }
 
-    // Intro
     if (body.intro && typeof body.intro.tagline === "string") {
         content.intro.tagline = body.intro.tagline;
     }
 
-    // Story
     if (body.story) {
         const s = body.story;
         if (typeof s.title === "string") content.story.title = s.title;
@@ -57,7 +60,6 @@ export const updateAboutContent = async (req, res) => {
         }
     }
 
-    // Stats
     if (body.stats && Array.isArray(body.stats.items)) {
         content.stats.items = body.stats.items.map((s) => ({
             value: s.value || "",
@@ -65,7 +67,6 @@ export const updateAboutContent = async (req, res) => {
         }));
     }
 
-    // Team
     if (body.team) {
         const t = body.team;
         if (typeof t.title === "string") content.team.title = t.title;
@@ -80,7 +81,6 @@ export const updateAboutContent = async (req, res) => {
         }
     }
 
-    // Commitments
     if (body.commitments) {
         const c = body.commitments;
         if (typeof c.title === "string") content.commitments.title = c.title;
@@ -106,6 +106,10 @@ export const updateAboutContent = async (req, res) => {
 /**
  * Upload 1 ảnh cho trang Giới thiệu (admin).
  * Trả về URL ảnh đã upload lên Cloudinary.
+ * @param {Object} req - Request object chứa file ảnh trong req.file (field name: "image")
+ * @param {Object} res - Response object
+ * @throws {400} Không có file ảnh
+ * @returns {201} URL ảnh đã upload
  */
 export const uploadAboutImage = async (req, res) => {
     const file = req.file;

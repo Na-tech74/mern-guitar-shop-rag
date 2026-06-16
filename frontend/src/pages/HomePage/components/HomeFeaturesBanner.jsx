@@ -31,9 +31,9 @@ export default function FeaturesBanner({ features }) {
                         return (
                             <div
                                 key={`${item.icon}-${idx}`}
-                                className="flex flex-col items-center text-center gap-2 sm:gap-3 lg:gap-4 p-3 sm:p-5 lg:p-6 rounded-xl border border-gray-100 bg-white shadow-soft hover:shadow-pop hover:border-amber-200 transition-all duration-300"
+                                className="flex flex-col items-center text-center p-3 sm:p-5 lg:p-6 rounded-xl border border-gray-100 bg-white shadow-soft hover:shadow-pop hover:border-amber-200 transition-all duration-300"
                             >
-                                <div className="size-10 sm:size-14 rounded-xl sm:rounded-2xl bg-gray-100 flex items-center justify-center group-hover:bg-amber-100 transition-colors shrink-0">
+                                <div className="size-10 sm:size-14 rounded-xl sm:rounded-2xl flex items-center justify-center mb-3 sm:mb-4">
                                     <FontAwesomeIcon
                                         icon={Icon}
                                         className="text-base sm:text-xl text-black"
@@ -49,7 +49,6 @@ export default function FeaturesBanner({ features }) {
                                         {item.description}
                                     </p>
                                 </div>
-
                             </div>
                         );
                     })}

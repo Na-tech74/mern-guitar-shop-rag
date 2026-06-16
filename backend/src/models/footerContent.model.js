@@ -1,10 +1,30 @@
+/**
+ * footerContent.model.js
+ * Model Mongoose cho nội dung footer (singleton)
+ * Lưu trữ mô tả, liên kết mạng xã hội, thông tin liên hệ, danh mục, liên kết hỗ trợ và thanh bottom bar
+ */
+
 import mongoose from "mongoose";
 
+/**
+ * Schema cho một liên kết trong danh sách (danh mục / hỗ trợ)
+ * @property {String} label - Tên hiển thị
+ * @property {String} path - Đường dẫn
+ */
 const footerLinkSchema = new mongoose.Schema({
     label: { type: String, default: "" },
     path: { type: String, default: "" },
 }, { _id: false });
 
+/**
+ * Schema tổng thể cho nội dung footer
+ * @property {String} description - Mô tả cửa hàng
+ * @property {Object} socialLinks - Liên kết mạng xã hội (facebook, instagram, youtube, tiktok)
+ * @property {Object} contactInfo - Thông tin liên hệ (address, phone, email, hours)
+ * @property {Array} categories - Danh mục sản phẩm
+ * @property {Array} supportLinks - Liên kết hỗ trợ
+ * @property {Object} bottomBar - Cấu hình thanh dưới cùng (copyright, hiển thị điều khoản/chính sách)
+ */
 const footerContentSchema = new mongoose.Schema({
     description: {
         type: String,

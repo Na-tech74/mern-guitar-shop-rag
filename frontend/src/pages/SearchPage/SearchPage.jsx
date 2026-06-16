@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import Breadcrumb from "../../components/Breadcrumb";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faBoxOpen, faSlidersH, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { productAPI, categoryAPI } from "../../api";
@@ -91,13 +92,7 @@ export default function SearchPage() {
     return (
         <div className="min-h-screen">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <nav className="text-sm mb-6">
-                    <ol className="flex items-center gap-2 text-gray-400">
-                        <li><Link to="/" className="hover:text-amber-500 transition">Trang chủ</Link></li>
-                        <li className="text-gray-300">/</li>
-                        <li className="text-gray-600 font-medium">Tìm kiếm</li>
-                    </ol>
-                </nav>
+                <Breadcrumb items={[{ label: "Trang chủ", href: "/" }, { label: "Tìm kiếm" }]} />
 
                 <div className="mb-8">
                     <h1 className="text-2xl sm:text-4xl font-bold text-gray-900">Tìm kiếm sản phẩm</h1>

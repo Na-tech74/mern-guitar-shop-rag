@@ -5,7 +5,8 @@ export const orderAPI = {
     getMyOrders: () => API.get("/orders/me"),
     getAll: (params) => API.get("/orders", { params }),
     getById: (id) => API.get(`/orders/${id}`),
-    updateStatus: (id, status) => API.put(`/orders/${id}/status`, { status }),
+    updateStatus: (id, data) => API.put(`/orders/${id}/status`, data),
     delete: (id) => API.delete(`/orders/${id}`),
     getStats: () => API.get("/orders/stats"),
+    momoPayment: (orderId) => API.post("/orders/momo-payment", { orderId }),
 };

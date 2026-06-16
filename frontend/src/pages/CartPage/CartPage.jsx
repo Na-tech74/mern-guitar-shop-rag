@@ -1,85 +1,36 @@
-import { useState, useEffect, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import Breadcrumb from "../../components/Breadcrumb";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faMinus, faPlus, faTrash, faShoppingCart, faArrowLeft,
-    faShieldAlt, faTruck, faUndo, faTag, faGift
+    faShieldAlt, faTruck, faUndo, faTag, faGift,
+    faTimes, faPercent, faMoneyBillWave
 } from "@fortawesome/free-solid-svg-icons";
 import { formatCurrency } from "../../helpers/formatters";
 import { getOptimizedImage } from "../../helpers/image";
 import Button from "../../components/Button";
-import { useDialog } from "../../components/MessageDialog";
+import useCartPage from "./hooks/useCartPage";
+
+const couponTypeLabels = {
+    percentage: "Giảm %",
+    fixed: "Giảm tiền",
+    free_shipping: "Miễn phí vận chuyển",
+};
 
 export default function CartPage() {
-    const { alert } = useDialog();
-    const navigate = useNavigate();
-    const [cartItems, setCartItems] = useState([]);
-    const [coupon, setCoupon] = useState("");
-    const [couponApplied, setCouponApplied] = useState(false);
+    const {
+        cartItems, coupon, setCoupon, appliedCoupon,
+        updateQuantity, removeItem, clearCart,
+        subtotal, shipping, discount, total, itemCount,
+        handleApplyCoupon, handleRemoveCoupon, navigate,
+    } = useCartPage();
 
-    useEffect(() => {
-        const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-        setCartItems(cart);
-    }, []);
-
-    const dispatchCartUpdate = useCallback(() => {
-        window.dispatchEvent(new Event("cart-updated"));
-    }, []);
-
-    const updateQuantity = useCallback((id, delta) => {
-        setCartItems(prev => {
-            const updated = prev.map(item =>
-                item._id === id
-                    ? { ...item, quantity: Math.max(1, (item.quantity || 1) + delta) }
-                    : item
-            );
-            localStorage.setItem("cart", JSON.stringify(updated));
-            dispatchCartUpdate();
-            return updated;
-        });
-    }, [dispatchCartUpdate]);
-
-    const removeItem = useCallback((id) => {
-        setCartItems(prev => {
-            const updated = prev.filter(item => item._id !== id);
-            localStorage.setItem("cart", JSON.stringify(updated));
-            dispatchCartUpdate();
-            return updated;
-        });
-    }, [dispatchCartUpdate]);
-
-    const clearCart = useCallback(() => {
-        localStorage.setItem("cart", "[]");
-        setCartItems([]);
-        dispatchCartUpdate();
-    }, [dispatchCartUpdate]);
-
-    const subtotal = cartItems.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
-    const shipping = 0;
-    const discount = couponApplied ? subtotal * 0.05 : 0;
-    const total = subtotal + shipping - discount;
-
-    const itemCount = cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
-
-    const handleApplyCoupon = async () => {
-        if (coupon.trim().toUpperCase() === "GUITAR10") {
-            setCouponApplied(true);
-        } else {
-            setCouponApplied(false);
-            await alert({ title: "Lỗi", message: "Mã giảm giá không hợp lệ!", variant: "warning" });
-        }
-    };
+    const couponApplied = !!appliedCoupon;
 
     return (
         <div className="min-h-screen bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <nav className="text-sm mb-6">
-                    <ol className="flex items-center gap-2 text-gray-400">
-                        <li><Link to="/" className="hover:text-amber-500 transition">Trang chủ</Link></li>
-                        <li className="text-gray-300">/</li>
-                        <li className="text-gray-600 font-medium">Giỏ hàng</li>
-                    </ol>
-                </nav>
+                <Breadcrumb items={[{ label: "Trang chủ", href: "/" }, { label: "Giỏ hàng" }]} />
 
                 <div className="flex items-center justify-between mb-6">
                     <div>
@@ -169,15 +120,26 @@ export default function CartPage() {
                                                 className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 text-gray-800 rounded-xl text-sm outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition placeholder-gray-400"
                                                 disabled={couponApplied}
                                             />
-                                            <Button
-                                                variant={couponApplied ? "success" : "outline"}
-                                                size="md"
-                                                onClick={handleApplyCoupon}
-                                                disabled={couponApplied}
-                                                className="shrink-0"
-                                            >
-                                                {couponApplied ? "Đã áp dụng" : "Áp dụng"}
-                                            </Button>
+                                            {couponApplied ? (
+                                                <Button
+                                                    variant="success"
+                                                    size="md"
+                                                    onClick={handleRemoveCoupon}
+                                                    className="shrink-0"
+                                                >
+                                                    <FontAwesomeIcon icon={faTimes} className="text-xs" />
+                                                    Bỏ
+                                                </Button>
+                                            ) : (
+                                                <Button
+                                                    variant="outline"
+                                                    size="md"
+                                                    onClick={handleApplyCoupon}
+                                                    className="shrink-0"
+                                                >
+                                                    Áp dụng
+                                                </Button>
+                                            )}
                                         </div>
                                     </div>
                                     <Link to="/products" className="text-sm text-amber-500 hover:text-amber-600 whitespace-nowrap font-medium transition shrink-0">
@@ -199,7 +161,7 @@ export default function CartPage() {
                                     </div>
                                     <div className="flex justify-between text-gray-600">
                                         <span className="flex items-center gap-1.5">
-                                            <FontAwesomeIcon icon={faTruck} className="text-amber-400 text-xs" />
+                                            <FontAwesomeIcon icon={faTruck} className=" text-xs" />
                                             Phí vận chuyển
                                         </span>
                                         <span className="text-emerald-600 font-medium">Miễn phí</span>
@@ -208,7 +170,8 @@ export default function CartPage() {
                                         <div className="flex justify-between text-emerald-600">
                                             <span className="flex items-center gap-1.5">
                                                 <FontAwesomeIcon icon={faTag} className="text-xs" />
-                                                Giảm giá (5%)
+                                                {appliedCoupon.code}
+                                                <span className="text-[10px] opacity-75">({couponTypeLabels[appliedCoupon.type]})</span>
                                             </span>
                                             <span>-{formatCurrency(discount)}</span>
                                         </div>

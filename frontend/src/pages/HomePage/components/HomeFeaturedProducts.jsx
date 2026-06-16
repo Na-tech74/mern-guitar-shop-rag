@@ -172,7 +172,7 @@ const ProductCard = ({ product, categoryName }) => {
                     className="w-full h-44 sm:h-56 lg:h-60 object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 {product.sold > 0 && !isAcoustic && (
-                    <div className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-amber-500 text-white text-[10px] sm:text-xs font-medium px-2 py-0.5 sm:px-2.5 sm:py-1 rounded shadow-sm">
+                    <div className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-red-500 text-white text-[10px] sm:text-xs font-medium px-2 py-0.5 sm:px-2.5 sm:py-1 rounded shadow-sm">
                         Hot
                     </div>
                 )}

@@ -1,6 +1,17 @@
+/**
+ * footerContent.controller.js
+ * Xử lý các API liên quan đến nội dung footer: lấy, cập nhật
+ */
+
 import FooterContent from "../models/footerContent.model.js";
 import { appError, appSuccess } from "../utils/appResponse.js";
 
+/**
+ * Lấy nội dung footer (singleton - tự động tạo nếu chưa có)
+ * @param {Object} req - Request object
+ * @param {Object} res - Response object
+ * @returns {200} Nội dung footer
+ */
 export const getFooterContent = async (req, res) => {
     let content = await FooterContent.findOne();
     if (!content) {
@@ -13,6 +24,12 @@ export const getFooterContent = async (req, res) => {
     });
 };
 
+/**
+ * Cập nhật nội dung footer
+ * @param {Object} req - Request object chứa dữ liệu cập nhật trong body
+ * @param {Object} res - Response object
+ * @returns {200} Nội dung footer đã cập nhật
+ */
 export const updateFooterContent = async (req, res) => {
     let content = await FooterContent.findOne();
     if (!content) {

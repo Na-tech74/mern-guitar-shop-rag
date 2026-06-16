@@ -7,6 +7,10 @@
  * (Express 5 làm req.query thành read-only getter).
  */
 
+/**
+ * Đệ quy xóa các key bắt đầu bằng '$' hoặc chứa '.' trong object
+ * @param {Object} obj - Object cần sanitize
+ */
 const sanitizeObject = (obj) => {
     if (!obj || typeof obj !== 'object') 
         return;
@@ -19,6 +23,12 @@ const sanitizeObject = (obj) => {
     }
 };
 
+/**
+ * Middleware sanitize request - loại bỏ NoSQL injection khỏi body, params, query
+ * @param {Object} req - Request object
+ * @param {Object} res - Response object
+ * @param {Function} next - Next middleware function
+ */
 export const mongoSanitize = (req, res, next) => {
     sanitizeObject(req.body);
     sanitizeObject(req.params);

@@ -1,5 +1,17 @@
+/**
+ * contactContent.model.js
+ * Model Mongoose cho nội dung trang liên hệ (singleton)
+ * Lưu trữ header, thông tin liên hệ, liên kết mạng xã hội và Google Maps embed URL
+ */
+
 import mongoose from "mongoose";
 
+/**
+ * Schema cho một mục thông tin liên hệ
+ * @property {String} icon - Tên icon (map, phone, email, clock)
+ * @property {String} label - Nhãn hiển thị
+ * @property {String} value - Giá trị nội dung
+ */
 const contactInfoSchema = new mongoose.Schema({
     icon: {
         type: String,
@@ -10,6 +22,13 @@ const contactInfoSchema = new mongoose.Schema({
     value: { type: String, default: "" },
 }, { _id: false });
 
+/**
+ * Schema tổng thể cho nội dung trang liên hệ
+ * @property {Object} header - Tiêu đề và phụ đề
+ * @property {Array} contactInfo - Danh sách thông tin liên hệ
+ * @property {Object} socialLinks - Liên kết mạng xã hội
+ * @property {String} mapEmbedUrl - URL nhúng Google Maps
+ */
 const contactContentSchema = new mongoose.Schema({
     header: {
         title: { type: String, default: "Liên hệ với chúng tôi" },

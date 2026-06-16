@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 import authRoutes from './auth.routes.js';
 import userRoutes from './users.routes.js';
-import categoriseRoutes from './categories.routes.js';
+import categoriesRoutes from './categories.routes.js';
 import productRoutes from './product.routes.js';
 import blogRoutes from './blog.routes.js';
 import orderRoutes from './order.routes.js';
@@ -11,6 +11,9 @@ import homeContentRoutes from './homeContent.routes.js';
 import aboutContentRoutes from './aboutContent.routes.js';
 import footerContentRoutes from './footerContent.routes.js';
 import contactContentRoutes from './contactContent.routes.js';
+import couponRoutes from './coupon.routes.js';
+import termsContentRoutes from './termsContent.routes.js';
+import notificationRoutes from './notification.routes.js';
 
 export const mountRoutes = (app) => {
     app.get('/', (req, res) => {
@@ -29,7 +32,7 @@ export const mountRoutes = (app) => {
 
     app.use('/api/auth', authRoutes);
     app.use('/api/users', userRoutes);
-    app.use('/api/categories', categoriseRoutes);
+    app.use('/api/categories', categoriesRoutes);
     app.use('/api/products', productRoutes);
     app.use('/api/blogs', blogRoutes);
     app.use('/api/orders', orderRoutes);
@@ -38,4 +41,7 @@ export const mountRoutes = (app) => {
     app.use('/api/about-content', aboutContentRoutes);
     app.use('/api/footer-content', footerContentRoutes);
     app.use('/api/contact-content', contactContentRoutes);
+    app.use('/api/coupons', couponRoutes);
+    app.use('/api/terms-content', termsContentRoutes);
+    app.use('/api/notifications', notificationRoutes);
 };

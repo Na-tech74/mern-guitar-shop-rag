@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faVideo, faUserGraduate, faClock, faImage, faPlay, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { courseAPI } from "../../api";
 import { formatCurrency } from "../../helpers/formatters";
+import Breadcrumb from "../../components/Breadcrumb";
 
 export default function CoursesPage() {
     const [courses, setCourses] = useState([]);
@@ -19,13 +20,7 @@ export default function CoursesPage() {
     return (
         <div className="min-h-screen bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
-                <nav className="text-sm mb-6 sm:mb-8">
-                    <ol className="flex items-center gap-2 text-gray-400">
-                        <li><Link to="/" className="hover:text-amber-500 transition">Trang chủ</Link></li>
-                        <li className="text-gray-300">/</li>
-                        <li className="text-gray-600 font-medium">Khóa học</li>
-                    </ol>
-                </nav>
+                <Breadcrumb items={[{ label: "Trang chủ", href: "/" }, { label: "Khóa học" }]} />
 
                 <div className="mb-8 sm:mb-10">
                     <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">Khóa học</h1>
