@@ -38,6 +38,9 @@ const HomeContent = lazy(() => import("./pages/AdminPage/HomeContent"));
 const AboutContent = lazy(() => import("./pages/AdminPage/AboutContent"));
 const FooterContent = lazy(() => import("./pages/AdminPage/FooterContent"));
 const ContactContent = lazy(() => import("./pages/AdminPage/ContactContent"));
+const Coupons = lazy(() => import("./pages/AdminPage/Coupons"));
+const TermsContent = lazy(() => import("./pages/AdminPage/TermsContent"));
+const TermsPage = lazy(() => import("./pages/TermsPage/TermsPage"));
 
 function LoadingFallback() {
   return (
@@ -81,6 +84,7 @@ function AppRoutes() {
           <Route path="wishlist" element={<WishlistPage />} />
           <Route path="account" element={<AccountPage />} />
           <Route path="orders" element={<OrdersPage />} />
+          <Route path="terms" element={<TermsPage />} />
         </Route>
 
         <Route path="/register" element={<Register />} />
@@ -104,6 +108,8 @@ function AppRoutes() {
             <Route path="settings" element={<Settings />} />
             <Route path="courses" element={<AdminCourses />} />
             <Route path="blog" element={<Blog />} />
+            <Route path="coupons" element={<Coupons />} />
+            <Route path="terms-content" element={<TermsContent />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

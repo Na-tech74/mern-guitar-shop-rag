@@ -3,20 +3,29 @@ import Breadcrumb from "../../components/Breadcrumb";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faMinus, faPlus, faTrash, faShoppingCart, faArrowLeft,
-    faShieldAlt, faTruck, faUndo, faTag, faGift
+    faShieldAlt, faTruck, faUndo, faTag, faGift,
+    faTimes, faPercent, faMoneyBillWave
 } from "@fortawesome/free-solid-svg-icons";
 import { formatCurrency } from "../../helpers/formatters";
 import { getOptimizedImage } from "../../helpers/image";
 import Button from "../../components/Button";
 import useCartPage from "./hooks/useCartPage";
 
+const couponTypeLabels = {
+    percentage: "Giảm %",
+    fixed: "Giảm tiền",
+    free_shipping: "Miễn phí vận chuyển",
+};
+
 export default function CartPage() {
     const {
-        cartItems, coupon, setCoupon, couponApplied,
+        cartItems, coupon, setCoupon, appliedCoupon,
         updateQuantity, removeItem, clearCart,
         subtotal, shipping, discount, total, itemCount,
-        handleApplyCoupon, navigate,
+        handleApplyCoupon, handleRemoveCoupon, navigate,
     } = useCartPage();
+
+    const couponApplied = !!appliedCoupon;
 
     return (
         <div className="min-h-screen bg-white">
@@ -111,15 +120,26 @@ export default function CartPage() {
                                                 className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 text-gray-800 rounded-xl text-sm outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition placeholder-gray-400"
                                                 disabled={couponApplied}
                                             />
-                                            <Button
-                                                variant={couponApplied ? "success" : "outline"}
-                                                size="md"
-                                                onClick={handleApplyCoupon}
-                                                disabled={couponApplied}
-                                                className="shrink-0"
-                                            >
-                                                {couponApplied ? "Đã áp dụng" : "Áp dụng"}
-                                            </Button>
+                                            {couponApplied ? (
+                                                <Button
+                                                    variant="success"
+                                                    size="md"
+                                                    onClick={handleRemoveCoupon}
+                                                    className="shrink-0"
+                                                >
+                                                    <FontAwesomeIcon icon={faTimes} className="text-xs" />
+                                                    Bỏ
+                                                </Button>
+                                            ) : (
+                                                <Button
+                                                    variant="outline"
+                                                    size="md"
+                                                    onClick={handleApplyCoupon}
+                                                    className="shrink-0"
+                                                >
+                                                    Áp dụng
+                                                </Button>
+                                            )}
                                         </div>
                                     </div>
                                     <Link to="/products" className="text-sm text-amber-500 hover:text-amber-600 whitespace-nowrap font-medium transition shrink-0">
@@ -150,7 +170,8 @@ export default function CartPage() {
                                         <div className="flex justify-between text-emerald-600">
                                             <span className="flex items-center gap-1.5">
                                                 <FontAwesomeIcon icon={faTag} className="text-xs" />
-                                                Giảm giá (5%)
+                                                {appliedCoupon.code}
+                                                <span className="text-[10px] opacity-75">({couponTypeLabels[appliedCoupon.type]})</span>
                                             </span>
                                             <span>-{formatCurrency(discount)}</span>
                                         </div>

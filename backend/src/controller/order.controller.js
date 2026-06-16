@@ -11,6 +11,7 @@ import Category from "../models/categories.model.js";
 import { appError, appSuccess } from "../utils/appResponse.js";
 import { isValidObjectId } from "../utils/valid.js";
 import { createMomoPayment, verifyMomoCallback } from "../services/momo.service.js";
+import { createNotification } from "./notification.controller.js";
 
 /**
  * Tạo đơn hàng mới từ giỏ hàng
@@ -84,6 +85,11 @@ export const createOrder = async (req, res) => {
         total,
         note: note || ""
     });
+
+    createNotification("new_order",
+        `Đơn hàng mới #${order._id} từ ${trimmed.fullName} - ${total.toLocaleString()}đ`,
+        `/admin/orders`
+    );
 
     return appSuccess(res, {
         statusCode: 201,

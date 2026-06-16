@@ -31,9 +31,16 @@ export default function FeaturesBanner({ features }) {
                         return (
                             <div
                                 key={`${item.icon}-${idx}`}
-                                className="flex items-center gap-3 sm:gap-4 p-3 sm:p-5 lg:p-6 rounded-xl border border-gray-100 bg-white shadow-soft hover:shadow-pop hover:border-amber-200 transition-all duration-300"
+                                className="flex flex-col items-center text-center p-3 sm:p-5 lg:p-6 rounded-xl border border-gray-100 bg-white shadow-soft hover:shadow-pop hover:border-amber-200 transition-all duration-300"
                             >
-                                <div className="flex-1 min-w-0">
+                                <div className="size-10 sm:size-14 rounded-xl sm:rounded-2xl flex items-center justify-center mb-3 sm:mb-4">
+                                    <FontAwesomeIcon
+                                        icon={Icon}
+                                        className="text-base sm:text-xl text-black"
+                                    />
+                                </div>
+
+                                <div>
                                     <h3 className="font-semibold text-gray-800 text-sm sm:text-base mb-1 sm:mb-1.5">
                                         {item.title}
                                     </h3>
@@ -41,13 +48,6 @@ export default function FeaturesBanner({ features }) {
                                     <p className="text-xs sm:text-sm text-gray-400 leading-relaxed line-clamp-2">
                                         {item.description}
                                     </p>
-                                </div>
-
-                                <div className="size-10 sm:size-14 rounded-xl sm:rounded-2xl bg-gray-100 flex items-center justify-center shrink-0">
-                                    <FontAwesomeIcon
-                                        icon={Icon}
-                                        className="text-base sm:text-xl text-black"
-                                    />
                                 </div>
                             </div>
                         );

@@ -1,6 +1,18 @@
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import {
+    faArrowRight, faTruck, faShieldHalved, faHeadset,
+    faAward, faGift, faRotate
+} from "@fortawesome/free-solid-svg-icons";
+
+const iconMap = {
+    truck: faTruck,
+    shield: faShieldHalved,
+    headset: faHeadset,
+    award: faAward,
+    gift: faGift,
+    rotate: faRotate,
+};
 
 export default function FeaturedTypes({ data }) {
     const items = data?.types || [];
@@ -33,9 +45,15 @@ export default function FeaturedTypes({ data }) {
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
                             <div className="absolute inset-0 ring-1 ring-inset ring-white/10 group-hover:ring-amber-400/30 rounded-2xl transition-all duration-500" />
                             <div className="absolute top-3 left-3 sm:top-4 sm:left-4">
-                                <span className="inline-flex items-center justify-center size-7 sm:size-8 rounded-full bg-white/15 backdrop-blur-sm text-white/80 text-xs font-semibold">
-                                    {(idx + 1).toString().padStart(2, '0')}
-                                </span>
+                                {item.icon && iconMap[item.icon] ? (
+                                    <span className="inline-flex items-center justify-center size-9 sm:size-10 rounded-full bg-white/20 backdrop-blur-sm text-white text-base sm:text-lg">
+                                        <FontAwesomeIcon icon={iconMap[item.icon]} />
+                                    </span>
+                                ) : (
+                                    <span className="inline-flex items-center justify-center size-7 sm:size-8 rounded-full bg-white/15 backdrop-blur-sm text-white/80 text-xs font-semibold">
+                                        {(idx + 1).toString().padStart(2, '0')}
+                                    </span>
+                                )}
                             </div>
                             <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 bg-gradient-to-t from-black/60 to-transparent">
                                 <h3 className="text-base sm:text-lg md:text-xl font-bold text-white mb-1">{item.title}</h3>

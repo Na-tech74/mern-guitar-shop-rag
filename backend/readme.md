@@ -2,7 +2,7 @@
 
 ## Giới thiệu
 
-Backend REST API cho website bán đàn guitar **Nam Acoustic**, xây dựng bằng **Node.js + Express 5** và **MongoDB (Mongoose 9)**. Hỗ trợ quản lý sản phẩm, danh mục, đơn hàng, người dùng, blog, khóa học, nội dung trang chủ/giới thiệu/footer/liên hệ và xác thực JWT dual-token.
+Backend REST API cho website bán đàn guitar **Nam Acoustic**, xây dựng bằng **Node.js + Express 5** và **MongoDB (Mongoose 9)**. Hỗ trợ quản lý sản phẩm, danh mục, đơn hàng, người dùng, blog, khóa học, mã giảm giá, thông báo admin và nội dung CMS (trang chủ/giới thiệu/footer/liên hệ/điều khoản) cùng xác thực JWT dual-token.
 
 ## Công nghệ sử dụng
 
@@ -50,7 +50,10 @@ backend/
 │   │   ├── homeContent.model.js   # Nội dung trang chủ (singleton)
 │   │   ├── aboutContent.model.js  # Nội dung trang giới thiệu (singleton)
 │   │   ├── footerContent.model.js # Nội dung footer (singleton)
-│   │   └── contactContent.model.js# Nội dung trang liên hệ (singleton)
+│   │   ├── contactContent.model.js# Nội dung trang liên hệ (singleton)
+│   │   ├── coupon.model.js        # Mã giảm giá
+│   │   ├── termsContent.model.js  # Điều khoản (singleton)
+│   │   └── notification.model.js  # Thông báo admin
 │   ├── routers/                   # Định tuyến
 │   │   ├── index.js               # Mount tất cả routes
 │   │   ├── auth.routes.js
@@ -63,7 +66,11 @@ backend/
 │   │   ├── homeContent.routes.js
 │   │   ├── aboutContent.routes.js
 │   │   ├── footerContent.routes.js
-│   │   └── contactContent.routes.js
+│   │   ├── footerContent.routes.js
+│   │   ├── contactContent.routes.js
+│   │   ├── coupon.routes.js
+│   │   ├── termsContent.routes.js
+│   │   └── notification.routes.js
 │   ├── controller/                # Xử lý nghiệp vụ
 │   │   ├── auth.controller.js
 │   │   ├── users.controller.js
@@ -75,12 +82,17 @@ backend/
 │   │   ├── homeContent.controller.js
 │   │   ├── aboutContent.controller.js
 │   │   ├── footerContent.controller.js
-│   │   └── contactContent.controller.js
+│   │   ├── footerContent.controller.js
+│   │   ├── contactContent.controller.js
+│   │   ├── coupon.controller.js
+│   │   ├── termsContent.controller.js
+│   │   └── notification.controller.js
 │   ├── services/
 │   │   ├── generateToken.js       # Tạo JWT access + refresh
 │   │   ├── sendEmail.js           # Gửi email (Gmail SMTP)
 │   │   ├── uploadImages.js        # Upload ảnh lên Cloudinary
-│   │   └── uploadVideos.js        # Upload video lên Cloudinary
+│   │   ├── uploadVideos.js        # Upload video lên Cloudinary
+│   │   └── momo.service.js        # Thanh toán MoMo
 │   └── utils/
 │       ├── appResponse.js         # Response/Error helpers (appSuccess, appError)
 │       ├── valid.js               # Validation helpers
@@ -181,6 +193,39 @@ backend/
 | POST | `/upload` | Admin | Upload ảnh (carousel, featuredTypes...) |
 | POST | `/upload-video` | Admin | Upload video (clip khuyến mãi) |
 
+### About Content (`/api/about-content`)
+
+| Method | Endpoint | Quyền | Mô tả |
+|--------|----------|-------|-------|
+| GET | `/` | Public | Lấy nội dung trang giới thiệu (singleton) |
+| PUT | `/` | Admin | Cập nhật nội dung trang giới thiệu |
+
+### Coupons (`/api/coupons`)
+
+| Method | Endpoint | Quyền | Mô tả |
+|--------|----------|-------|-------|
+| GET | `/active` | Public | Mã giảm giá đang hoạt động |
+| POST | `/apply` | User | Áp dụng mã (kiểm tra hợp lệ) |
+| GET | `/` | Admin | Danh sách mã giảm giá |
+| GET | `/:id` | Admin | Chi tiết mã giảm giá |
+| POST | `/` | Admin | Tạo mã giảm giá |
+| PUT | `/:id` | Admin | Cập nhật mã giảm giá |
+
+### Terms Content (`/api/terms-content`)
+
+| Method | Endpoint | Quyền | Mô tả |
+|--------|----------|-------|-------|
+| GET | `/` | Public | Lấy nội dung điều khoản (singleton) |
+| PUT | `/` | Admin | Cập nhật nội dung điều khoản |
+
+### Notifications (`/api/notifications`)
+
+| Method | Endpoint | Quyền | Mô tả |
+|--------|----------|-------|-------|
+| GET | `/` | Admin | Danh sách thông báo |
+| PUT | `/:id/read` | Admin | Đánh dấu đã đọc |
+| PUT | `/read-all` | Admin | Đánh dấu tất cả đã đọc |
+
 ### Footer Content (`/api/footer-content`)
 
 | Method | Endpoint | Quyền | Mô tả |
@@ -258,11 +303,11 @@ Xem thêm trong thư mục `docs/backend/`:
 |------|-------|
 | `api.md` | API endpoints chi tiết (params, body, response, errors) |
 | `middleware.md` | Auth (protect, adminOnly, rate limit), error handler, upload, asyncHandler |
-| `models.md` | 11 Mongoose models (Users, Product, Category, Blog, Order, Course, HomeContent, AboutContent, FooterContent, ContactContent) |
+| `models.md` | 13 Mongoose models (Users, Product, Category, Blog, Order, Course, HomeContent, AboutContent, FooterContent, ContactContent, Coupon, TermsContent, Notification) |
 | `services.md` | generateToken, sendEmail, uploadImages, uploadVideos |
 | `utils.md` | appResponse, valid, format, cookier |
 | `config.md` | Kết nối DB, cấu hình Cloudinary, global middleware |
-| `controllers.md` | Chi tiết 11 controllers (logic, validation, errors) |
+| `controllers.md` | Chi tiết controllers (logic, validation, errors) |
 
 ## Môi trường
 

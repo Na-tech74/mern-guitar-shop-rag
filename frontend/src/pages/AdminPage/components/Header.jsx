@@ -10,6 +10,7 @@ import {
     faGear,
     faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
+import AdminNotificationBell from "../../../components/AdminNotificationBell.jsx";
 import { useUserInfo } from "../../../hooks/useUserInfo.js";
 import { logoutAPI, userAPI } from "../../../api";
 import UserAvatar from "../../../components/UserAvatar.jsx";
@@ -18,6 +19,9 @@ const PAGE_TITLES = {
     admin: "Bảng điều khiển",
     "home-content": "Trang chủ",
     "about-content": "Giới thiệu",
+    "footer-content": "Footer",
+    "contact-content": "Liên hệ",
+    "terms-content": "Điều khoản & Bảo mật",
     products: "Sản phẩm",
     orders: "Đơn hàng",
     users: "Người dùng",
@@ -25,19 +29,25 @@ const PAGE_TITLES = {
     courses: "Khóa học",
     blog: "Blog",
     settings: "Cài đặt",
+    coupons: "Mã giảm giá",
 };
 
-function usePageTitle() {
+function useBreadcrumbs() {
     const { pathname } = useLocation();
     const segments = pathname.split("/").filter(Boolean);
     const last = segments[segments.length - 1] || "admin";
-    return PAGE_TITLES[last] || last;
+    const pageTitle = PAGE_TITLES[last] || last;
+
+    return [
+        { label: "Trang chủ", href: "/admin" },
+        { label: pageTitle },
+    ];
 }
 
 export default function AdminHeader({ toggleMobileSidebar }) {
     const navigate = useNavigate();
     const userInfo = useUserInfo();
-    const title = usePageTitle();
+    const breadcrumbs = useBreadcrumbs();
     const [menuOpen, setMenuOpen] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState("");
@@ -135,9 +145,24 @@ export default function AdminHeader({ toggleMobileSidebar }) {
                     <FontAwesomeIcon icon={faBars} />
                 </button>
 
-                <h1 className="text-base font-semibold text-gray-800 truncate">{title}</h1>
+                <nav className="text-sm">
+                    <ol className="flex items-center gap-2 text-gray-500">
+                        {breadcrumbs.map((item, i) => (
+                            <li key={i} className="flex items-center gap-2">
+                                {i > 0 && <span className="text-gray-300">/</span>}
+                                {item.href ? (
+                                    <span className="text-gray-400">{item.label}</span>
+                                ) : (
+                                    <span className="text-gray-800 font-semibold">{item.label}</span>
+                                )}
+                            </li>
+                        ))}
+                    </ol>
+                </nav>
 
-                <div ref={menuRef} className="ml-auto relative">
+                <div className="ml-auto flex items-center gap-1">
+                    <AdminNotificationBell />
+                    <div ref={menuRef} className="relative">
                     <button
                         type="button"
                         onClick={() => setMenuOpen((v) => !v)}
@@ -266,6 +291,7 @@ export default function AdminHeader({ toggleMobileSidebar }) {
                     )}
                 </div>
             </div>
+        </div>
         </header>
     );
 }

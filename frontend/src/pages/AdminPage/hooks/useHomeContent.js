@@ -25,9 +25,9 @@ const defaultContent = {
         title: "",
         subtitle: "",
         types: [
-            { title: "", subtitle: "", image: "", link: "/products" },
-            { title: "", subtitle: "", image: "", link: "/products" },
-            { title: "", subtitle: "", image: "", link: "/products" },
+            { title: "", subtitle: "", image: "", link: "/products", icon: "" },
+            { title: "", subtitle: "", image: "", link: "/products", icon: "" },
+            { title: "", subtitle: "", image: "", link: "/products", icon: "" },
         ]
     },
     ctaSection: {

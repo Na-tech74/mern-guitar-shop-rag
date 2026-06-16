@@ -336,7 +336,7 @@ export default function HomeContent() {
                             <ClipSection formData={formData} handlers={handlers} />
                         )}
                         {activeTab === "types" && (
-                            <FeaturedTypesSection formData={formData} handlers={handlers} />
+                            <FeaturedTypesSection formData={formData} handlers={handlers} iconOptions={iconOptions} />
                         )}
                         {activeTab === "cta" && (
                             <CtaSection formData={formData} handlers={handlers} />
@@ -578,7 +578,7 @@ const ClipSection = ({ formData, handlers }) => {
     );
 };
 
-const FeaturedTypesSection = ({ formData, handlers }) => {
+const FeaturedTypesSection = ({ formData, handlers, iconOptions }) => {
     const { updateFeaturedType, updateFeaturedTypesMeta } = handlers;
     return (
         <div className="space-y-6">
@@ -612,7 +612,7 @@ const FeaturedTypesSection = ({ formData, handlers }) => {
                             onChange={(e) => updateFeaturedType(index, "subtitle", e.target.value)}
                         />
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <Input
                             label="URL hình ảnh"
                             value={type.image}
@@ -623,6 +623,23 @@ const FeaturedTypesSection = ({ formData, handlers }) => {
                             value={type.link}
                             onChange={(e) => updateFeaturedType(index, "link", e.target.value)}
                         />
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Biểu tượng
+                            </label>
+                            <select
+                                value={type.icon}
+                                onChange={(e) => updateFeaturedType(index, "icon", e.target.value)}
+                                className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/50 bg-white"
+                            >
+                                <option value="">Không có</option>
+                                {iconOptions.map((opt) => (
+                                    <option key={opt.value} value={opt.value}>
+                                        {opt.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
                     <ImageUploader
                         value={type.image}

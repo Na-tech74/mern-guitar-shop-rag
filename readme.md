@@ -18,7 +18,8 @@ User (Browser)
        │        ├── Auth (JWT dual-token)
        │        ├── Products / Categories / Orders
        │        ├── Users / Blog / Courses
-       │        ├── HomeContent / AboutContent / FooterContent / ContactContent
+       │        ├── Coupons / Notifications
+       │        ├── Content CMS (Home/About/Footer/Contact/Terms)
        │        ▼
        │     MongoDB
        │
@@ -30,7 +31,7 @@ User (Browser)
            ┌────┴────┐
            ▼         ▼
       Vector DB    LLM Model
-     (FAISS)     (Mistral/OpenAI)
+     (FAISS)     (Mistral/OpenAI/Gemini)
            │         │
            └── RAG ──┘
                 │
@@ -84,10 +85,10 @@ User (Browser)
 │   │   ├── app.js              # Express app (tách riêng để test)
 │   │   ├── config/             # DB, Cloudinary, global middleware
 │   │   ├── middleware/         # Auth, error, upload, sanitize, notFound, asyncHandler
-│   │   ├── models/             # 11 Mongoose models
-│   │   ├── routers/            # Route definitions (11 modules)
-│   │   ├── controller/         # Business logic (11 controllers)
-│   │   ├── services/           # generateToken, sendEmail, uploadImages, uploadVideos
+│   │   ├── models/             # 13 Mongoose models
+│   │   ├── routers/            # Route definitions (14 modules)
+│   │   ├── controller/         # Business logic (14 controllers)
+│   │   ├── services/           # generateToken, sendEmail, uploadImages, uploadVideos, momo
 │   │   └── utils/              # appResponse, valid, format, cookier
 │   └── readme.md
 │
@@ -95,9 +96,9 @@ User (Browser)
 │   ├── src/
 │   │   ├── main.jsx            # Entry point
 │   │   ├── App.jsx             # Root + Router (lazy loading)
-│   │   ├── api/                # Axios client + interceptors + 11 API modules
-│   │   ├── components/         # 14 shared components
-│   │   ├── hooks/              # 6 custom hooks
+│   │   ├── api/                # Axios client + interceptors + 14 API modules
+│   │   ├── components/         # 18 shared components
+│   │   ├── hooks/              # 6 global hooks + 14 admin hooks
 │   │   ├── helpers/            # Format utilities
 │   │   ├── layouts/            # MainLayout, AdminLayout
 │   │   └── pages/              # 14 page groups (14 user + 12 admin + 2 admin components + 12 admin hooks)
@@ -114,13 +115,15 @@ User (Browser)
 
 - **Trang chủ**: Hero carousel (3 slides), banner tính năng, danh mục, sản phẩm nổi bật, clip quảng cáo, bộ sưu tập, CTA hỗ trợ
 - **Sản phẩm**: Danh sách phân trang, lọc danh mục, sắp xếp, tìm kiếm, gallery ảnh
-- **Giỏ hàng**: localStorage, thêm/sửa/xoá, mã giảm giá GUITAR10
-- **Thanh toán**: Form địa chỉ, COD / chuyển khoản
+- **Giỏ hàng**: localStorage, thêm/sửa/xoá, mã giảm giá (validate qua API)
+- **Thanh toán**: Form địa chỉ, COD / chuyển khoản / MoMo
 - **Yêu thích**: localStorage, thêm/xoá/thêm tất cả vào giỏ
 - **Khóa học**: Danh sách, chi tiết (video player + danh sách bài học động)
 - **Blog**: Danh sách & chi tiết bài viết
 - **Xác thực**: Đăng ký, đăng nhập, quên mật khẩu (OTP qua email)
 - **Tài khoản**: Thông tin cá nhân, đổi mật khẩu, avatar, lịch sử đơn hàng
+- **Mã giảm giá**: Xem mã khuyến mãi, copy mã từ header
+- **Điều khoản**: Trang điều khoản & chính sách
 - **Tìm kiếm**: Tìm kiếm sản phẩm theo từ khóa (debounce)
 
 ### Quản trị (Admin)
@@ -136,6 +139,9 @@ User (Browser)
 - **Nội dung trang giới thiệu**: Chỉnh sửa story, stats, team, commitments
 - **Nội dung footer**: Chỉnh sửa mô tả, liên kết, mạng xã hội, thông tin liên hệ
 - **Nội dung trang liên hệ**: Chỉnh sửa thông tin liên hệ, mạng xã hội, Google Maps
+- **Mã giảm giá**: Quản lý mã (percentage/fixed/free_shipping), kích hoạt/vô hiệu, phân trang
+- **Nội dung điều khoản**: CMS điều khoản & chính sách với sections động
+- **Thông báo admin**: Chuông thông báo real-time khi có đơn hàng mới/người dùng mới
 - **Cài đặt**: Thông tin cá nhân, đổi mật khẩu
 
 ### Chatbot AI (RAG) - đang phát triển
@@ -171,9 +177,9 @@ User chọn sản phẩm → localStorage cart
 ### Quản lý nội dung (Singleton)
 
 ```
-Admin chỉnh sửa → PUT /api/home-content (hoặc about-content / footer-content / contact-content)
+Admin chỉnh sửa → PUT /api/home-content (hoặc about-content / footer-content / contact-content / terms-content)
   → Backend cập nhật document duy nhất
-  → Frontend GET → render trang chủ / giới thiệu / footer / liên hệ
+  → Frontend GET → render trang chủ / giới thiệu / footer / liên hệ / điều khoản
 ```
 
 ### Chatbot RAG (kế hoạch)
@@ -215,9 +221,4 @@ npm run dev       # http://localhost:5173 (proxy /api → backend)
 
 ### Biến môi trường
 
-<<<<<<< HEAD
 Xem chi tiết tại `backend/readme.md` và `frontend/readme.md`.
-
-=======
-Xem chi tiết tại `backend/readme.md` và `frontend/readme.md`.
->>>>>>> 6320a4b ( create contactContent and FooterContent , update ux/ui frontend)

@@ -29,7 +29,7 @@ export default function ProductCard({ product, viewMode = "grid", onAddToCart, i
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none" />
                     {product.sold > 0 && (
-                        <div className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-amber-500 text-white text-[10px] sm:text-[11px] font-medium px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full shadow-sm flex items-center gap-1">
+                        <div className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-red-500 text-white text-[10px] sm:text-[11px] font-medium px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full shadow-sm flex items-center gap-1">
                             <FontAwesomeIcon icon={faFire} className="text-[8px] sm:text-[9px]" />
                             Hot
                         </div>

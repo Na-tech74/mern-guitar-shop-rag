@@ -16,6 +16,7 @@ import { appError, appSuccess } from "../utils/appResponse.js"; // Utility xử 
 import { isValidEmail, isValidPassword } from "../utils/valid.js"; // Utility validate input
 import { refreshTokenCookie, clearCookie } from "../utils/cookier.js"; // Utility xử lý cookie
 import { sanitizeEmail, sanitizeText, formatDateTime } from "../utils/format.js";
+import { createNotification } from "./notification.controller.js";
 
 /**
  * Đăng ký tài khoản mới
@@ -73,6 +74,11 @@ export const register = async (req, res) => {
 
     // Gửi refresh token qua cookie HttpOnly
     refreshTokenCookie(res, refreshToken);
+
+    createNotification("new_user",
+        `Người dùng mới: ${sanitizeText(name)} (${sanitizeEmail(email)})`,
+        `/admin/users`
+    );
 
     // Trả về thông tin user và access token cho client
     return appSuccess(res, {

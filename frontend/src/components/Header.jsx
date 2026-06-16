@@ -9,6 +9,7 @@ import {
 import { faFacebook, faYoutube, faTiktok, faInstagram } from '@fortawesome/free-brands-svg-icons';
 import Logo from './Logo.jsx';
 import UserAvatar from './UserAvatar.jsx';
+import CouponBell from './CouponBell.jsx';
 import { useUserInfo } from '../hooks/useUserInfo.js';
 import { logoutAPI, userAPI } from '../api';
 
@@ -151,7 +152,7 @@ const Header = memo(function Header() {
       <header className="w-full sticky top-0 z-50 will-change-transform">
 
         {/* Top Bar */}
-        <div className="hidden lg:block bg-amber-400 text-white text-xs py-2">
+        <div className="hidden lg:block bg-amber-400  text-xs py-2">
           <div className="max-w-7xl mx-auto flex justify-between items-center px-4">
             <div className="flex items-center gap-4">
               <a href="mailto:namn98561@gmail.com" className="hover:text-white/70 transition">
@@ -165,16 +166,16 @@ const Header = memo(function Header() {
               </a>
             </div>
             <div className="flex gap-3">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-white/70 transition">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 transition">
                 <FontAwesomeIcon icon={faFacebook} />
               </a>
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="hover:text-white/70 transition">
+              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="hover:text-red-600 transition">
                 <FontAwesomeIcon icon={faYoutube} />
               </a>
-              <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="hover:text-white/70 transition">
+              <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="hover:text-black transition">
                 <FontAwesomeIcon icon={faTiktok} />
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-white/70 transition">
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-pink-500 transition">
                 <FontAwesomeIcon icon={faInstagram} />
               </a>
             </div>
@@ -214,6 +215,8 @@ const Header = memo(function Header() {
                   </span>
                 )}
               </Link>
+
+              {isLoggedIn && <CouponBell />}
 
               {/* Account Dropdown */}
               <div className="relative" ref={dropdownRef}>
@@ -345,7 +348,7 @@ const Header = memo(function Header() {
               <Link to="/cart" className="relative group">
                 <FontAwesomeIcon icon={faCartShopping} className="text-xl text-gray-600 group-hover:text-amber-500 transition" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-amber-500 text-white text-[10px] size-4 flex items-center justify-center rounded-full font-bold">
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] size-4 flex items-center justify-center rounded-full font-bold">
                     {cartCount}
                   </span>
                 )}
@@ -353,7 +356,7 @@ const Header = memo(function Header() {
             </div>
 
             {/* Mobile Buttons */}
-            <div className="flex lg:hidden items-center gap-3">
+            <div className="flex lg:hidden items-center gap-1">
               <button type="button" onClick={() => setIsSearchOpen(!isSearchOpen)}>
                 <FontAwesomeIcon icon={faSearch} className="text-xl text-gray-700" />
               </button>
@@ -365,10 +368,11 @@ const Header = memo(function Header() {
                   </span>
                 )}
               </Link>
+              {isLoggedIn && <CouponBell />}
               <Link to="/cart" className="relative">
                 <FontAwesomeIcon icon={faCartShopping} className="text-xl text-gray-700" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-amber-500 text-white text-[10px] size-4 flex items-center justify-center rounded-full">
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] size-4 flex items-center justify-center rounded-full">
                     {cartCount}
                   </span>
                 )}

@@ -17,6 +17,8 @@ import {
     faCopyright,
     faChevronDown,
     faEnvelope,
+    faTicket,
+    faFileContract,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 
@@ -113,6 +115,9 @@ export default function AdminSidebar({ isMobileOpen, setIsMobileOpen }) {
                             <li>
                                 <NavItem to="/admin/contact-content" icon={faEnvelope} name="Liên hệ" />
                             </li>
+                            <li>
+                                <NavItem to="/admin/terms-content" icon={faFileContract} name="Điều khoản" />
+                            </li>
                         </NavSection>
                         <li>
                             <NavItem to="/admin/products" icon={faBox} name="Sản phẩm" />
@@ -125,6 +130,9 @@ export default function AdminSidebar({ isMobileOpen, setIsMobileOpen }) {
                         </li>
                         <li>
                             <NavItem to="/admin/categories" icon={faTag} name="Danh mục" />
+                        </li>
+                        <li>
+                            <NavItem to="/admin/coupons" icon={faTicket} name="Mã giảm giá" />
                         </li>
                     </ul>
                 </nav>

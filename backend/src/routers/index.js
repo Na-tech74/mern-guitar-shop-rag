@@ -11,6 +11,9 @@ import homeContentRoutes from './homeContent.routes.js';
 import aboutContentRoutes from './aboutContent.routes.js';
 import footerContentRoutes from './footerContent.routes.js';
 import contactContentRoutes from './contactContent.routes.js';
+import couponRoutes from './coupon.routes.js';
+import termsContentRoutes from './termsContent.routes.js';
+import notificationRoutes from './notification.routes.js';
 
 export const mountRoutes = (app) => {
     app.get('/', (req, res) => {
@@ -38,4 +41,7 @@ export const mountRoutes = (app) => {
     app.use('/api/about-content', aboutContentRoutes);
     app.use('/api/footer-content', footerContentRoutes);
     app.use('/api/contact-content', contactContentRoutes);
+    app.use('/api/coupons', couponRoutes);
+    app.use('/api/terms-content', termsContentRoutes);
+    app.use('/api/notifications', notificationRoutes);
 };
