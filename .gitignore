@@ -17,3 +17,7 @@ node_modules/
 dist/
 build/
 docs/
+
+# bot
+bot/.venv/
+bot/.env
