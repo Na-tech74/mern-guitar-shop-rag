@@ -21,3 +21,4 @@ docs/
 # bot
 bot/.venv/
 bot/.env
+bot/_pycache_
