@@ -1,0 +1,55 @@
+services:
+  - type: web
+    name: guitar-shop-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node src/server.js
+    healthCheckPath: /api/products?limit=1
+    envVars:
+      - key: PORT
+        value: "5000"
+      - key: MONGO_URL
+        sync: false
+      - key: MONGO_LOCAL_URI
+        sync: false
+      - key: MONGO_ATLAS_URI
+        sync: false
+      - key: MONGOBRIDGE_DB
+        value: Guitar_Shop
+      - key: JWT_ACCESS_SECRET
+        sync: false
+      - key: JWT_REFRESH_SECRET
+        sync: false
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: CORS_ORIGIN
+        value: https://guitar-shop-frontend.onrender.com
+      - key: MOMO_PARTNER_CODE
+        sync: false
+      - key: MOMO_ACCESS_KEY
+        sync: false
+      - key: MOMO_SECRET_KEY
+        sync: false
+      - key: MOMO_API_URL
+        sync: false
+      - key: MOMO_API_PATH
+        sync: false
+
+  - type: web
+    name: guitar-shop-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://guitar-shop-backend.onrender.com/api
