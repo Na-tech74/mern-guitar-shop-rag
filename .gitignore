@@ -1,24 +1,26 @@
 # backend
 backend/node_modules/
 backend/.env
-backend/server-error.log
-backend/server.log
-backend/dev-stdout.log
+backend/*.log
 
 # frontend
 frontend/node_modules/
 frontend/.env
-frontend/dev-stderr.log
-frontend/dev-stdout.log
-# chung
-node_modules/
-.gitignore
-.env
-dist/
-build/
-docs/
+frontend/dist/
+frontend/*.log
 
 # bot
 bot/.venv/
 bot/.env
-bot/_pycache_
+bot/__pycache__/
+bot/*.log
+
+# chung
+node_modules/
+.env
+dist/
+build/
+docs/
+*.log
+.DS_Store
+Thumbs.db

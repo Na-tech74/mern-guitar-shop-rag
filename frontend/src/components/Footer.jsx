@@ -150,7 +150,7 @@ const Footer = memo(function Footer() {
       </div>
 
       {/* Bottom */}
-      <div className="bg-amber-400  text-xs px-4 sm:px-6 lg:px-8 py-4">
+      <div className="bg-amber-400  text-xs px-4 sm:px-6 lg:px-8 py-4 text-black">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
           <p>{bottom.copyrightText || `© ${new Date().getFullYear()} Nam Acoustic. No copyright design by Nam Nguyễn`}</p>
           <div className="flex items-center gap-4">

@@ -1,0 +1,21 @@
+services:
+  backend:
+    build: ./backend
+    container_name: guitar-shop-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: /api
+    container_name: guitar-shop-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend

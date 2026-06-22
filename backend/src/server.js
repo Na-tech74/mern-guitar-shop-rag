@@ -8,12 +8,12 @@
  *   4. Đăng ký graceful shutdown (đóng server + DB khi nhận SIGTERM / SIGINT)
  */
 
-// Load .env TRƯỚC mọi import khác để các module dùng được process.env
-// Dùng side-effect import "dotenv/config" để chắc chắn .env được nạp
-// trước khi các module bên dưới (vd: cloudinay.config.js) đọc process.env.
-// Lưu ý: ES module imports bị hoisted nên `dotenv.config()` viết sau import
-// sẽ chạy SAU khi tất cả import đã load xong -> các module đọc env quá sớm.
-import 'dotenv/config';
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 import mongoose from 'mongoose';
 
