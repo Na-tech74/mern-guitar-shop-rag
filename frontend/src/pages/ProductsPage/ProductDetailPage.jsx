@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Link, useParams } from "react-router-dom";
 import Breadcrumb from "../../components/Breadcrumb";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart, faMinus, faPlus, faShoppingCart, faTruck, faShieldAlt, faUndo, faImage, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faHeart, faMinus, faPlus, faShoppingCart, faTruck, faShieldAlt, faUndo, faImage, faCheck, faXmark, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { productAPI } from "../../api";
 import { formatCurrency } from "../../helpers/formatters";
 import { getOptimizedImage } from "../../helpers/image";
@@ -52,6 +52,44 @@ export default function ProductDetailPage() {
             .finally(() => setLoaded(true));
     }, [id]);
 
+    const images = product?.images?.length > 0 ? product.images : [];
+
+    const imgRef = useRef(images.length);
+    const containerRef = useRef(null);
+
+    const goTo = useCallback((idx) => {
+        if (idx < 0) idx = imgRef.current - 1;
+        if (idx >= imgRef.current) idx = 0;
+        setSelectedImage(idx);
+    }, []);
+
+    useEffect(() => { imgRef.current = images.length; }, [images.length]);
+
+    useEffect(() => {
+        const onKey = (e) => {
+            if (e.key === "ArrowLeft") goTo(selectedImage - 1);
+            if (e.key === "ArrowRight") goTo(selectedImage + 1);
+        };
+        document.addEventListener("keydown", onKey);
+        return () => document.removeEventListener("keydown", onKey);
+    }, [selectedImage, goTo]);
+
+    useEffect(() => {
+        const el = containerRef.current;
+        if (!el) return;
+        let startX = 0;
+        const onStart = (e) => { startX = e.touches[0].clientX; };
+        const onEnd = (e) => {
+            const diff = startX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 50) {
+                diff > 0 ? goTo(selectedImage + 1) : goTo(selectedImage - 1);
+            }
+        };
+        el.addEventListener("touchstart", onStart, { passive: true });
+        el.addEventListener("touchend", onEnd, { passive: true });
+        return () => { el.removeEventListener("touchstart", onStart); el.removeEventListener("touchend", onEnd); };
+    }, [selectedImage, goTo]);
+
     if (!loaded) {
         return <Skeleton.ProductDetail />;
     }
@@ -71,23 +109,51 @@ export default function ProductDetailPage() {
         );
     }
 
-    const images = product.images?.length > 0 ? product.images : [];
-
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
             <Breadcrumb items={[{ label: "Trang chủ", href: "/" }, { label: "Sản phẩm", href: "/products" }, { label: product.name }]} />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">
-                <div>
-                    <div className="aspect-square rounded-xl sm:rounded-2xl overflow-hidden bg-gray-100 mb-3 sm:mb-4 shadow-soft">
+                <div ref={containerRef}>
+                    <div className="relative aspect-square rounded-xl sm:rounded-2xl overflow-hidden bg-gray-100 mb-3 sm:mb-4 shadow-soft group">
                         {images.length > 0 ? (
-                            <img
-                                src={getOptimizedImage(images[selectedImage], 600)}
-                                alt={product.name}
-                                className="w-full h-full object-cover"
-                                loading="eager"
-                                decoding="async"
-                            />
+                            <>
+                                <div
+                                    className="flex transition-transform duration-500 ease-out absolute inset-0"
+                                    style={{ transform: `translateX(-${selectedImage * 100}%)` }}
+                                >
+                                    {images.map((img, idx) => (
+                                        <div key={idx} className="min-w-full h-full shrink-0">
+                                            <img
+                                                src={getOptimizedImage(img, 600)}
+                                                alt={product.name}
+                                                className="w-full h-full object-cover"
+                                                loading={idx === 0 ? "eager" : "lazy"}
+                                                decoding="async"
+                                                fetchpriority={idx === 0 ? "high" : "low"}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                                {images.length > 1 && (
+                                    <>
+                                        <button type="button" onClick={() => goTo(selectedImage - 1)}
+                                            className="absolute left-2 top-1/2 -translate-y-1/2 size-9 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <FontAwesomeIcon icon={faChevronLeft} className="text-sm" />
+                                        </button>
+                                        <button type="button" onClick={() => goTo(selectedImage + 1)}
+                                            className="absolute right-2 top-1/2 -translate-y-1/2 size-9 rounded-full bg-white/80 hover:bg-white shadow-md flex items-center justify-center text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <FontAwesomeIcon icon={faChevronRight} className="text-sm" />
+                                        </button>
+                                        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                                            {images.map((_, idx) => (
+                                                <button key={idx} type="button" onClick={() => setSelectedImage(idx)}
+                                                    className={`size-2 rounded-full transition-all ${idx === selectedImage ? "bg-white w-4" : "bg-white/50 hover:bg-white/70"}`} />
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
+                            </>
                         ) : (
                             <div className="w-full h-full flex items-center justify-center text-gray-300">
                                 <FontAwesomeIcon icon={faImage} className="text-4xl sm:text-6xl" />

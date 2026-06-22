@@ -187,11 +187,20 @@ export const updateProducts = async (req, res) => {
     product.category = category;
     product.stock = parseInt(stock);
 
+    let existingImageUrls = [];
+    if (req.body.existingImages) {
+        try {
+            existingImageUrls = JSON.parse(req.body.existingImages);
+        } catch {
+            existingImageUrls = [];
+        }
+    }
+
     if (imageFiles && imageFiles.length > 0) {
-        const imageUrls = await uploadImages(imageFiles, "guitar-shop/products");
-        product.images = imageUrls;
-    } else if (images) {
-        product.images = images;
+        const newImageUrls = await uploadImages(imageFiles, "guitar-shop/products");
+        product.images = [...existingImageUrls, ...newImageUrls];
+    } else if (existingImageUrls.length > 0) {
+        product.images = existingImageUrls;
     }
 
     await product.save();

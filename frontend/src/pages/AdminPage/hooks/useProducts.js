@@ -215,6 +215,10 @@ export const useProducts = () => {
                 fd.append("images", file);
             }
 
+            if (formData.existingImages?.length > 0) {
+                fd.append("existingImages", JSON.stringify(formData.existingImages));
+            }
+
             if (editingProduct) {
                 await updateProduct(editingProduct._id, fd);
             } else {

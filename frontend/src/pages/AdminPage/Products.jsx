@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faPen, faTrash, faSearch, faImage, faUpload, faSpinner, faBox, faTag, faCube } from "@fortawesome/free-solid-svg-icons";
 import { formatCurrency } from "../../helpers/formatters";
+import { getOptimizedImage } from "../../helpers/image";
 import { useProducts } from "./hooks/useProducts";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
@@ -98,12 +99,21 @@ export default function Products() {
                                         <tr key={product._id} className={`border-b border-gray-50 last:border-0 hover:bg-amber-50/30 transition-colors ${i % 2 === 0 ? "bg-white" : "bg-gray-50/30"}`}>
                                             <td className="py-3 px-4">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="size-10 rounded-lg bg-gray-100 overflow-hidden shrink-0 border border-gray-200">
-                                                        {product.images?.[0] ? (
-                                                            <img src={product.images[0]} alt={product.name} className="h-full w-full object-cover" loading="lazy" />
+                                                    <div className="flex -space-x-1.5 shrink-0">
+                                                        {product.images?.length > 0 ? (
+                                                            product.images.slice(0, 3).map((img, idx) => (
+                                                                <div key={idx} className="size-8 rounded-md border-2 border-white bg-gray-100 overflow-hidden relative shadow-sm">
+                                                                    <img src={getOptimizedImage(img, 64)} alt="" className="w-full h-full object-cover" loading="lazy" />
+                                                                    {idx === 2 && product.images.length > 3 && (
+                                                                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-[10px] font-bold">
+                                                                            +{product.images.length - 3}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            ))
                                                         ) : (
-                                                            <div className="flex h-full w-full items-center justify-center text-gray-300">
-                                                                <FontAwesomeIcon icon={faImage} />
+                                                            <div className="size-8 rounded-md border-2 border-white bg-gray-100 flex items-center justify-center text-gray-300">
+                                                                <FontAwesomeIcon icon={faImage} className="text-xs" />
                                                             </div>
                                                         )}
                                                     </div>
@@ -160,12 +170,21 @@ export default function Products() {
                             {filteredProducts.map((product) => (
                                 <div key={product._id} className="rounded-xl bg-white border border-gray-100 shadow-sm overflow-hidden">
                                     <div className="flex gap-3 p-3">
-                                        <div className="size-16 rounded-lg bg-gray-50 overflow-hidden shrink-0 border border-gray-100">
-                                            {product.images?.[0] ? (
-                                                <img src={product.images[0]} alt={product.name} className="h-full w-full object-cover" loading="lazy" />
+                                        <div className="flex flex-col gap-0.5 shrink-0">
+                                            {product.images?.length > 0 ? (
+                                                product.images.slice(0, 3).map((img, idx) => (
+                                                    <div key={idx} className="size-7 rounded border border-gray-200 bg-gray-50 overflow-hidden relative">
+                                                        <img src={getOptimizedImage(img, 64)} alt="" className="w-full h-full object-cover" loading="lazy" />
+                                                        {idx === 2 && product.images.length > 3 && (
+                                                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-[8px] font-bold">
+                                                                +{product.images.length - 3}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                ))
                                             ) : (
-                                                <div className="flex h-full w-full items-center justify-center text-gray-200">
-                                                    <FontAwesomeIcon icon={faImage} />
+                                                <div className="size-7 rounded border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-200">
+                                                    <FontAwesomeIcon icon={faImage} className="text-[10px]" />
                                                 </div>
                                             )}
                                         </div>
@@ -289,7 +308,7 @@ export default function Products() {
                             </div>
 
                             <div>
-                                <label className="mb-1 block text-sm font-medium text-gray-700">Hình ảnh</label>
+                                <label className="mb-1 block text-sm font-medium text-gray-700">Hình ảnh ({formData.images.length}/5)</label>
                                 <label className="flex flex-col items-center justify-center h-28 rounded-lg border-2 border-dashed border-gray-200 bg-gray-50 hover:border-amber-400 hover:bg-amber-50/30 cursor-pointer transition-all">
                                     <input
                                         type="file"
@@ -299,7 +318,7 @@ export default function Products() {
                                         className="hidden"
                                     />
                                     <FontAwesomeIcon icon={faUpload} className="text-gray-300 text-xl mb-1" />
-                                    <p className="text-xs text-gray-500">Nhấn để chọn ảnh</p>
+                                    <p className="text-xs text-gray-500">Nhấn để chọn nhiều ảnh (tối đa 5)</p>
                                 </label>
                                 {formData.images.length > 0 && (
                                     <div className="mt-3 flex gap-2 flex-wrap">

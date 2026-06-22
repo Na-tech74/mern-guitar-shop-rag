@@ -11,26 +11,26 @@
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import mongoose from 'mongoose';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
-
-import mongoose from 'mongoose';
-
-// Express app (đã được cấu hình middleware + routes trong app.js)
-import app from './app.js';
-import connectDB from './config/db.config.js';
 
 // Đọc port từ env, mặc định 5000 nếu không có
 const port = process.env.PORT || 5000;
 
 /**
  * Khởi động server tuần tự:
+ *   - Load dotenv trước để env có sẵn cho Cloudinary config
  *   - Đợi DB kết nối thành công rồi mới listen port
  *   - Nếu DB fail, log lỗi và exit (không để server chạy mà không có DB)
  */
 const startServer = async () => {
     try {
+        // Dynamic import để đảm bảo dotenv đã load trước khi app (và Cloudinary) chạy
+        const { default: app } = await import('./app.js');
+        const { default: connectDB } = await import('./config/db.config.js');
+
         // 1. Kết nối MongoDB trước (await để chắc chắn thành công)
         await connectDB();
 
