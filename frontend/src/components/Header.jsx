@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faSearch, faHeart, faUser, faCartShopping, faBars,
   faChevronDown, faEnvelope, faTimes, faRightFromBracket, faPhone,
-  faCamera, faTrash, faSpinner,
+  faCamera, faTrash, faSpinner, faGear,
 } from '@fortawesome/free-solid-svg-icons';
 import { faFacebook, faYoutube, faTiktok, faInstagram } from '@fortawesome/free-brands-svg-icons';
 import Logo from './Logo.jsx';
@@ -330,6 +330,12 @@ const Header = memo(function Header() {
                             <FontAwesomeIcon icon={faRightFromBracket} className="text-base text-gray-400" />
                             <span>Đơn hàng</span>
                           </Link>
+                          {(userInfo?.role === "admin" || userInfo?.role === "staff") && (
+                            <Link to={userInfo?.role === "admin" ? "/admin" : "/staff"} className="flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setIsAccountOpen(false)}>
+                              <FontAwesomeIcon icon={faGear} className="text-base text-gray-400" />
+                              <span>Quản lý</span>
+                            </Link>
+                          )}
                         </div>
 
                         <div className="border-t border-gray-100 py-1">

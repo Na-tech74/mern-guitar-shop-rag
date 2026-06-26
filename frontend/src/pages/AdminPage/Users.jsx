@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPen, faTrash, faSearch, faUserShield, faSpinner, faUsers, faEnvelope, faCalendar, faShieldHalved } from "@fortawesome/free-solid-svg-icons";
+import { faPen, faTrash, faSearch, faUserShield, faSpinner, faUsers, faEnvelope, faCalendar, faShieldHalved, faUserTie } from "@fortawesome/free-solid-svg-icons";
 import { useUsers } from "./hooks/useUsers";
 import { formatDate } from "../../helpers/formatters";
 import Button from "../../components/Button";
@@ -75,10 +75,10 @@ export default function Users() {
                                     <td className="py-3 px-4 text-sm text-gray-600">{user.email}</td>
                                     <td className="py-3 px-4">
                                         <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                                            user.role === "admin" ? "bg-amber-100 text-amber-700" : "bg-gray-100 text-gray-600"
+                                            user.role === "admin" ? "bg-amber-100 text-amber-700" : user.role === "staff" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"
                                         }`}>
-                                            <FontAwesomeIcon icon={user.role === "admin" ? faUserShield : faShieldHalved} className="text-[10px]" />
-                                            {user.role === "admin" ? "Admin" : "User"}
+                                            <FontAwesomeIcon icon={user.role === "admin" ? faUserShield : user.role === "staff" ? faUserTie : faShieldHalved} className="text-[10px]" />
+                                            {user.role === "admin" ? "Admin" : user.role === "staff" ? "Staff" : "Customer"}
                                         </span>
                                     </td>
                                     <td className="py-3 px-4 text-sm text-gray-500">
@@ -140,10 +140,10 @@ export default function Users() {
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${
-                                            user.role === "admin" ? "bg-amber-100 text-amber-700" : "bg-gray-100 text-gray-600"
+                                            user.role === "admin" ? "bg-amber-100 text-amber-700" : user.role === "staff" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"
                                         }`}>
-                                            <FontAwesomeIcon icon={user.role === "admin" ? faUserShield : faShieldHalved} className="text-[7px]" />
-                                            {user.role === "admin" ? "Admin" : "User"}
+                                            <FontAwesomeIcon icon={user.role === "admin" ? faUserShield : user.role === "staff" ? faUserTie : faShieldHalved} className="text-[7px]" />
+                                            {user.role === "admin" ? "Admin" : user.role === "staff" ? "Staff" : "Customer"}
                                         </span>
                                         {user.createdAt && (
                                             <span className="text-[10px] text-gray-400 flex items-center gap-1">
@@ -196,7 +196,8 @@ export default function Users() {
                                     onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                                     className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:border-amber-400 focus:bg-white focus:ring-2 focus:ring-amber-400/20 transition-all"
                                 >
-                                    <option value="user">User</option>
+                                    <option value="customer">Customer</option>
+                                    <option value="staff">Staff</option>
                                     <option value="admin">Admin</option>
                                 </select>
                             </div>

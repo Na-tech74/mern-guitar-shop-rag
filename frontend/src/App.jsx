@@ -61,6 +61,8 @@ function AppRoutes() {
         const user = JSON.parse(raw);
         if (user.role === "admin" && location.pathname === "/") {
           navigate("/admin", { replace: true });
+        } else if (user.role === "staff" && location.pathname === "/") {
+          navigate("/staff", { replace: true });
         }
       } catch {}
     }, []);
@@ -110,6 +112,16 @@ function AppRoutes() {
             <Route path="blog" element={<Blog />} />
             <Route path="coupons" element={<Coupons />} />
             <Route path="terms-content" element={<TermsContent />} />
+        </Route>
+
+        <Route path="/staff" element={
+          <ProtectedRoute roleRequired={["staff", "admin"]}>
+            <AdminLayout />
+          </ProtectedRoute>
+        }>
+            <Route index element={<Dashboard />} />
+            <Route path="orders" element={<AdminOrders />} />
+            <Route path="users" element={<Users />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

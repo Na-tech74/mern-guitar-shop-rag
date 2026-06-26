@@ -10,6 +10,7 @@ import Skeleton from "../../components/Skeleton";
 import useCart from "./hooks/useCart";
 
 export default function ProductDetailPage() {
+    
     const { id } = useParams();
     const [product, setProduct] = useState(null);
     const [loaded, setLoaded] = useState(false);
@@ -87,7 +88,8 @@ export default function ProductDetailPage() {
         };
         el.addEventListener("touchstart", onStart, { passive: true });
         el.addEventListener("touchend", onEnd, { passive: true });
-        return () => { el.removeEventListener("touchstart", onStart); el.removeEventListener("touchend", onEnd); };
+        return () => { el.removeEventListener("touchstart", onStart); 
+            el.removeEventListener("touchend", onEnd); };
     }, [selectedImage, goTo]);
 
     if (!loaded) {

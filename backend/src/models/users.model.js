@@ -48,11 +48,11 @@ const userSchema = new mongoose.Schema({
         default: 0
     },
 
-    // Vai trò người dùng: user hoặc admin
+    // Vai trò người dùng: customer, staff, admin
     role: {
         type: String,
-        enum: ["user", "admin"], // Chỉ chấp nhận 2 giá trị này
-        default: "user"
+        enum: ["customer", "staff", "admin"],
+        default: "customer"
     },
 
     // URL ảnh đại diện (upload lên Cloudinary)

@@ -17,6 +17,7 @@ import UserAvatar from "../../../components/UserAvatar.jsx";
 
 const PAGE_TITLES = {
     admin: "Bảng điều khiển",
+    staff: "Bảng điều khiển",
     "home-content": "Trang chủ",
     "about-content": "Giới thiệu",
     "footer-content": "Footer",
@@ -35,11 +36,12 @@ const PAGE_TITLES = {
 function useBreadcrumbs() {
     const { pathname } = useLocation();
     const segments = pathname.split("/").filter(Boolean);
-    const last = segments[segments.length - 1] || "admin";
+    const base = segments[0] || "admin";
+    const last = segments[segments.length - 1] || base;
     const pageTitle = PAGE_TITLES[last] || last;
 
     return [
-        { label: "Trang chủ", href: "/admin" },
+        { label: "Trang chủ", href: `/${base}` },
         { label: pageTitle },
     ];
 }
@@ -131,7 +133,7 @@ export default function AdminHeader({ toggleMobileSidebar }) {
     };
 
     const userName = userInfo?.name || "Admin";
-    const userRole = userInfo?.role === "admin" ? "Quản trị viên" : "Người dùng";
+    const userRole = userInfo?.role === "admin" ? "Quản trị viên" : userInfo?.role === "staff" ? "Nhân viên" : "Người dùng";
 
     return (
         <header className="sticky top-0 z-30 h-[60px] bg-white border-b border-gray-200">

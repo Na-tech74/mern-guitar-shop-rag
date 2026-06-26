@@ -44,6 +44,28 @@ export const protect = async (req, res, next) => {
     return next(appError("Không được ủy quyền, không có token !", 401));
   }
 };
+export const staff = (req, res, next) => {
+  if (req.user && req.user.role === "staff") {
+    next();
+  } else {
+    return next(appError("Chỉ nhân viên mới có quyền !", 403));
+  }
+};
+
+/**
+ * Middleware kiểm tra quyền staff hoặc admin
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next function
+ * @returns {void} Gọi next() nếu là staff hoặc admin, hoặc next(error) nếu không
+ */
+export const staffOrAdmin = (req, res, next) => {
+  if (req.user && (req.user.role === "staff" || req.user.role === "admin")) {
+    next();
+  } else {
+    return next(appError("Bạn không có quyền thực hiện hành động này !", 403));
+  }
+};
 
 /**
  * Middleware kiểm tra quyền admin
@@ -53,12 +75,10 @@ export const protect = async (req, res, next) => {
  * @returns {void} Gọi next() nếu là admin, hoặc next(error) nếu không
  */
 export const adminOnly = (req, res, next) => {
-  // Kiểm tra user đã được xác thực (bởi protect middleware) và có role là admin
   if (req.user && req.user.role === "admin") {
     next();
   } else {
-    // Không có quyền admin
-    return next(appError("Chỉ admin mới có quyền !", 403));
+    return next(appError("Chỉ quản trị viên mới có quyền !", 403));
   }
 };
 

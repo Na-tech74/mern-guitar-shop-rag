@@ -5,7 +5,7 @@
  */
 
 import { Router } from "express";
-import { protect, adminOnly } from "../middleware/auth.middleware.js";
+import { protect, adminOnly, staffOrAdmin } from "../middleware/auth.middleware.js";
 import { asyncHandler } from "../middleware/asyncHandler.js";
 import {
     createOrder,
@@ -46,9 +46,9 @@ router.get("/stats", protect, adminOnly, asyncHandler(getDashboardStats));
 /**
  * GET /api/orders
  * Lấy tất cả đơn hàng (phân trang, lọc trạng thái)
- * Admin only
+ * Staff & Admin
  */
-router.get("/", protect, adminOnly, asyncHandler(getAllOrders));
+router.get("/", protect, staffOrAdmin, asyncHandler(getAllOrders));
 
 /**
  * GET /api/orders/:id
@@ -60,9 +60,9 @@ router.get("/:id", protect, asyncHandler(getOrderById));
 /**
  * PUT /api/orders/:id/status
  * Cập nhật trạng thái đơn hàng
- * Admin only
+ * Staff & Admin
  */
-router.put("/:id/status", protect, adminOnly, asyncHandler(updateOrderStatus));
+router.put("/:id/status", protect, staffOrAdmin, asyncHandler(updateOrderStatus));
 
 /**
  * POST /api/orders/momo-payment

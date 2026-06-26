@@ -83,41 +83,29 @@ export const updateUser = async (req, res) => {
         user.name = name;
     }
 
+    if (email && !isValidEmail(email)) {
+        throw appError("Email không hợp lệ!", 400);
+    }
+    const dup = email ? await User.findOne({ email }) : null;
+    if (email && dup && dup._id.toString() !== id) {
+        throw appError("Email đã tồn tại!", 400);
+    }
     if (email) {
-        if (!isValidEmail(email)) {
-            throw appError("Email không hợp lệ!", 400);
-        }
-
-        const existingUser = await User.findOne({ email });
-
-        if (
-            existingUser &&
-            existingUser._id.toString() !== id
-        ) {
-            throw appError("Email đã tồn tại!", 400);
-        }
-
         user.email = email;
     }
 
+    if (password && !isValidPassword(password)) {
+        throw appError("Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường và số!", 400);
+    }
     if (password) {
-        if (!isValidPassword(password)) {
-            throw appError(
-                "Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường và số!",
-                400
-            );
-        }
-
         user.password = await bcrypt.hash(password, 10);
     }
 
     if (role) {
-        const allowedRoles = ["user", "admin"];
-
+        const allowedRoles = ["customer", "staff", "admin"];
         if (!allowedRoles.includes(role)) {
             throw appError("Role không hợp lệ!", 400);
         }
-
         user.role = role;
     }
 

@@ -53,7 +53,7 @@ export default function useLogin() {
             const isSafeRedirect = (url) =>
                 typeof url === "string" && url.startsWith("/") && !url.startsWith("//");
             const redirectParam = searchParams.get("redirect");
-            const fallbackRedirect = data.user.role === "admin" ? "/admin" : "/";
+            const fallbackRedirect = data.user.role === "admin" ? "/admin" : data.user.role === "staff" ? "/staff" : "/";
             const redirect = isSafeRedirect(redirectParam) ? redirectParam : fallbackRedirect;
             window.location.href = redirect;
 

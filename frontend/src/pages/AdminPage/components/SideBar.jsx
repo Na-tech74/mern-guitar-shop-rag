@@ -1,7 +1,8 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Logo from "../../../components/Logo";
 import Button from "../../../components/Button";
+import { useUserInfo } from "../../../hooks/useUserInfo";
 import {
     faXmark,
     faChartPie,
@@ -57,6 +58,10 @@ function NavSection({ icon, name, defaultOpen = true, children }) {
 }
 
 export default function AdminSidebar({ isMobileOpen, setIsMobileOpen }) {
+    const userInfo = useUserInfo();
+    const role = userInfo?.role;
+    const base = role === "staff" ? "/staff" : "/admin";
+
     return (
         <>
             {isMobileOpen && (
@@ -94,46 +99,63 @@ export default function AdminSidebar({ isMobileOpen, setIsMobileOpen }) {
                 <nav className="flex-1 overflow-y-auto p-2">
                     <ul className="space-y-1">
                         <li>
-                            <NavItem to="/admin" icon={faChartPie} name="Bảng điều khiển" end />
+                            <NavItem to={base} icon={faChartPie} name="Bảng điều khiển" end />
                         </li>
-                        <NavSection icon={faHouse} name="Giao diện CMS">
+                        
+                        {/* CMS ch admin mới được dùng */}
+                        {role === "admin" && (
+                            <NavSection icon={faHouse} name="Giao diện CMS">
+                                <li>
+                                    <NavItem to={"/admin/home-content"} icon={faHouse} name="Trang chủ" />
+                                </li>
+                                <li>
+                                    <NavItem to={"/admin/about-content"} icon={faInfoCircle} name="Giới thiệu" />
+                                </li>
+                                <li>
+                                    <NavItem to={"/admin/footer-content"} icon={faCopyright} name="Footer" />
+                                </li>
+                                <li>
+                                    <NavItem to={"/admin/courses"} icon={faVideo} name="Khóa học" />
+                                </li>
+                                <li>
+                                    <NavItem to={"/admin/blog"} icon={faNewspaper} name="Blog" />
+                                </li>
+                                <li>
+                                    <NavItem to={"/admin/contact-content"} icon={faEnvelope} name="Liên hệ" />
+                                </li>
+                                <li>
+                                    <NavItem to={"/admin/terms-content"} icon={faFileContract} name="Điều khoản" />
+                                </li>
+                            </NavSection>
+                        )}
+                        {/*admin*/}
+                        {role === "admin" && (
                             <li>
-                                <NavItem to="/admin/home-content" icon={faHouse} name="Trang chủ" />
+                                <NavItem to={"/admin/products"} icon={faBox} name="Sản phẩm" />
                             </li>
-                            <li>
-                                <NavItem to="/admin/about-content" icon={faInfoCircle} name="Giới thiệu" />
-                            </li>
-                            <li>
-                                <NavItem to="/admin/footer-content" icon={faCopyright} name="Footer" />
-                            </li>
-                            <li>
-                                <NavItem to="/admin/courses" icon={faVideo} name="Khóa học" />
-                            </li>
-                            <li>
-                                <NavItem to="/admin/blog" icon={faNewspaper} name="Blog" />
-                            </li>
-                            <li>
-                                <NavItem to="/admin/contact-content" icon={faEnvelope} name="Liên hệ" />
-                            </li>
-                            <li>
-                                <NavItem to="/admin/terms-content" icon={faFileContract} name="Điều khoản" />
-                            </li>
-                        </NavSection>
+                        )}
+
+                        {/* staff và admin đều dùng được */}
+
                         <li>
-                            <NavItem to="/admin/products" icon={faBox} name="Sản phẩm" />
+                            <NavItem to={`${base}/orders`} icon={faCartShopping} name="Đơn hàng" />
                         </li>
-                        <li>
-                            <NavItem to="/admin/orders" icon={faCartShopping} name="Đơn hàng" />
-                        </li>
-                        <li>
-                            <NavItem to="/admin/users" icon={faUsers} name="Người dùng" />
-                        </li>
-                        <li>
-                            <NavItem to="/admin/categories" icon={faTag} name="Danh mục" />
-                        </li>
-                        <li>
-                            <NavItem to="/admin/coupons" icon={faTicket} name="Mã giảm giá" />
-                        </li>
+                        {role === "admin" && (
+                            <li>
+                                <NavItem to={`${base}/users`} icon={faUsers} name="Người dùng" />
+                            </li>
+                        )}
+
+                        {role === "admin" && (
+                            <li>
+                                <NavItem to={"/admin/categories"} icon={faTag} name="Danh mục" />
+                            </li>
+                        )}
+                        {role === "admin" && (
+                            <li>
+                                <NavItem to={"/admin/coupons"} icon={faTicket} name="Mã giảm giá" />
+                            </li>
+                        )}
                     </ul>
                 </nav>
 

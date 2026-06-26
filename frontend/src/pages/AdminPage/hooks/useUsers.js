@@ -14,7 +14,7 @@ export const useUsers = () => {
 
     const [showModal, setShowModal] = useState(false);
     const [editingUser, setEditingUser] = useState(null);
-    const [formData, setFormData] = useState({ name: "", email: "", role: "user" });
+    const [formData, setFormData] = useState({ name: "", email: "", role: "customer" });
 
     const hasLoadedRef = useRef(false);
 
@@ -61,7 +61,7 @@ export const useUsers = () => {
 
     const openModal = (user) => {
         setEditingUser(user);
-        setFormData({ name: user.name, email: user.email, role: user.role || "user" });
+        setFormData({ name: user.name, email: user.email, role: user.role || "customer" });
         setShowModal(true);
     };
 

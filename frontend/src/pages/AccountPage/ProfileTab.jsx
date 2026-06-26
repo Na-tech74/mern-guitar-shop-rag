@@ -52,7 +52,7 @@ export default function ProfileTab({ profile, userInfo, onSaved, showToast }) {
                 <Field
                     label="Vai trò"
                     icon={faShieldHalved}
-                    value={profile?.role === "admin" || userInfo?.role === "admin" ? "Quản trị viên" : "Người dùng"}
+                    value={profile?.role === "admin" || userInfo?.role === "admin" ? "Quản trị viên" : profile?.role === "staff" || userInfo?.role === "staff" ? "Nhân viên" : "Khách hàng"}
                     disabled
                 />
                 {profile?.createdAt && (

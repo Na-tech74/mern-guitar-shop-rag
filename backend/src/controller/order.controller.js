@@ -248,7 +248,7 @@ export const getOrderById = async (req, res) => {
         throw appError("Đơn hàng không tồn tại!", 404);
     }
 
-    if (req.user.role !== "admin" && order.user._id.toString() !== req.user._id.toString()) {
+    if (req.user.role !== "admin" && req.user.role !== "staff" && order.user._id.toString() !== req.user._id.toString()) {
         throw appError("Bạn không có quyền xem đơn hàng này!", 403);
     }
 
