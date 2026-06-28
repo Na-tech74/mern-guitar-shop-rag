@@ -86,10 +86,12 @@ export const updateUser = async (req, res) => {
     if (email && !isValidEmail(email)) {
         throw appError("Email không hợp lệ!", 400);
     }
+
     const dup = email ? await User.findOne({ email }) : null;
     if (email && dup && dup._id.toString() !== id) {
         throw appError("Email đã tồn tại!", 400);
     }
+
     if (email) {
         user.email = email;
     }
@@ -119,7 +121,7 @@ export const updateUser = async (req, res) => {
             name: user.name,
             email: user.email,
             role: user.role,
-            createAt:formatDateTime(user.createdAt),
+            createAt: formatDateTime(user.createdAt),
             updatedAt: formatDateTime(user.updatedAt),
         }
     });
@@ -136,12 +138,13 @@ export const updateUser = async (req, res) => {
  */
 export const deleteUser = async (req, res) => {
     const { id } = req.params;
+    const userId = req.user._id;
 
     if (!isValidObjectId(id)) {
         throw appError("ID người dùng không hợp lệ!", 400);
     }
 
-    if (req.user._id.toString() === id) {
+    if (userId.toString() === id) {
         throw appError("Không thể tự xóa tài khoản vì bạn là admin!", 403);
     }
 
@@ -204,16 +207,14 @@ export const updateMyProfile = async (req, res) => {
         user.name = name;
     }
 
-    if (email) {
-        if (!isValidEmail(email)) {
-            throw appError("Email không hợp lệ!", 400);
-        }
-        const existingUser = await User.findOne({ email });
-        if (existingUser && existingUser._id.toString() !== userId.toString()) {
-            throw appError("Email đã tồn tại!", 400);
-        }
-        user.email = email;
+    if (email && !isValidEmail(email)) {
+        throw appError("Email không hợp lệ!", 400);
     }
+    const existingUser = await User.findOne({ email });
+    if (existingUser && existingUser._id.toString() !== userId.toString()) {
+        throw appError("Email đã tồn tại!", 400);
+    }
+    user.email = email;
 
     await user.save();
 
@@ -230,7 +231,7 @@ export const updateMyProfile = async (req, res) => {
             updatedAt: formatDateTime(user.updatedAt),
         }
     });
-};
+}
 
 /**
  * Thay đổi mật khẩu của người dùng hiện tại
@@ -285,14 +286,18 @@ export const changePassword = async (req, res) => {
  * @returns {200} URL avatar mới
  */
 export const uploadMyAvatar = async (req, res) => {
-    if (!req.file) {
+
+    const userId = req.user._id;
+    const imageFile = req.file;
+
+    if (!imageFile) {
         throw appError("Vui lòng chọn file ảnh để tải lên!", 400);
     }
 
-    const urls = await uploadImages([req.file], "avatars");
+    const urls = await uploadImages([imageFile], "avatars");
 
     const user = await User
-        .findById(req.user._id)
+        .findById(userId)
         .select("-password -refreshToken");
     if (!user) {
         throw appError("Không tìm thấy người dùng!", 404);
@@ -318,8 +323,10 @@ export const uploadMyAvatar = async (req, res) => {
  * @returns {200} Thông báo xóa avatar thành công
  */
 export const deleteMyAvatar = async (req, res) => {
+    const userId = req.user._id;
+
     const user = await User
-        .findById(req.user._id)
+        .findById(userId)
         .select("-password -refreshToken");
     if (!user) {
         throw appError("Không tìm thấy người dùng!", 404);

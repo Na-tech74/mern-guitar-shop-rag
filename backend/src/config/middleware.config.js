@@ -17,10 +17,11 @@ import rateLimit from 'express-rate-limit';
 import { mongoSanitize } from '../middleware/sanitize.middleware.js';
 import { appError } from '../utils/appResponse.js';
 
+// kiểm tra xem request HTTP có phải từ admin
 const isAdminRequest = (req) => {
     const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) return false;
-
+    if (!authHeader || !authHeader.startsWith('Bearer ')) { return false; }
+    //Tách chuỗi authHeader (vd: "Bearer eyJhbGciOi...") bằng dấu cách, lấy phần tử thứ 2 — chính là token JWT.
     const token = authHeader.split(' ')[1];
     try {
         const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
@@ -30,6 +31,7 @@ const isAdminRequest = (req) => {
     }
 };
 
+//Người dùng thường bị giới hạn 100 request/15p, admin thì không bị giới hạn.
 const globalRateLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 100,
@@ -46,9 +48,10 @@ const globalRateLimiter = rateLimit({
  * @param {import('express').Express} app
  */
 export const applyGlobalMiddleware = (app) => {
+    // bảo mật HTTP headers
     app.use(helmet());
 
-    const allowedOrigins = (process.env.CORS_ORIGIN || "http://localhost:5173,http://localhost:5174")
+    const allowedOrigins = (process.env.CORS_ORIGIN || "http://localhost:5173")
         .split(",")
         .map((o) => o.trim())
         .filter(Boolean);
@@ -62,11 +65,11 @@ export const applyGlobalMiddleware = (app) => {
         },
         credentials: true
     }));
-
+    //nén nội dung response (thường dùng gzip) trước khi gửi về client, giúp giảm dung lượng dữ liệu truyền qua mạng, tăng tốc tải trang. Client tự động giải nén khi nhận được.
     app.use(compression());
-
+    //Log request (format combined ở production, dev ở dev)
     app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
-
+    //Parse JSON body, giới hạn 1MB
     app.use(express.json({ limit: '1mb' }));
     app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 

@@ -19,6 +19,7 @@ import { isValidObjectId } from "../utils/valid.js";
  * @returns {201} Danh mục vừa tạo
  */
 export const createCategory = async (req, res) => {
+    
     const { name, description } = req.body;
 
     // vì hình ảnh là file nên phải req.file

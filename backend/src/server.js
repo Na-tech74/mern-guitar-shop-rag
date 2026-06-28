@@ -14,7 +14,7 @@ import path from 'path';
 import mongoose from 'mongoose';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 // Đọc port từ env, mặc định 5000 nếu không có
 const port = process.env.PORT || 5000;

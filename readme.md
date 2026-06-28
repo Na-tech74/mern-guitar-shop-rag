@@ -16,22 +16,24 @@ User (Browser)
        │   Backend (Express 5 + Mongoose 9)
        │        │
        │        ├── Auth (JWT dual-token)
-       │        ├── Products / Categories / Orders
-       │        ├── Users / Blog / Courses
-       │        ├── Coupons / Notifications
-       │        ├── Content CMS (Home/About/Footer/Contact/Terms)
+       │        ├── Product Module
+       │        ├── Cart Module
+       │        ├── Order Module
+       │        ├── Payment Module (MoMo/Banking/COD)
+       │        ├── Review Module
+       │        ├── Admin Module (CRUD + CMS)
+       │        ├── Dashboard Module
+       │        ├── Knowledge Base Module
+       │        ├── Embedding Module
        │        ▼
        │     MongoDB
        │
-       └── Chat API (RAG - đang phát triển)
-                │
-                ▼
-          Chat Service
+       └── RAG Chatbot Module
                 │
            ┌────┴────┐
            ▼         ▼
       Vector DB    LLM Model
-     (FAISS)     (Mistral/OpenAI/Gemini)
+     (FAISS)     (Gemini API)
            │         │
            └── RAG ──┘
                 │

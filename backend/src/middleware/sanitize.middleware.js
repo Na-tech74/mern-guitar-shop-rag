@@ -7,12 +7,16 @@
  * (Express 5 làm req.query thành read-only getter).
  */
 
+import { Query } from "mongoose";
+
 /**
- * Đệ quy xóa các key bắt đầu bằng '$' hoặc chứa '.' trong object
- * @param {Object} obj - Object cần sanitize
+Xóa các query parameter nguy hiểm để chống NoSQL injection:
+- key.startsWith('$') — chặn các operator như $gt, $ne, $where (vd: ?$gt=...)
+- key.includes('.') — chặn truy cập nested field (vd: ?role.admin=...)
+Ngăn attacker thao túng query MongoDB qua URL parameters.
  */
 const sanitizeObject = (obj) => {
-    if (!obj || typeof obj !== 'object') 
+    if (!obj || typeof obj !== 'object')
         return;
     for (const key of Object.keys(obj)) {
         if (key.startsWith('$') || key.includes('.')) {
@@ -32,14 +36,6 @@ const sanitizeObject = (obj) => {
 export const mongoSanitize = (req, res, next) => {
     sanitizeObject(req.body);
     sanitizeObject(req.params);
-
-    if (req.query) {
-        for (const key of Object.keys(req.query)) {
-            if (key.startsWith('$') || key.includes('.')) {
-                delete req.query[key];
-            }
-        }
-    }
-
+    sanitizeObject(req.query)
     next();
 };

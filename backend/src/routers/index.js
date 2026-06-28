@@ -14,7 +14,7 @@ import contactContentRoutes from './contactContent.routes.js';
 import couponRoutes from './coupon.routes.js';
 import termsContentRoutes from './termsContent.routes.js';
 import notificationRoutes from './notification.routes.js';
-
+import reviewRoutes from './review.routes.js';
 export const mountRoutes = (app) => {
     app.get('/', (req, res) => {
         res.json({ message: "Server healthy!" });
@@ -44,4 +44,5 @@ export const mountRoutes = (app) => {
     app.use('/api/coupons', couponRoutes);
     app.use('/api/terms-content', termsContentRoutes);
     app.use('/api/notifications', notificationRoutes);
+    app.use('/api/review', reviewRoutes)
 };

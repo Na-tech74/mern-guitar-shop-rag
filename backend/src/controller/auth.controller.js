@@ -30,7 +30,6 @@ import { createNotification } from "./notification.controller.js";
 export const register = async (req, res) => {
     const { name, email, password } = req.body;
 
-    // Validate dữ liệu đầu vào
     if (!name || !email || !password) {
         throw appError("Vui lòng nhập đầy đủ thông tin!", 400);
     }
@@ -46,17 +45,13 @@ export const register = async (req, res) => {
         );
     }
 
-    // Kiểm tra email đã tồn tại chưa
     const existingUser = await User.findOne({ email });
-
     if (existingUser) {
         throw appError("Người dùng đã tồn tại!", 409);
     }
 
-    // Mã hóa mật khẩu trước khi lưu
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Tạo user mới trong database
     const newUser = await User.create({
         name: sanitizeText(name),
         email: sanitizeEmail(email),
@@ -69,18 +64,17 @@ export const register = async (req, res) => {
 
     // Lưu refresh token vào database để track phiên
     newUser.refreshToken = refreshToken;
-
     await newUser.save();
 
     // Gửi refresh token qua cookie HttpOnly
     refreshTokenCookie(res, refreshToken);
-
+    
+    //thông báo cho admin biết có user mới đăng ký, mà không cần refresh trang.
     createNotification("new_user",
         `Người dùng mới: ${sanitizeText(name)} (${sanitizeEmail(email)})`,
         `/admin/users`
     );
 
-    // Trả về thông tin user và access token cho client
     return appSuccess(res, {
         statusCode: 201,
         message: "Đăng ký thành công!",
@@ -113,7 +107,6 @@ export const login = async (req, res) => {
 
     const { email, password } = req.body;
 
-    // Validate dữ liệu đầu vào
     if (!email || !password) {
         throw appError("Vui lòng nhập đầy đủ thông tin!", 400);
     }
@@ -122,7 +115,6 @@ export const login = async (req, res) => {
         throw appError("Email không hợp lệ!", 400);
     }
 
-    // Tìm user theo email (lấy thêm password & refreshToken để verify)
     const existingUser = await User.findOne({ email })
         .select("+password +refreshToken");
 
@@ -130,17 +122,14 @@ export const login = async (req, res) => {
         throw appError("Email hoặc mật khẩu không đúng!", 401);
     }
 
-    // So sánh mật khẩu nhập vào với mật khẩu đã hash trong database
     const isPasswordMatch = await bcrypt.compare(
         password,
         existingUser.password
     );
-
     if (!isPasswordMatch) {
         throw appError("Email hoặc mật khẩu không đúng!", 401);
     }
 
-    // Tạo JWT tokens mới cho phiên đăng nhập
     const accessToken = generateAccessToken(existingUser);
     const refreshToken = generateRefreshToken(existingUser);
 
@@ -151,7 +140,6 @@ export const login = async (req, res) => {
     // Gửi refresh token qua cookie HttpOnly
     refreshTokenCookie(res, refreshToken);
 
-    // Trả về thông tin user và access token
     return appSuccess(res, {
         statusCode: 200,
         message: "Đăng nhập thành công!",
@@ -205,7 +193,6 @@ export const logout = async (req, res) => {
 export const forgotPassword = async (req, res) => {
     const { email } = req.body;
 
-    // Validate email
     if (!email) {
         throw appError("Vui lòng nhập email!", 400);
     }
@@ -214,7 +201,6 @@ export const forgotPassword = async (req, res) => {
         throw appError("Email không hợp lệ!", 400);
     }
 
-    // Kiểm tra user tồn tại
     const existingUser = await User.findOne({ email })
         .select("+resetOtp +resetOtpExpire");
 
@@ -222,18 +208,14 @@ export const forgotPassword = async (req, res) => {
         throw appError("Email không tồn tại!", 404);
     }
 
-    // Tạo OTP 6 số ngẫu nhiên
     const otp = crypto.randomInt(100000, 999999).toString();
 
     // Hash OTP và lưu vào database cùng với thời hạn (10 phút)
     const hashedOtp = await bcrypt.hash(otp, 10);
-
     existingUser.resetOtp = hashedOtp;
     existingUser.resetOtpExpire = Date.now() + 10 * 60 * 1000;
-
     await existingUser.save();
 
-    // Gửi OTP qua email cho user
     await sendEmail({
         email: existingUser.email,
         subject: "OTP Đặt Lại Mật Khẩu",
@@ -265,7 +247,6 @@ export const forgotPassword = async (req, res) => {
 export const resetPassword = async (req, res) => {
     const { email, otp, password } = req.body;
 
-    // Validate dữ liệu đầu vào
     if (!email || !otp || !password) {
         throw appError("Thiếu dữ liệu!", 400);
     }
@@ -281,7 +262,6 @@ export const resetPassword = async (req, res) => {
         );
     }
 
-    // Tìm user và lấy các trường liên quan
     const existingUser = await User.findOne({ email })
         .select("+password +refreshToken +resetOtp +resetOtpExpire");
 
@@ -289,7 +269,6 @@ export const resetPassword = async (req, res) => {
         throw appError("Người dùng không tồn tại!", 404);
     }
 
-    // Kiểm tra OTP đã hết hạn chưa
     if (
         !existingUser.resetOtp ||
         existingUser.resetOtpExpire < Date.now()
@@ -307,9 +286,7 @@ export const resetPassword = async (req, res) => {
         throw appError("OTP không hợp lệ hoặc đã hết hạn!", 400);
     }
 
-    // Cập nhật mật khẩu mới (hash trước khi lưu)
     const hashedPassword = await bcrypt.hash(password, 10);
-
     existingUser.password = hashedPassword;
 
     // Xóa các trường OTP và refresh token cũ (bắt buộc đăng nhập lại)
@@ -384,8 +361,7 @@ export const refreshAccessToken = async (req, res) => {
 
     // Gửi refresh token mới qua cookie
     refreshTokenCookie(res, newRefreshToken);
-
-    // Trả về access token mới cho client
+    
     return appSuccess(res, {
         statusCode: 200,
         message: "Refresh token thành công!",

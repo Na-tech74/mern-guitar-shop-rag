@@ -72,6 +72,18 @@ const productSchema = new mongoose.Schema({
      * Mảng các đường dẫn ảnh
      */
     images: [String],
+
+    ratings:{
+        type:Number,
+        default:0,
+        min:1,
+        max:5
+    },
+    numReview:{
+        type:Number,
+        default:0,
+        min:0
+    }
 }, {
     timestamps: true
 });
