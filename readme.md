@@ -31,7 +31,7 @@ User (Browser)
            ┌────┴────┐
            ▼         ▼
       Vector DB    LLM Model
-     (FAISS)     (MGemini API key )
+     (FAISS)     (Gemini API key)
            │         │
            └── RAG ──┘
                 │
