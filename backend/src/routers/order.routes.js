@@ -51,20 +51,6 @@ router.get("/stats", protect, adminOnly, asyncHandler(getDashboardStats));
 router.get("/", protect, staffOrAdmin, asyncHandler(getAllOrders));
 
 /**
- * GET /api/orders/:id
- * Lấy chi tiết đơn hàng
- * User (của mình) hoặc Admin (bất kỳ)
- */
-router.get("/:id", protect, asyncHandler(getOrderById));
-
-/**
- * PUT /api/orders/:id/status
- * Cập nhật trạng thái đơn hàng
- * Staff & Admin
- */
-router.put("/:id/status", protect, staffOrAdmin, asyncHandler(updateOrderStatus));
-
-/**
  * POST /api/orders/momo-payment
  * Tạo link thanh toán MoMo
  * User (cần đăng nhập)
@@ -82,6 +68,20 @@ router.post("/momo-callback", asyncHandler(momoCallback));
  * MoMo redirect user về sau khi thanh toán
  */
 router.get("/momo-return", asyncHandler(momoReturn));
+
+/**
+ * GET /api/orders/:id
+ * Lấy chi tiết đơn hàng
+ * User (của mình) hoặc Admin (bất kỳ)
+ */
+router.get("/:id", protect, asyncHandler(getOrderById));
+
+/**
+ * PUT /api/orders/:id/status
+ * Cập nhật trạng thái đơn hàng
+ * Staff & Admin
+ */
+router.put("/:id/status", protect, staffOrAdmin, asyncHandler(updateOrderStatus));
 
 /**
  * DELETE /api/orders/:id

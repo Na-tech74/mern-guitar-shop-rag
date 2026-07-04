@@ -22,7 +22,7 @@ export const createReview = async (req, res) => {
     const { rating, productId, title, comment } = req.body;
     const userId = req.user._id
 
-    if (!rating || !title || !comment) {
+    if (!rating || !comment) {
         throw appError(" Vui lòng điền đầy đủ nội dung !", 400);
     };
 
@@ -40,7 +40,7 @@ export const createReview = async (req, res) => {
 
     const existingReview = await Review.findOne({
         user: userId,
-        Product: productId
+        product: productId
     });
     if (existingReview) {
         throw appError("Bạn đã đánh giá sản phẩm này !", 400)
@@ -86,7 +86,7 @@ export const createReview = async (req, res) => {
         //Làm tròn avgRating đến 1 chữ số thập phân. VD: 4.333... → 43.33 → 43 → 4.3
         product.ratings = Math.round(stats[0].avgRating * 10) / 10;
         // Số lượng review — $sum: 1 đếm từng review. VD: có 12 review → count = 12
-        product.numReviews = stats[0].count;
+        product.numReview = stats[0].count;
     } else {
         product.ratings = 0;
         product.numReview = 0;
@@ -106,26 +106,28 @@ export const createReview = async (req, res) => {
     });
 };
 
-// lấy tất cả bái đánh giá 
+// lấy tất cả bài đánh giá
 export const getAllReviews = async (req, res) => {
-    const review = await Review.find()
-    if (!review) {
-        throw appError("Không tìm thấy bài đánh giá nào !", 404);
-    };
+    const { product } = req.query;
+    const filter = {};
+    if (product && isValidObjectId(product)) {
+        filter.product = product;
+    }
+    const reviews = await Review.find(filter).populate('user', 'name avatar').sort({ createdAt: -1 });
     return appSuccess(res, {
         statusCode: 200,
-        message: "Lấy danh mục thành công !",
-        data: { review }
+        message: "Lấy danh sách đánh giá thành công !",
+        data: { reviews: reviews || [] }
     })
 };
 
 // update bài đánh giá
 export const updateReviews = async (req, res) => {
-    const id = req.params;
+    const { id } = req.params;
     const { rating, title, comment } = req.body;
     const userId = req.user._id
 
-    if (!isValidObjectId(userId)) {
+    if (!isValidObjectId(id)) {
         throw appError("ID không hợp lệ !", 400);
     };
     const review = await Review.findById(id);
@@ -136,10 +138,90 @@ export const updateReviews = async (req, res) => {
     if (review.user.toString() !== userId.toString()) {
         throw appError("Bạn không có quyền chỉnh sửa bài đánh giá này ", 403)
     }
-    if (!rating && (rating > 1 || rating < 5)) {
+    if (rating && (rating < 1 || rating > 5)) {
         throw appError("Đánh giá sản phầm từ 1 đến 5 sao ", 400)
     }
-    if (!rating) { rewview.rating = rating };
-    if (!title) { review.title = sanitizeText(title) };
-    if (!comment) { review.comment = sanitizeText(title) };
-}
+    if (rating) { review.rating = rating };
+    if (title) { review.title = sanitizeText(title) };
+    if (comment) { review.comment = sanitizeText(comment) };
+    await review.save();
+
+    const stats = await Review.aggregate([
+        { $match: { product: review.product } },
+        {
+            $group: {
+                _id: null,
+                avgRating: { $avg: "$rating" },
+                count: { $sum: 1 }
+            }
+        }
+    ]);
+    const product = await Product.findById(review.product);
+    if (stats.length > 0) {
+        product.ratings = Math.round(stats[0].avgRating * 10) / 10;
+        product.numReview = stats[0].count;
+    } else {
+        product.ratings = 0;
+        product.numReview = 0;
+    }
+    await product.save();
+
+    return appSuccess(res, {
+        statusCode: 200,
+        message: "Cập nhật đánh giá thành công!",
+        data: {
+            id: review._id,
+            user: review.user,
+            rating: review.rating,
+            title: review.title,
+            comment: review.comment,
+            createdAt: review.createdAt
+        }
+    });
+};
+
+// xóa bài đánh giá
+export const deleteReview = async (req, res) => {
+    const { id } = req.params;
+    const userId = req.user._id;
+
+    if (!isValidObjectId(id)) {
+        throw appError("ID không hợp lệ !", 400);
+    };
+    const review = await Review.findById(id);
+    if (!review) {
+        throw appError("Bài đánh giá này không tồn tại !", 404);
+    }
+
+    if (review.user.toString() !== userId.toString() && req.user.role !== "admin") {
+        throw appError("Bạn không có quyền xóa bài đánh giá này ", 403)
+    }
+
+    const productId = review.product;
+    await Review.findByIdAndDelete(id);
+
+    const stats = await Review.aggregate([
+        { $match: { product: productId } },
+        {
+            $group: {
+                _id: null,
+                avgRating: { $avg: "$rating" },
+                count: { $sum: 1 }
+            }
+        }
+    ]);
+    const product = await Product.findById(productId);
+    if (stats.length > 0) {
+        product.ratings = Math.round(stats[0].avgRating * 10) / 10;
+        product.numReview = stats[0].count;
+    } else {
+        product.ratings = 0;
+        product.numReview = 0;
+    }
+    await product.save();
+
+    return appSuccess(res, {
+        statusCode: 200,
+        message: "Xóa đánh giá thành công!"
+    });
+};

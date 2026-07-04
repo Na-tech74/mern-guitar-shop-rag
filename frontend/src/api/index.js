@@ -14,3 +14,4 @@ export { contactContentAPI } from "./contactContent";
 export { couponAPI } from "./coupons";
 export { termsContentAPI } from "./termsContent";
 export { notificationAPI } from "./notifications";
+export { reviewAPI } from "./reviews";

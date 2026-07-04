@@ -19,14 +19,13 @@ const BANK_INFO = {
 };
 
 export default function OrderSuccessPage() {
-    const { state } = useOrderSuccessPage();
+    const { state, loading } = useOrderSuccessPage();
     const [copied, setCopied] = useState(false);
 
-    if (!state?.orderId) return null;
-
-    const orderCode = `DH${state.orderId.slice(-8).toUpperCase()}`;
+    const orderCode = state?.orderId ? `DH${state.orderId.slice(-8).toUpperCase()}` : "";
 
     const qrUrl = useMemo(() => {
+        if (!state?.total) return "";
         const base = `https://img.vietqr.io/image/${BANK_INFO.shortName}-${BANK_INFO.accountNumber}-compact2.png`;
         const params = new URLSearchParams({
             amount: Math.round(state.total),
@@ -34,7 +33,17 @@ export default function OrderSuccessPage() {
             accountName: BANK_INFO.accountName,
         });
         return `${base}?${params}`;
-    }, [state.total, orderCode]);
+    }, [state?.total, orderCode]);
+
+    if (loading) {
+        return (
+            <div className="min-h-dvh bg-gray-50 flex items-center justify-center">
+                <div className="animate-spin rounded-full size-12 border-b-2 border-amber-500" />
+            </div>
+        );
+    }
+
+    if (!state?.orderId) return null;
 
     const handleCopy = async (text) => {
         try {
