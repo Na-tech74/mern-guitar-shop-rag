@@ -30,7 +30,7 @@ router.get("/:id", asyncHandler(getCategoryById));
 /**
  * POST /api/categories/create - Tạo danh mục mới
  * @requires Authorization (Admin)
- * @body {name, description, image} - image là file upload
+ * @body {name, image} - image là file upload
  */
 router.post("/create", protect, adminOnly, upload.single("image"), asyncHandler(createCategory));
 

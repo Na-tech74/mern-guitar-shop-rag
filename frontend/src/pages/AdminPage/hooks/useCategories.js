@@ -15,7 +15,7 @@ export const useCategories = () => {
 
     const [showModal, setShowModal] = useState(false);
     const [editingCategory, setEditingCategory] = useState(null);
-    const [formData, setFormData] = useState({ name: "", description: "", image: "" });
+    const [formData, setFormData] = useState({ name: "", image: "", parent: "" });
     const [imagePreview, setImagePreview] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
 
@@ -69,7 +69,14 @@ export const useCategories = () => {
     const filteredCategories = useMemo(() => {
         if (!debouncedSearch) return categories || [];
         const term = debouncedSearch.toLowerCase();
-        return (categories || []).filter((cat) => cat.name?.toLowerCase().includes(term));
+        const matchIds = new Set();
+        (categories || []).forEach((cat) => {
+            if (cat.name?.toLowerCase().includes(term)) {
+                matchIds.add(cat._id);
+                if (cat.parent?._id) matchIds.add(cat.parent._id);
+            }
+        });
+        return (categories || []).filter((cat) => matchIds.has(cat._id));
     }, [categories, debouncedSearch]);
 
     const createCategory = useCallback(async (data) => {
@@ -100,7 +107,9 @@ export const useCategories = () => {
         try {
             const fd = new FormData();
             fd.append("name", formData.name);
-            fd.append("description", formData.description);
+            if (formData.parent) {
+                fd.append("parent", formData.parent);
+            }
             if (selectedFile) {
                 fd.append("image", selectedFile);
             } else if (editingCategory && formData.image) {
@@ -151,8 +160,8 @@ export const useCategories = () => {
         setEditingCategory(category);
         setFormData({
             name: category.name,
-            description: category.description || "",
             image: category.image || "",
+            parent: category.parent?._id || category.parent || "",
         });
         setImagePreview(category.image || "");
         setSelectedFile(null);
@@ -165,7 +174,7 @@ export const useCategories = () => {
             previewBlobRef.current = null;
         }
         setEditingCategory(null);
-        setFormData({ name: "", description: "", image: "" });
+        setFormData({ name: "", image: "", parent: "" });
         setImagePreview("");
         setSelectedFile(null);
     };

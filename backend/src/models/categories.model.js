@@ -14,10 +14,6 @@ const categorySchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
-    description: {
-      type: String,
-      default: "",
-    },
     image: {
       type: String,
       default: "",
@@ -26,10 +22,24 @@ const categorySchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    parent: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      default: null,
+    },
   },
   {
     timestamps: true,
   }
 );
+
+categorySchema.virtual("children", {
+  ref: "Category",
+  localField: "_id",
+  foreignField: "parent",
+});
+
+categorySchema.set("toJSON", { virtuals: true });
+categorySchema.set("toObject", { virtuals: true });
 
 export default mongoose.model("Category", categorySchema);

@@ -1,4 +1,4 @@
-import { memo, useState, useEffect, useRef, useCallback } from 'react';
+import React, { memo, useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -11,7 +11,7 @@ import Logo from './Logo.jsx';
 import UserAvatar from './UserAvatar.jsx';
 import CouponBell from './CouponBell.jsx';
 import { useUserInfo } from '../hooks/useUserInfo.js';
-import { logoutAPI, userAPI } from '../api';
+import { logoutAPI, userAPI, categoryAPI } from '../api';
 
 const Header = memo(function Header() {
 
@@ -22,6 +22,8 @@ const Header = memo(function Header() {
   const [cartCount, setCartCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [expandedParents, setExpandedParents] = useState(new Set());
   const [uploading, setUploading] = useState(false);
   const [avatarError, setAvatarError] = useState("");
   const closeTimeoutRef = useRef(null);
@@ -58,6 +60,29 @@ const Header = memo(function Header() {
     };
   }, []);
 
+  useEffect(() => {
+    categoryAPI.getAll().then((res) => {
+      setCategories(res.data?.data?.categories || []);
+    }).catch(() => {});
+  }, []);
+
+  const buildTree = (cats) => {
+    const map = {};
+    const roots = [];
+    cats.forEach((cat) => { map[cat._id] = { ...cat, children: [] }; });
+    cats.forEach((cat) => {
+      const node = map[cat._id];
+      if (cat.parent?._id && map[cat.parent._id]) {
+        map[cat.parent._id].children.push(node);
+      } else if (!cat.parent) {
+        roots.push(node);
+      }
+    });
+    return roots;
+  };
+
+  const categoryTree = buildTree(categories);
+
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -91,8 +116,8 @@ const Header = memo(function Header() {
       setAvatarError("Chỉ chấp nhận file ảnh");
       return;
     }
-    if (file.size > 10 * 1024 * 1024) {
-      setAvatarError("Ảnh tối đa 10MB");
+    if (file.size > 2 * 1024 * 1024) {
+      setAvatarError("Ảnh tối đa 2MB");
       return;
     }
 
@@ -414,63 +439,67 @@ const Header = memo(function Header() {
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center justify-between">
               <ul className="flex">
-                <li className="relative"
-                  onMouseEnter={() => { clearTimeout(closeTimeoutRef.current); closeTimeoutRef.current = null; }}
-                  onMouseLeave={() => { closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 300); }}>
-                  <Link to="/" className="flex items-center gap-1 text-gray-800 hover:text-amber-500 px-4 py-3 text-sm font-semibold transition">
-                    TRANG CHỦ
-                  </Link>
-                </li>
-                <li className="relative"
-                  onMouseEnter={() => { clearTimeout(closeTimeoutRef.current); closeTimeoutRef.current = null; setOpenDropdown('SẢN PHẨM'); }}
-                  onMouseLeave={() => { closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 300); }}>
-                  <Link to="/products" className="flex items-center gap-1 text-gray-800 hover:text-amber-500 px-4 py-3 text-sm font-semibold transition">
-                    SẢN PHẨM
-                    <FontAwesomeIcon icon={faChevronDown} className="text-[10px]" />
-                  </Link>
-                  {openDropdown === 'SẢN PHẨM' && (
-                    <div className="absolute top-full left-0 w-56 bg-white rounded-lg shadow-lg border border-gray-100 z-50 py-2"
-                      onMouseEnter={() => { clearTimeout(closeTimeoutRef.current); closeTimeoutRef.current = null; }}
-                      onMouseLeave={() => { closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 300); }}>
-                      <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('guitar-acoustic'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Guitar Acoustic</button>
-                      <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('guitar-classic'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Guitar Classic</button>
-                      <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('guitar-bass'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Guitar Bass</button>
-                      <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('guitar-electric'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Guitar Electric</button>
-                      <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('ukulele'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Ukulele</button>
-                      <button type="button" onClick={() => { setOpenDropdown(null); scrollToCategory('piano'); }} className="block w-full text-left px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Piano</button>
-                      <hr />
-                      <Link to="/products?all=1" onClick={() => setOpenDropdown(null)} className="block px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Tất cả sản phẩm</Link>
-                    </div>
-                  )}
-                </li>
-                <li className="relative"
-                  onMouseEnter={() => { clearTimeout(closeTimeoutRef.current); closeTimeoutRef.current = null; }}
-                  onMouseLeave={() => { closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 300); }}>
-                  <Link to="/courses" className="flex items-center gap-1 text-gray-800 hover:text-amber-500 px-4 py-3 text-sm font-semibold transition">
-                    KHÓA HỌC
-                  </Link>
-                </li>
-                <li className="relative"
-                  onMouseEnter={() => { clearTimeout(closeTimeoutRef.current); closeTimeoutRef.current = null; }}
-                  onMouseLeave={() => { closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 300); }}>
-                  <Link to="/about" className="flex items-center gap-1 text-gray-800 hover:text-amber-500 px-4 py-3 text-sm font-semibold transition">
-                    GIỚI THIỆU
-                  </Link>
-                </li>
-                <li className="relative"
-                  onMouseEnter={() => { clearTimeout(closeTimeoutRef.current); closeTimeoutRef.current = null; }}
-                  onMouseLeave={() => { closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 300); }}>
-                  <Link to="/blog" className="flex items-center gap-1 text-gray-800 hover:text-amber-500 px-4 py-3 text-sm font-semibold transition">
-                    BÀI VIẾT
-                  </Link>
-                </li>
-                <li className="relative"
-                  onMouseEnter={() => { clearTimeout(closeTimeoutRef.current); closeTimeoutRef.current = null; }}
-                  onMouseLeave={() => { closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 300); }}>
-                  <Link to="/contact" className="flex items-center gap-1 text-gray-800 hover:text-amber-500 px-4 py-3 text-sm font-semibold transition">
-                    LIÊN HỆ
-                  </Link>
-                </li>
+                {[
+                  { label: "TRANG CHỦ", to: "/" },
+                  { label: "SẢN PHẨM", to: "/products", hasDropdown: true },
+                  { label: "KHÓA HỌC", to: "/courses" },
+                  { label: "GIỚI THIỆU", to: "/about" },
+                  { label: "BÀI VIẾT", to: "/blog" },
+                  { label: "LIÊN HỆ", to: "/contact" },
+                ].map((item) => (
+                  <li key={item.label} className="relative"
+                    onMouseEnter={() => { clearTimeout(closeTimeoutRef.current); closeTimeoutRef.current = null; if (item.hasDropdown) setOpenDropdown(item.label); }}
+                    onMouseLeave={() => { closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 300); }}>
+                    <Link to={item.to} className="flex items-center gap-1 text-gray-800 hover:text-amber-500 px-4 py-3 text-sm font-semibold transition">
+                      {item.label}
+                      {item.hasDropdown && <FontAwesomeIcon icon={faChevronDown} className="text-[10px]" />}
+                    </Link>
+                    {item.hasDropdown && openDropdown === item.label && (
+                      <div className="absolute top-full left-0 w-64 bg-white rounded-lg shadow-lg border border-gray-100 z-50 py-2 max-h-[70vh] overflow-y-auto"
+                        onMouseEnter={() => { clearTimeout(closeTimeoutRef.current); closeTimeoutRef.current = null; }}
+                        onMouseLeave={() => { closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 300); }}>
+                        {categoryTree.map((parent) => {
+                          const isOpen = expandedParents.has(parent._id);
+                          const toggle = () => {
+                            setExpandedParents((prev) => {
+                              const next = new Set(prev);
+                              if (next.has(parent._id)) next.delete(parent._id);
+                              else next.add(parent._id);
+                              return next;
+                            });
+                          };
+                          return (
+                          <div key={parent._id}>
+                            <button
+                              type="button"
+                              onClick={parent.children.length > 0 ? toggle : () => { setOpenDropdown(null); scrollToCategory(parent.name.toLowerCase().replace(/\s+/g, '-')); }}
+                              className="flex items-center justify-between w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition"
+                            >
+                              <span className={parent.children.length > 0 ? "font-semibold text-gray-700" : ""}>{parent.name}</span>
+                              {parent.children.length > 0 && (
+                                <FontAwesomeIcon icon={faChevronDown} className={`text-[10px] text-gray-700 transition-transform ${isOpen ? "rotate-0" : "-rotate-90"}`} />
+                              )}
+                            </button>
+                            {parent.children.length > 0 && isOpen && (
+                              <div className="bg-gray-50/50">
+                                {parent.children.map((child) => (
+                                  <button
+                                    key={child._id}
+                                    type="button"
+                                    onClick={() => { setOpenDropdown(null); scrollToCategory(child.name.toLowerCase().replace(/\s+/g, '-')); }}
+                                    className="block w-full text-left px-8 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600"
+                                  >{child.name}</button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );})}
+                        <hr />
+                        <Link to="/products?all=1" onClick={() => setOpenDropdown(null)} className=" font-semibold block px-4 py-2.5 text-gray-700 hover:bg-amber-50 hover:text-amber-600">Tất cả sản phẩm</Link>
+                      </div>
+                    )}
+                  </li>
+                ))}
               </ul>
               <div className="flex items-center gap-2 text-gray-600 text-sm">
                 <span>Hỗ trợ:</span>
@@ -521,42 +550,70 @@ const Header = memo(function Header() {
             </div>
 
             <div className="py-2">
-              <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
-                <span className="text-sm">TRANG CHỦ</span>
-              </Link>
-              <button type="button" onClick={() => setOpenDropdown(openDropdown === 'SẢN PHẨM' ? null : 'SẢN PHẨM')} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
-                <span className="text-sm">SẢN PHẨM</span>
-                <FontAwesomeIcon icon={faChevronDown} className={`text-xs transition-transform ${openDropdown === 'SẢN PHẨM' ? 'rotate-180' : ''}`} />
-              </button>
-              {openDropdown === 'SẢN PHẨM' && (
-                <div className="pl-4">
-                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-acoustic'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-amber-50 hover:text-amber-600">Guitar Acoustic</button>
-                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-classic'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-amber-50 hover:text-amber-600">Guitar Classic</button>
-                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-bass'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-amber-50 hover:text-amber-600">Guitar Bass</button>
-                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('guitar-electric'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-amber-50 hover:text-amber-600">Guitar Electric</button>
-                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('ukulele'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-amber-50 hover:text-amber-600">Ukulele</button>
-                  <button type="button" onClick={() => { setIsMobileMenuOpen(false); scrollToCategory('piano'); }} className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-amber-50 hover:text-amber-600">Piano</button>
-                  <hr />
-                   <Link to="/products?all=1" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-600 hover:bg-amber-50 hover:text-amber-600">Tất cả sản phẩm</Link>
-                  <hr />
-                </div>
-              )}
-
-              <Link to="/courses" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
-                <span className="text-sm">KHÓA HỌC</span>
-              </Link>
-              <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
-                <span className="text-sm">GIỚI THIỆU</span>
-              </Link>
-              <Link to="/account" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
-                <span className="text-sm">TÀI KHOẢN</span>
-              </Link>
-              <Link to="/blog" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
-                <span className="text-sm">BÀI VIẾT</span>
-              </Link>
-              <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
-                <span className="text-sm">LIÊN HỆ</span>
-              </Link>
+              {[
+                { label: "TRANG CHỦ", to: "/" },
+                { label: "SẢN PHẨM", to: "/products", hasDropdown: true },
+                { label: "KHÓA HỌC", to: "/courses" },
+                { label: "GIỚI THIỆU", to: "/about" },
+                { label: "TÀI KHOẢN", to: "/account" },
+                { label: "BÀI VIẾT", to: "/blog" },
+                { label: "LIÊN HỆ", to: "/contact" },
+              ].map((item) => (
+                item.hasDropdown ? (
+                  <React.Fragment key={item.label}>
+                    <button type="button" onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
+                      <span className="text-sm">{item.label}</span>
+                      <FontAwesomeIcon icon={faChevronDown} className={`text-xs transition-transform ${openDropdown === item.label ? 'rotate-180' : ''}`} />
+                    </button>
+                    {openDropdown === item.label && (
+                      <div className="pl-4">
+                        {categoryTree.map((parent) => {
+                          const isOpen = expandedParents.has(parent._id);
+                          const toggle = () => {
+                            setExpandedParents((prev) => {
+                              const next = new Set(prev);
+                              if (next.has(parent._id)) next.delete(parent._id);
+                              else next.add(parent._id);
+                              return next;
+                            });
+                          };
+                          return (
+                          <div key={parent._id}>
+                            <button
+                              type="button"
+                              onClick={parent.children.length > 0 ? toggle : () => { setIsMobileMenuOpen(false); scrollToCategory(parent.name.toLowerCase().replace(/\s+/g, '-')); }}
+                              className="flex items-center justify-between w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition"
+                            >
+                              <span className={parent.children.length > 0 ? "font-semibold text-gray-800" : ""}>{parent.name}</span>
+                              {parent.children.length > 0 && (
+                                <FontAwesomeIcon icon={faChevronDown} className={`text-[10px] text-gray-400 transition-transform ${isOpen ? "rotate-0" : "-rotate-90"}`} />
+                              )}
+                            </button>
+                            {parent.children.length > 0 && isOpen && (
+                              <div>
+                                {parent.children.map((child) => (
+                                  <button
+                                    key={child._id}
+                                    type="button"
+                                    onClick={() => { setIsMobileMenuOpen(false); scrollToCategory(child.name.toLowerCase().replace(/\s+/g, '-')); }}
+                                    className="block w-full text-left px-8 py-2 text-sm text-gray-600 hover:bg-amber-50 hover:text-amber-600"
+                                  >{child.name}</button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );})}
+                        <hr />
+                         <Link to="/products?all=1" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-600 hover:bg-amber-50 hover:text-amber-600">Tất cả sản phẩm</Link>
+                      </div>
+                    )}
+                  </React.Fragment>
+                ) : (
+                  <Link key={item.label} to={item.to} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:bg-amber-50 hover:text-amber-600 transition">
+                    <span className="text-sm">{item.label}</span>
+                  </Link>
+                )
+              ))}
             </div>
 
             {/* Top Bar - Social */}

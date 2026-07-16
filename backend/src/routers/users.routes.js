@@ -4,7 +4,7 @@
  */
 
 import express from "express";
-import { adminOnly, protect, authLimiter } from "../middleware/auth.middleware.js";
+import { adminOnly, protect } from "../middleware/auth.middleware.js";
 import { asyncHandler } from "../middleware/asyncHandler.js";
 import { upload } from "../middleware/upload.middleware.js";
 import {
@@ -54,7 +54,7 @@ router.delete("/me/avatar", protect, asyncHandler(deleteMyAvatar));
  * Đổi mật khẩu người dùng hiện tại
  * Protected - Rate limited (3 requests/phút)
  */
-router.put("/password", authLimiter(60 * 1000, 3), protect, asyncHandler(changePassword));
+router.put("/password", protect, asyncHandler(changePassword));
 
 /**
  * GET /api/users

@@ -5,43 +5,14 @@
  *         -> cookie parser -> sanitize -> global rate-limit
  */
 
-import jwt from 'jsonwebtoken';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 import morgan from 'morgan';
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import rateLimit from 'express-rate-limit';
 
 import { mongoSanitize } from '../middleware/sanitize.middleware.js';
-import { appError } from '../utils/appResponse.js';
-
-// kiểm tra xem request HTTP có phải từ admin
-const isAdminRequest = (req) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) { return false; }
-    //Tách chuỗi authHeader (vd: "Bearer eyJhbGciOi...") bằng dấu cách, lấy phần tử thứ 2 — chính là token JWT.
-    const token = authHeader.split(' ')[1];
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-        return decoded?.role === 'admin';
-    } catch (e) {
-        return false;
-    }
-};
-
-//Người dùng thường bị giới hạn 100 request/15p, admin thì không bị giới hạn.
-const globalRateLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
-    standardHeaders: true,
-    legacyHeaders: false,
-    skip: (req) => isAdminRequest(req),
-    handler: (req, res, next) => {
-        return next(appError("Quá nhiều yêu cầu, vui lòng thử lại sau!", 429));
-    }
-});
 
 /**
  * Áp dụng toàn bộ global middleware vào Express app
@@ -76,6 +47,4 @@ export const applyGlobalMiddleware = (app) => {
     app.use(cookieParser());
 
     app.use(mongoSanitize);
-
-    app.use(globalRateLimiter);
 };

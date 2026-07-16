@@ -1,17 +1,105 @@
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faPen, faTrash, faSearch, faImage, faSpinner, faTags, faEye, faEyeSlash, faCalendar } from "@fortawesome/free-solid-svg-icons";
-import { formatDate } from "../../helpers/formatters";
+import { faPlus, faPen, faTrash, faSearch, faImage, faSpinner, faTags, faEye, faEyeSlash, faChevronDown, faFolder, faFile } from "@fortawesome/free-solid-svg-icons";
 import { useCategories } from "./hooks/useCategories";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
 
+function buildTree(categories) {
+    const map = {};
+    const roots = [];
+    categories.forEach((cat) => { map[cat._id] = { ...cat, children: [] }; });
+    categories.forEach((cat) => {
+        const node = map[cat._id];
+        if (cat.parent?._id && map[cat.parent._id]) {
+            map[cat.parent._id].children.push(node);
+        } else if (!cat.parent) {
+            roots.push(node);
+        }
+    });
+    return roots;
+}
+
+function CategoryRow({ cat, depth, onEdit, onDelete }) {
+    const hasChildren = cat.children && cat.children.length > 0;
+    const [expanded, setExpanded] = useState(depth < 1);
+
+    return (
+        <>
+            <div
+                className={`flex items-center gap-2 sm:gap-4 pr-3 sm:pr-6 py-3 sm:py-5 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 ${depth > 0 ? "bg-gray-50/50" : ""}`}
+                style={{ paddingLeft: `${depth === 0 ? 20 : 68 + (depth - 1) * 28}px` }}
+            >
+                {hasChildren ? (
+                    <button
+                        type="button"
+                        onClick={() => setExpanded(!expanded)}
+                        className="size-6 sm:size-7 flex items-center justify-center shrink-0 text-gray-400 hover:text-gray-600 transition rounded hover:bg-gray-100"
+                    >
+                        <FontAwesomeIcon icon={faChevronDown} className={`text-[10px] sm:text-xs transition-transform ${expanded ? "rotate-0" : "-rotate-90"}`} />
+                    </button>
+                ) : (
+                    <span className="size-6 sm:size-7 flex items-center justify-center shrink-0">
+                        <FontAwesomeIcon icon={faFile} className="text-[10px] sm:text-sm text-gray-300" />
+                    </span>
+                )}
+
+                {depth === 0 && (
+                <div className="size-10 sm:size-14 rounded-lg sm:rounded-xl overflow-hidden bg-gray-50 shrink-0 border border-gray-100">
+                    {cat.image ? (
+                        <img src={cat.image} alt={cat.name} className="w-full h-full object-cover" />
+                    ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-200">
+                            <FontAwesomeIcon icon={faImage} className="text-xs sm:text-lg" />
+                        </div>
+                    )}
+                </div>
+                )}
+
+                <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
+                        {hasChildren && <FontAwesomeIcon icon={faFolder} className="text-amber-400 text-[10px] sm:text-sm" />}
+                        <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate">{cat.name}</h3>
+                        {hasChildren && (
+                            <span className="text-[10px] sm:text-xs text-gray-400 bg-gray-100 px-1.5 sm:px-2 py-0.5 rounded-full shrink-0 font-medium">
+                                {cat.children.length}
+                            </span>
+                        )}
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-1 sm:gap-3 shrink-0">
+                    <span className={`hidden sm:inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
+                        cat.isActive ? "bg-emerald-50 text-emerald-700" : "bg-gray-100 text-gray-500"
+                    }`}>
+                        <FontAwesomeIcon icon={cat.isActive ? faEye : faEyeSlash} className="text-[10px]" />
+                        {cat.isActive ? "Hoạt động" : "Ẩn"}
+                    </span>
+                    <button onClick={() => onEdit(cat)} className="size-8 sm:size-9 rounded-lg hover:bg-blue-50 text-blue-600 flex items-center justify-center transition-colors">
+                        <FontAwesomeIcon icon={faPen} className="text-xs sm:text-sm" />
+                    </button>
+                    <button onClick={() => onDelete(cat._id)} className="size-8 sm:size-9 rounded-lg hover:bg-red-50 text-red-500 flex items-center justify-center transition-colors">
+                        <FontAwesomeIcon icon={faTrash} className="text-xs sm:text-sm" />
+                    </button>
+                </div>
+            </div>
+            {hasChildren && expanded && cat.children.map((child) => (
+                <CategoryRow key={child._id} cat={child} depth={depth + 1} onEdit={onEdit} onDelete={onDelete} />
+            ))}
+        </>
+    );
+}
+
 export default function Categories() {
-    const { 
+    const {
         loading, refetching, filteredCategories, searchTerm, setSearchTerm,
         handleSubmit, handleDelete, handleEdit, resetForm, openModal,
         showModal, setShowModal, editingCategory,
         formData, setFormData, imagePreview, handleImageChange, categories
     } = useCategories();
+
+    const parentOptions = categories.filter((cat) => !cat.parent);
+    const tree = buildTree(filteredCategories);
 
     if (loading) {
         return (
@@ -39,7 +127,7 @@ export default function Categories() {
                 </Button>
             </div>
 
-            <div className="rounded-xl bg-white shadow-sm border border-gray-100">
+            <div className="rounded-xl bg-white shadow-sm border border-gray-100 overflow-hidden">
                 <div className="p-3 sm:p-4 border-b border-gray-100">
                     <div className="relative max-w-md">
                         <FontAwesomeIcon icon={faSearch} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -59,62 +147,22 @@ export default function Categories() {
                     </div>
                 </div>
 
-                <div className="p-2 sm:p-4">
-                    {filteredCategories.length === 0 ? (
-                        <div className="py-12 text-center text-gray-400 text-sm">
+                <div className="divide-y divide-gray-50">
+                    {tree.length === 0 ? (
+                        <div className="py-16 text-center text-gray-400 text-sm">
+                            <FontAwesomeIcon icon={faTags} className="text-3xl text-gray-200 mb-3 block mx-auto" />
                             Không tìm thấy danh mục nào
                         </div>
                     ) : (
-                        <div className="grid gap-2 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                            {filteredCategories.map((category) => (
-                                <div key={category._id} className="rounded-xl border border-gray-100 bg-white hover:shadow-md transition-shadow">
-                                    <div className="p-3 sm:p-4">
-                                        <div className="flex gap-3 sm:gap-4">
-                                            <div className="size-14 sm:size-20 rounded-lg overflow-hidden bg-gray-50 shrink-0 border border-gray-100">
-                                                {category.image ? (
-                                                    <img src={category.image} alt={category.name} className="w-full h-full object-cover" />
-                                                ) : (
-                                                    <div className="w-full h-full flex items-center justify-center text-gray-200">
-                                                        <FontAwesomeIcon icon={faImage} className="text-lg sm:text-2xl" />
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-start justify-between gap-1">
-                                                    <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate">{category.name}</h3>
-                                                    <div className="flex gap-0.5 shrink-0 ml-1">
-                                                        <button onClick={() => handleEdit(category)} className="size-7 rounded-lg hover:bg-blue-50 text-blue-600 flex items-center justify-center">
-                                                            <FontAwesomeIcon icon={faPen} className="text-[11px]" />
-                                                        </button>
-                                                        <button onClick={() => handleDelete(category._id)} className="size-7 rounded-lg hover:bg-red-50 text-red-500 flex items-center justify-center">
-                                                            <FontAwesomeIcon icon={faTrash} className="text-[11px]" />
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <p className="mt-0.5 text-xs sm:text-sm text-gray-500 line-clamp-2">
-                                                    {category.description || "Chưa có mô tả"}
-                                                </p>
-                                                <p className="mt-1 text-[10px] sm:text-xs text-gray-400 font-mono">
-                                                    /{category.slug}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div className="mt-2 sm:mt-3 flex items-center justify-between pt-2 sm:pt-3 border-t border-gray-50">
-                                            <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] sm:text-xs font-medium ${
-                                                category.isActive ? "bg-emerald-50 text-emerald-700" : "bg-gray-100 text-gray-500"
-                                            }`}>
-                                                <FontAwesomeIcon icon={category.isActive ? faEye : faEyeSlash} className="text-[8px] sm:text-[10px]" />
-                                                {category.isActive ? "Hoạt động" : "Ẩn"}
-                                            </span>
-                                            <span className="text-[10px] sm:text-xs text-gray-400 flex items-center gap-1">
-                                                <FontAwesomeIcon icon={faCalendar} className="text-[8px] sm:text-[10px]" />
-                                                {category.createdAt ? formatDate(category.createdAt) : "-"}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                        tree.map((cat) => (
+                            <CategoryRow
+                                key={cat._id}
+                                cat={cat}
+                                depth={0}
+                                onEdit={handleEdit}
+                                onDelete={handleDelete}
+                            />
+                        ))
                     )}
                 </div>
             </div>
@@ -136,6 +184,7 @@ export default function Categories() {
                             </button>
                         </div>
                         <form onSubmit={handleSubmit} className="px-4 sm:px-6 pb-4 sm:pb-6 space-y-4">
+                            {!formData.parent && (
                             <div>
                                 <label className="mb-1 block text-sm font-medium text-gray-700">Hình ảnh</label>
                                 <div className="flex items-center gap-3 sm:gap-4">
@@ -164,6 +213,7 @@ export default function Categories() {
                                     </div>
                                 </div>
                             </div>
+                            )}
                             <Input
                                 label="Tên danh mục"
                                 value={formData.name}
@@ -171,13 +221,17 @@ export default function Categories() {
                                 required
                             />
                             <div>
-                                <label className="mb-1 block text-sm font-medium text-gray-700">Mô tả</label>
-                                <textarea
-                                    value={formData.description}
-                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                <label className="mb-1 block text-sm font-medium text-gray-700">Danh mục cha</label>
+                                <select
+                                    value={formData.parent}
+                                    onChange={(e) => setFormData({ ...formData, parent: e.target.value })}
                                     className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm outline-none focus:border-amber-400 focus:bg-white focus:ring-2 focus:ring-amber-400/20 transition-all"
-                                    rows={3}
-                                />
+                                >
+                                    <option value="">— Không có (danh mục gốc) —</option>
+                                    {parentOptions.map((p) => (
+                                        <option key={p._id} value={p._id} disabled={editingCategory?._id === p._id}>{p.name}</option>
+                                    ))}
+                                </select>
                             </div>
                             <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-2">
                                 <Button variant="secondary" type="button" onClick={() => { setShowModal(false); resetForm(); }} className="w-full sm:w-auto">

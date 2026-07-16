@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrash, faSearch, faUserShield, faSpinner, faUsers, faEnvelope, faCalendar, faShieldHalved, faUserTie } from "@fortawesome/free-solid-svg-icons";
 import { useUsers } from "./hooks/useUsers";
 import { formatDate } from "../../helpers/formatters";
+import UserAvatar from "../../components/UserAvatar";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
 
@@ -66,9 +67,7 @@ export default function Users() {
                                     <td className="py-3 px-4 text-sm text-gray-500">{i + 1}</td>
                                     <td className="py-3 px-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="size-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-semibold text-gray-600 shrink-0">
-                                                {user.name?.charAt(0).toUpperCase()}
-                                            </div>
+                                            <UserAvatar user={user} size="sm" />
                                             <span className="font-medium text-gray-800 text-sm">{user.name}</span>
                                         </div>
                                     </td>
@@ -118,9 +117,7 @@ export default function Users() {
                                 <div className="p-3">
                                     <div className="flex items-start justify-between gap-2 mb-2">
                                         <div className="flex items-center gap-2 min-w-0">
-                                            <div className="size-10 rounded-full bg-gray-50 flex items-center justify-center text-sm font-bold text-gray-700 shrink-0 border border-gray-100">
-                                                {user.name?.charAt(0).toUpperCase()}
-                                            </div>
+                                            <UserAvatar user={user} size="lg" />
                                             <div className="min-w-0">
                                                 <p className="text-sm font-semibold text-gray-900 truncate">{user.name}</p>
                                                 <p className="text-[11px] text-gray-500 truncate flex items-center gap-1">

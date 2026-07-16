@@ -36,10 +36,10 @@ const videoFileFilter = (req, file, callback) => {
     else callback(new Error("Chỉ cho phép tải lên file video !"), false);
 };
 
-/** Multer instance cho upload ảnh (tối đa 10MB) */
+/** Multer instance cho upload ảnh (tối đa 2MB) */
 export const upload = multer({
     storage,
-    limits: { fileSize: 10 * 1024 * 1024 },
+    limits: { fileSize: 2 * 1024 * 1024 },
     fileFilter: imageFileFilter,
 });
 

@@ -11,7 +11,6 @@ import { isValidObjectId } from "../utils/valid.js";
 /**
  * Tạo danh mục mới (Admin only)
  * @param {string} name - Tên danh mục (bắt buộc)
- * @param {string} description - Mô tả danh mục (bắt buộc)
  * @param {File} image - Hình ảnh danh mục (bắt buộc, upload)
  * @requires req.user.role = 'admin'
  * @throws {400} Thiếu trường bắt buộc
@@ -20,33 +19,41 @@ import { isValidObjectId } from "../utils/valid.js";
  */
 export const createCategory = async (req, res) => {
     
-    const { name, description } = req.body;
+    const { name, parent } = req.body;
 
-    // vì hình ảnh là file nên phải req.file
     const imageFile = req.file;
 
-    if (!name || !description) {
+    if (!name) {
         throw appError("Thiếu trường bắt buộc!", 400);
     }
 
-    if (!imageFile) {
+    if (!imageFile && !parent) {
         throw appError("Vui lòng tải lên hình ảnh danh mục!", 400);
     }
 
-    // Kiểm tra danh mục đã tồn tại bằng tên của danh mục đó
     const existingCategory = await Category.findOne({ name: sanitizeText(name) });
     if (existingCategory) {
         throw appError("Tên danh mục đã tồn tại!", 400);
     }
-    // Upload ảnh lên Cloudinary (thư mục: guitar-shop/categories)
-    const [imageUrl] = await uploadImages([imageFile], "guitar-shop/categories");
 
-    // Tạo danh mục mới với thông tin và URL ảnh
+    if (parent && !isValidObjectId(parent)) {
+        throw appError("ID danh mục cha không hợp lệ!", 400);
+    }
+
+    let imageUrl = "";
+    if (imageFile) {
+        [imageUrl] = await uploadImages([imageFile], "guitar-shop/categories");
+    }
+
     const newCategory = await Category.create({
         name: sanitizeText(name),
-        description: sanitizeText(description),
         image: imageUrl,
+        parent: parent || null,
     });
+
+    if (newCategory.parent) {
+        await newCategory.populate("parent", "name");
+    }
 
     return appSuccess(res, {
         statusCode: 201,
@@ -55,8 +62,8 @@ export const createCategory = async (req, res) => {
             category: {
                 id: newCategory._id,
                 name: newCategory.name,
-                description: newCategory.description,
                 image: newCategory.image,
+                parent: newCategory.parent,
                 createdAt: formatDateTime(newCategory.createdAt),
                 updatedAt: formatDateTime(newCategory.updatedAt),
             }
@@ -70,12 +77,26 @@ export const createCategory = async (req, res) => {
  * @throws {404} Không có danh mục nào
  */
 export const getAllCategory = async (req, res) => {
-    const categories = await Category.find({ isActive: true });
+    const { parent } = req.query;
+
+    const filter = { isActive: true };
+    if (parent === "null") {
+        filter.parent = null;
+    } else if (parent) {
+        if (!isValidObjectId(parent)) {
+            throw appError("ID danh mục cha không hợp lệ!", 400);
+        }
+        filter.parent = parent;
+    }
+
+    const categories = await Category.find(filter).populate("parent", "name");
+
+    const parents = await Category.find({ isActive: true, parent: null });
 
     return appSuccess(res, {
         statusCode: 200,
         message: "Lấy danh mục thành công!",
-        data: { categories }
+        data: { categories, parents }
     });
 };
 
@@ -91,7 +112,7 @@ export const getCategoryById = async (req, res) => {
     if (!isValidObjectId(id)) {
         throw appError("ID không hợp lệ!", 400);
     }
-    const category = await Category.findById(id);
+    const category = await Category.findById(id).populate("parent", "name");
 
     if (!category) {
         throw appError("Danh mục không tồn tại!", 404);
@@ -108,7 +129,6 @@ export const getCategoryById = async (req, res) => {
  * Cập nhật danh mục (Admin only)
  * @param {string} id - ID danh mục (params)
  * @param {string} name - Tên mới (tùy chọn)
- * @param {string} description - Mô tả mới (tùy chọn)
  * @param {string} image - Hình ảnh mới (tùy chọn)
  * @requires req.user.role = 'admin'
  * @throws {403} Không có quyền
@@ -117,7 +137,7 @@ export const getCategoryById = async (req, res) => {
  */
 export const updateCategory = async (req, res) => {
     const { id } = req.params;
-    const { name, description, image } = req.body;
+    const { name, image, parent } = req.body;
 
     if (!isValidObjectId(id)) {
         throw appError("ID không hợp lệ!", 400);
@@ -128,9 +148,18 @@ export const updateCategory = async (req, res) => {
     if (!category) {
         throw appError("Danh mục không tồn tại!", 404);
     }
-    // Cập nhật các trường mới
+
     if (name) { category.name = sanitizeText(name); }
-    if (description) { category.description = sanitizeText(description); }
+    if (parent !== undefined) {
+        if (parent === "" || parent === "null") {
+            category.parent = null;
+        } else {
+            if (!isValidObjectId(parent)) {
+                throw appError("ID danh mục cha không hợp lệ!", 400);
+            }
+            category.parent = parent;
+        }
+    }
     if (req.file) {
         const [imageUrl] = await uploadImages([req.file], "guitar-shop/categories");
         category.image = imageUrl;
@@ -139,6 +168,10 @@ export const updateCategory = async (req, res) => {
     }
 
     await category.save();
+
+    if (category.parent) {
+        await category.populate("parent", "name");
+    }
 
     return appSuccess(res, {
         statusCode: 200,
@@ -167,6 +200,7 @@ export const deleteCategory = async (req, res) => {
         throw appError("Danh mục không tồn tại!", 404);
     }
 
+    await Category.updateMany({ parent: id }, { parent: null });
     await category.deleteOne();
 
     return appSuccess(res, {

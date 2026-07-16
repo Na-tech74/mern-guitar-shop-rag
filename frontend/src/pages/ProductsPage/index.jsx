@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThLarge, faList, faBoxOpen, faTriangleExclamation, faSlidersH } from "@fortawesome/free-solid-svg-icons";
 import useProducts from "./hooks/useProducts";
@@ -22,7 +22,6 @@ const sortOptions = [
 
 export default function ProductsPage() {
 
-    const [searchParams] = useSearchParams();
     const { products, loading, error, pagination, fetchProducts } = useProducts();
     const [categories, setCategories] = useState([]);
     const [viewMode, setViewMode] = useState("grid");
@@ -67,13 +66,21 @@ export default function ProductsPage() {
         categoryAPI.getAll().then((res) => {
             const data = res.data?.data?.categories || [];
             setCategories(data);
-            if (!didAutoSelect.current && searchParams.get("all") !== "1") {
+            if (!didAutoSelect.current) {
                 didAutoSelect.current = true;
-                const acoustic = data.find((cat) => cat.name === "Guitar Acoustic");
-                if (acoustic) setSelectedCategory(acoustic._id);
+                const params = new URLSearchParams(window.location.search);
+                const urlCat = params.get("category");
+                if (urlCat) {
+                    setSelectedCategory(urlCat);
+                } else if (params.get("all") !== "1") {
+                    const acoustic = data.find((cat) => cat.name === "Guitar Acoustic");
+                    if (acoustic) setSelectedCategory(acoustic._id);
+                }
             }
         }).catch(() => {});
     }, []);
+
+
 
     return (
         <>

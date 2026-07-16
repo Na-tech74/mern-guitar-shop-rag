@@ -1,4 +1,5 @@
 import Product from "../models/product.model.js";
+import Category from "../models/categories.model.js";
 import { appError, appSuccess } from "../utils/appResponse.js";
 import { uploadImages } from "../services/uploadImages.js";
 import { formatDateTime, sanitizeText } from "../utils/format.js";
@@ -88,7 +89,15 @@ export const getAllProducts = async (req, res) => {
     const { page = 1, limit = 9, category, search, sortBy } = req.query;
 
     const query = {};
-    if (category) query.category = category;
+    if (category) {
+        const children = await Category.find({ parent: category }).select("_id");
+        if (children.length > 0) {
+            const ids = [category, ...children.map((c) => c._id)];
+            query.category = { $in: ids };
+        } else {
+            query.category = category;
+        }
+    }
     if (search) query.name = { $regex: search, $options: 'i' };
 
     let sortOption = {};

@@ -4,7 +4,6 @@
  */
 
 import jwt from "jsonwebtoken";
-import rateLimit from "express-rate-limit";
 import User from "../models/users.model.js";
 import { appError } from "../utils/appResponse.js";
 
@@ -82,30 +81,3 @@ export const adminOnly = (req, res, next) => {
   }
 };
 
-/**
- * Rate limiter cho các endpoint xác thực (login, register, forgot-password, reset-password)
- * @param {number} windowMs - Thời gian tính theo miliseconds (mặc định 1 phút)
- * @param {number} max - Số request tối đa (mặc định 5)
- * @returns {Function} Express middleware rate limiter
- */
-export const authLimiter = (windowMs = 60 * 1000, max = 5) => rateLimit({
-  windowMs,
-  max,
-  handler: (req, res, next) => {
-    return next(appError("Quá nhiều yêu cầu, vui lòng thử lại sau 1 phút!", 429));
-  }
-});
-
-/**
- * Rate limiter cho endpoint refresh token
- * @param {number} windowMs - Thời gian tính theo miliseconds (mặc định 1 phút)
- * @param {number} max - Số request tối đa (mặc định 10)
- * @returns {Function} Express middleware rate limiter
- */
-export const refreshLimiter = (windowMs = 60 * 1000, max = 10) => rateLimit({
-  windowMs,
-  max,
-  handler: (req, res, next) => {
-    return next(appError("Quá nhiều yêu cầu, vui lòng thử lại sau!", 429));
-  }
-});

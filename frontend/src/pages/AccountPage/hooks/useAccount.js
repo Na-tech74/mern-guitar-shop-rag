@@ -74,8 +74,8 @@ export default function useAccount() {
             showToast("error", "Chỉ chấp nhận file ảnh");
             return;
         }
-        if (file.size > 10 * 1024 * 1024) {
-            showToast("error", "Ảnh tối đa 10MB");
+        if (file.size > 2 * 1024 * 1024) {
+            showToast("error", "Ảnh tối đa 2MB");
             return;
         }
 

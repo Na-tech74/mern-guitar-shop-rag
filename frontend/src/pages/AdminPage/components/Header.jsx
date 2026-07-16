@@ -92,8 +92,8 @@ export default function AdminHeader({ toggleMobileSidebar }) {
             setError("Chỉ chấp nhận file ảnh");
             return;
         }
-        if (file.size > 10 * 1024 * 1024) {
-            setError("Ảnh tối đa 10MB");
+        if (file.size > 2 * 1024 * 1024) {
+            setError("Ảnh tối đa 2MB");
             return;
         }
 
