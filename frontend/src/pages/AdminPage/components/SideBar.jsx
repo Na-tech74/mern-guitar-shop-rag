@@ -98,10 +98,11 @@ export default function AdminSidebar({ isMobileOpen, setIsMobileOpen }) {
                 {/* MENU */}
                 <nav className="flex-1 overflow-y-auto p-2">
                     <ul className="space-y-1">
+
                         <li>
-                            <NavItem to={base} icon={faChartPie} name="Bảng điều khiển" end />
+                            <NavItem to={base} icon={faChartPie} name="Bảng điều khiển" />
                         </li>
-                        
+
                         {/* CMS ch admin mới được dùng */}
                         {role === "admin" && (
                             <NavSection icon={faHouse} name="Giao diện CMS">
@@ -128,6 +129,7 @@ export default function AdminSidebar({ isMobileOpen, setIsMobileOpen }) {
                                 </li>
                             </NavSection>
                         )}
+
                         {/*admin*/}
                         {role === "admin" && (
                             <li>
@@ -140,6 +142,8 @@ export default function AdminSidebar({ isMobileOpen, setIsMobileOpen }) {
                         <li>
                             <NavItem to={`${base}/orders`} icon={faCartShopping} name="Đơn hàng" />
                         </li>
+
+
                         {role === "admin" && (
                             <li>
                                 <NavItem to={`${base}/users`} icon={faUsers} name="Người dùng" />

@@ -34,7 +34,10 @@ export const register = async (req, res) => {
         throw appError("Vui lòng nhập đầy đủ thông tin!", 400);
     }
 
-    if (!isValidEmail(email)) {
+    const sanitizedName = sanitizeText(name)
+    const sanitizedEmail = sanitizeEmail(email)
+
+    if (!isValidEmail(sanitizedEmail)) {
         throw appError("Email không hợp lệ!", 400);
     }
 
@@ -45,7 +48,7 @@ export const register = async (req, res) => {
         );
     }
 
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email: sanitizedEmail });
     if (existingUser) {
         throw appError("Người dùng đã tồn tại!", 409);
     }
@@ -53,8 +56,8 @@ export const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({
-        name: sanitizeText(name),
-        email: sanitizeEmail(email),
+        name: sanitizedName,
+        email: sanitizedEmail,
         password: hashedPassword
     });
 
@@ -68,10 +71,10 @@ export const register = async (req, res) => {
 
     // Gửi refresh token qua cookie HttpOnly
     refreshTokenCookie(res, refreshToken);
-    
+
     //thông báo cho admin biết có user mới đăng ký, mà không cần refresh trang.
     createNotification("new_user",
-        `Người dùng mới: ${sanitizeText(name)} (${sanitizeEmail(email)})`,
+        `Người dùng mới: ${sanitizedName} (${sanitizedEmail})`,
         `/admin/users`
     );
 
@@ -110,12 +113,13 @@ export const login = async (req, res) => {
     if (!email || !password) {
         throw appError("Vui lòng nhập đầy đủ thông tin!", 400);
     }
+    const sanitizedEmail = sanitizeEmail(email)
 
-    if (!isValidEmail(email)) {
+    if (!isValidEmail(sanitizedEmail)) {
         throw appError("Email không hợp lệ!", 400);
     }
 
-    const existingUser = await User.findOne({ email })
+    const existingUser = await User.findOne({ email: sanitizedEmail })
         .select("+password +refreshToken");
 
     if (!existingUser) {
@@ -196,12 +200,12 @@ export const forgotPassword = async (req, res) => {
     if (!email) {
         throw appError("Vui lòng nhập email!", 400);
     }
-
-    if (!isValidEmail(email)) {
+    const sanitizedEmail = sanitizeEmail(email)
+    if (!isValidEmail(sanitizedEmail)) {
         throw appError("Email không hợp lệ!", 400);
     }
 
-    const existingUser = await User.findOne({ email })
+    const existingUser = await User.findOne({ emai:sanitizedEmail })
         .select("+resetOtp +resetOtpExpire");
 
     if (!existingUser) {
@@ -250,8 +254,9 @@ export const resetPassword = async (req, res) => {
     if (!email || !otp || !password) {
         throw appError("Thiếu dữ liệu!", 400);
     }
-
-    if (!isValidEmail(email)) {
+ 
+    const sanitizedEmail = sanitizeEmail(email)
+    if (!isValidEmail(sanitizedEmail)) {
         throw appError("Email không hợp lệ!", 400);
     }
 
@@ -361,7 +366,7 @@ export const refreshAccessToken = async (req, res) => {
 
     // Gửi refresh token mới qua cookie
     refreshTokenCookie(res, newRefreshToken);
-    
+
     return appSuccess(res, {
         statusCode: 200,
         message: "Refresh token thành công!",
