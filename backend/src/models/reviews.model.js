@@ -1,15 +1,15 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 const reviewSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.ObjectId,
-        ref: "User",
-        require: true
+        ref: "Users",
+        required: true
     },
     product: {
         type: mongoose.Schema.ObjectId,
         ref: "Product",
-        require: true
+        required: true
     },
     rating:{
         type:Number,

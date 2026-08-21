@@ -29,13 +29,23 @@ const productSchema = new mongoose.Schema({
     },
 
     /**
-     * Giá sản phẩm (VND)
+     * Giá sales (VND) - giá khách hàng phải trả
      * Giá trị tối thiểu = 0
      */
     price: {
         type: Number,
         required: true,
         min: 0,
+    },
+
+    /**
+     * Giá gốc (VND) - giá trước khi giảm, hiển thị gạch ngang khi có khuyến mãi
+     * Giá trị tối thiểu = 0
+     */
+    originalPrice: {
+        type: Number,
+        min: 0,
+        default: 0,
     },
 
     /**
@@ -46,6 +56,15 @@ const productSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category",
         required: true
+    },
+
+    /**
+     * Thương hiệu sản phẩm
+     * Tham chiếu đến Brand
+     */
+    brand: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Brand",
     },
 
     /**

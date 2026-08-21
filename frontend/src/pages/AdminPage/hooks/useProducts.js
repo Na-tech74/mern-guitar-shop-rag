@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { productAPI, categoryAPI } from "../../../api";
+import { compressImage } from "../../../helpers/imageCompression";
+import { productAPI, categoryAPI, brandAPI } from "../../../api";
 import useDebounce from "../../../hooks/useDebounce";
 import { useDialog } from "../../../components/MessageDialog";
 
@@ -21,6 +22,7 @@ export const useProducts = () => {
 
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [brands, setBrands] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refetching, setRefetching] = useState(false);
     const [error, setError] = useState(null);
@@ -35,7 +37,9 @@ export const useProducts = () => {
         name: "",
         description: "",
         price: "",
+        originalPrice: "",
         category: "",
+        brand: "",
         stock: "",
         images: [],
         fileList: [],
@@ -96,9 +100,20 @@ export const useProducts = () => {
         }
     }, []);
 
+    // Tách fetch brands (chỉ gọi 1 lần khi mount).
+    const fetchBrands = useCallback(async () => {
+        try {
+            const res = await brandAPI.getAll();
+            setBrands(res.data?.data?.brands || []);
+        } catch {
+            setBrands([]);
+        }
+    }, []);
+
     useEffect(() => {
         fetchCategories();
-    }, [fetchCategories]);
+        fetchBrands();
+    }, [fetchCategories, fetchBrands]);
 
     // Refetch khi đổi trang hoặc search (debounced). Reset về trang 1 khi search đổi
     // bằng cách setState page=1 rồi return — effect chạy lại với page mới sẽ fetch,
@@ -207,12 +222,15 @@ export const useProducts = () => {
             fd.append("name", formData.name);
             fd.append("description", formData.description);
             fd.append("price", String(formData.price).replace(/\./g, ""));
+            fd.append("originalPrice", String(formData.originalPrice || 0).replace(/\./g, ""));
             fd.append("category", formData.category);
+            fd.append("brand", formData.brand || "");
             fd.append("stock", String(formData.stock).replace(/\./g, ""));
 
             const fileList = formData.fileList || [];
             for (const file of fileList) {
-                fd.append("images", file);
+                const compressed = await compressImage(file);
+                fd.append("images", compressed);
             }
 
             if (formData.existingImages?.length > 0) {
@@ -264,7 +282,9 @@ export const useProducts = () => {
             name: product.name,
             description: product.description,
             price: product.price,
+            originalPrice: product.originalPrice || "",
             category: product.category?._id || product.category,
+            brand: product.brand?._id || product.brand || "",
             stock: product.stock,
             images: product.images || [],
             fileList: [],
@@ -283,7 +303,9 @@ export const useProducts = () => {
             name: "",
             description: "",
             price: "",
+            originalPrice: "",
             category: "",
+            brand: "",
             stock: "",
             images: [],
             fileList: [],
@@ -302,6 +324,7 @@ export const useProducts = () => {
         // nhưng giờ filter đã do server xử lý nên trả về luôn products.
         filteredProducts: products,
         categories,
+        brands,
         loading,
         refetching,
         error,

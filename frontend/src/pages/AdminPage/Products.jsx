@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faPen, faTrash, faSearch, faImage, faUpload, faSpinner, faBox, faTag, faCube } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faPen, faTrash, faSearch, faImage, faUpload, faSpinner, faBox, faTag, faCube, faTrademark } from "@fortawesome/free-solid-svg-icons";
 import { formatCurrency } from "../../helpers/formatters";
 import { getOptimizedImage } from "../../helpers/image";
 import { useProducts } from "./hooks/useProducts";
@@ -12,7 +12,7 @@ export default function Products() {
         loading, refetching, error, filteredProducts, searchTerm, setSearchTerm,
         handleSubmit, handleDelete, handleEdit, resetForm, openModal,
         showModal, setShowModal, editingProduct, formData, setFormData,
-        pagination, handlePageChange, categories, handleFileChange, removeImage
+        pagination, handlePageChange, categories, brands, handleFileChange, removeImage
     } = useProducts();
 
     if (error) {
@@ -79,6 +79,7 @@ export default function Products() {
                             <tr className="border-b border-gray-100 bg-gray-50/50">
                                 <th className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-500">Sản phẩm</th>
                                 <th className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-500">Danh mục</th>
+                                <th className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-500">Thương hiệu</th>
                                 <th className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-500">Giá</th>
                                 <th className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-500">Tồn kho</th>
                                 <th className="py-3 px-4 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-500">Đã bán</th>
@@ -88,7 +89,7 @@ export default function Products() {
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan={6} className="py-16 text-center text-gray-500 text-sm">
+                                    <td colSpan={7} className="py-16 text-center text-gray-500 text-sm">
                                         <FontAwesomeIcon icon={faSpinner} className="mr-2 animate-spin text-amber-400" />
                                         Đang tải...
                                     </td>
@@ -126,7 +127,22 @@ export default function Products() {
                                                     {product.category?.name || "Chưa phân loại"}
                                                 </span>
                                             </td>
-                                            <td className="py-3 px-4 font-semibold text-gray-800 text-sm">{formatCurrency(product.price)}</td>
+                                            <td className="py-3 px-4">
+                                                <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs text-amber-700">
+                                                    <FontAwesomeIcon icon={faTrademark} className="text-[8px]" />
+                                                    {product.brand?.name || "Chưa có"}
+                                                </span>
+                                            </td>
+                                            <td className="py-3 px-4">
+                                                {product.originalPrice > product.price ? (
+                                                    <div className="flex flex-col">
+                                                        <span className="text-xs text-gray-400 line-through">{formatCurrency(product.originalPrice)}</span>
+                                                        <span className="font-semibold text-gray-800 text-sm">{formatCurrency(product.price)}</span>
+                                                    </div>
+                                                ) : (
+                                                    <span className="font-semibold text-gray-800 text-sm">{formatCurrency(product.price)}</span>
+                                                )}
+                                            </td>
                                             <td className="py-3 px-4">
                                                 <span className={`inline-flex items-center gap-1 text-sm ${product.stock > 0 ? "text-emerald-600" : "text-red-500"}`}>
                                                     <FontAwesomeIcon icon={faCube} className="text-[10px]" />
@@ -148,7 +164,7 @@ export default function Products() {
                                     ))}
                                     {filteredProducts.length === 0 && (
                                         <tr>
-                                            <td colSpan={6} className="py-12 text-center text-gray-400 text-sm">
+                                            <td colSpan={7} className="py-12 text-center text-gray-400 text-sm">
                                                 Không tìm thấy sản phẩm nào
                                             </td>
                                         </tr>
@@ -200,11 +216,20 @@ export default function Products() {
                                                     </button>
                                                 </div>
                                             </div>
-                                            <p className="text-base font-bold text-gray-800 text-sm mt-1">{formatCurrency(product.price)}</p>
+                                            <div className="flex items-baseline gap-1.5 mt-1">
+                                                {product.originalPrice > product.price && (
+                                                    <span className="text-[10px] text-gray-400 line-through">{formatCurrency(product.originalPrice)}</span>
+                                                )}
+                                                <p className="text-sm font-bold text-gray-800">{formatCurrency(product.price)}</p>
+                                            </div>
                                             <div className="flex items-center gap-2 mt-1">
                                                 <span className="inline-flex items-center gap-1 rounded-md bg-gray-50 px-1.5 py-0.5 text-[10px] font-medium text-gray-500">
                                                     <FontAwesomeIcon icon={faTag} className="text-[7px]" />
                                                     {product.category?.name || "Chưa phân loại"}
+                                                </span>
+                                                <span className="inline-flex items-center gap-1 rounded-md bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-700">
+                                                    <FontAwesomeIcon icon={faTrademark} className="text-[7px]" />
+                                                    {product.brand?.name || "Chưa có"}
                                                 </span>
                                                 <div className="flex items-center gap-1">
                                                     <span className={`inline-flex items-center gap-0.5 text-[11px] font-medium ${product.stock > 0 ? "text-emerald-600" : "text-red-500"}`}>
@@ -278,7 +303,14 @@ export default function Products() {
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <Input
-                                    label="Giá (VND)"
+                                    label="Giá gốc (VND)"
+                                    type="number"
+                                    value={formData.originalPrice}
+                                    onChange={(e) => setFormData({ ...formData, originalPrice: e.target.value })}
+                                    placeholder="Giá trước khi giảm (tùy chọn)"
+                                />
+                                <Input
+                                    label="Giá sales (VND)"
                                     type="number"
                                     value={formData.price}
                                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
@@ -303,6 +335,20 @@ export default function Products() {
                                     <option value="">Chọn danh mục</option>
                                     {categories.map((cat) => (
                                         <option key={cat._id} value={cat._id}>{cat.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className="mb-1 block text-sm font-medium text-gray-700">Thương hiệu</label>
+                                <select
+                                    value={formData.brand}
+                                    onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
+                                    className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:border-amber-400 focus:bg-white focus:ring-2 focus:ring-amber-400/20 transition-all"
+                                >
+                                    <option value="">Chọn thương hiệu</option>
+                                    {brands.filter((b) => b.isActive !== false).map((b) => (
+                                        <option key={b._id} value={b._id}>{b.name}</option>
                                     ))}
                                 </select>
                             </div>

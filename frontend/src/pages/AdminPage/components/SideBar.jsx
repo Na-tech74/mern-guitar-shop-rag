@@ -20,6 +20,7 @@ import {
     faEnvelope,
     faTicket,
     faFileContract,
+    faTrademark,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 
@@ -153,6 +154,11 @@ export default function AdminSidebar({ isMobileOpen, setIsMobileOpen }) {
                         {role === "admin" && (
                             <li>
                                 <NavItem to={"/admin/categories"} icon={faTag} name="Danh mục" />
+                            </li>
+                        )}
+                        {role === "admin" && (
+                            <li>
+                                <NavItem to={"/admin/brands"} icon={faTrademark} name="Thương hiệu" />
                             </li>
                         )}
                         {role === "admin" && (

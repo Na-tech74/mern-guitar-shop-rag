@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { compressImage } from "../../../helpers/imageCompression";
 import { API, logoutAPI, orderAPI, userAPI } from "../../../api";
 
 export default function useAccount() {
@@ -81,8 +82,9 @@ export default function useAccount() {
 
         setUploading(true);
         try {
+            const compressed = await compressImage(file);
             const formData = new FormData();
-            formData.append("avatar", file);
+            formData.append("avatar", compressed);
             const { data } = await userAPI.uploadAvatar(formData);
 
             const current = JSON.parse(sessionStorage.getItem("userInfo") || "{}");

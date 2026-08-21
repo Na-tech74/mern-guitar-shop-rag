@@ -130,11 +130,7 @@ export default function FeaturedProducts({ products, categories, title, subtitle
                                         <ProductCard product={product} categoryName={category.name} />
                                     </div>
                                 ))}
-                                {Array.from({ length: Math.max(0, ITEMS_PER_PAGE - paginatedItems.length) }).map((_, i) => (
-                                    <div key={`placeholder-${i}`} aria-hidden="true" className="rounded-xl border border-dashed border-gray-200 bg-white min-h-[240px] sm:min-h-[280px] flex items-center justify-center text-xs text-gray-400">
-                                        Đang cập nhật
-                                    </div>
-                                ))}
+
                             </div>
                             <Pagination
                                 page={page}

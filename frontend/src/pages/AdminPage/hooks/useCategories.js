@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from "react";
+import { compressImage } from "../../../helpers/imageCompression";
 import { categoryAPI } from "../../../api";
 import useDebounce from "../../../hooks/useDebounce";
 import { useDialog } from "../../../components/MessageDialog";
@@ -111,7 +112,8 @@ export const useCategories = () => {
                 fd.append("parent", formData.parent);
             }
             if (selectedFile) {
-                fd.append("image", selectedFile);
+                const compressed = await compressImage(selectedFile);
+                fd.append("image", compressed);
             } else if (editingCategory && formData.image) {
                 fd.append("image", formData.image);
             }

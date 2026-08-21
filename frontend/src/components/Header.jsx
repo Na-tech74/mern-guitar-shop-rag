@@ -7,6 +7,7 @@ import {
   faCamera, faTrash, faSpinner, faGear,
 } from '@fortawesome/free-solid-svg-icons';
 import { faFacebook, faYoutube, faTiktok, faInstagram } from '@fortawesome/free-brands-svg-icons';
+import { compressImage } from '../helpers/imageCompression';
 import Logo from './Logo.jsx';
 import UserAvatar from './UserAvatar.jsx';
 import CouponBell from './CouponBell.jsx';
@@ -124,8 +125,9 @@ const Header = memo(function Header() {
     setAvatarError("");
     setUploading(true);
     try {
+      const compressed = await compressImage(file);
       const formData = new FormData();
-      formData.append("avatar", file);
+      formData.append("avatar", compressed);
       const { data } = await userAPI.uploadAvatar(formData);
 
       const current = JSON.parse(sessionStorage.getItem("userInfo") || "{}");

@@ -7,7 +7,6 @@
  * (Express 5 làm req.query thành read-only getter).
  */
 
-import { Query } from "mongoose";
 
 /**
 Xóa các query parameter nguy hiểm để chống NoSQL injection:

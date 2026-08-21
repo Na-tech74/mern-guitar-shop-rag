@@ -25,7 +25,7 @@ export const formatDateTime = (date) => {
  */
 export const sanitizeText = (text) => {
     if (!text) return '';
-    return text.trim().replace(/\s+/g, ' ');
+    return text.replace(/\r\n/g, '\n').trim().replace(/[^\S\n]+/g, ' ');
 };
 
 /**
@@ -37,3 +37,6 @@ export const sanitizeEmail = (email) => {
     if (!email) return '';
     return email.toLowerCase().trim();
 };
+
+export const Slug = (name) =>
+    sanitizeText(name).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");

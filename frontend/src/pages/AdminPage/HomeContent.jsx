@@ -16,6 +16,7 @@ import {
     faFilm
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import { compressImage } from "../../helpers/imageCompression";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import { useHomeContent } from "./hooks/useHomeContent";
@@ -63,7 +64,8 @@ const ImageUploader = ({ value, onChange, alt = "" }) => {
         setError(null);
         setUploading(true);
         try {
-            const res = await homeContentAPI.uploadImage(file);
+            const compressed = await compressImage(file);
+            const res = await homeContentAPI.uploadImage(compressed);
             const url = res.data?.data?.url;
             if (url) {
                 onChange(url);
@@ -340,6 +342,9 @@ export default function HomeContent() {
                         )}
                         {activeTab === "cta" && (
                             <CtaSection formData={formData} handlers={handlers} />
+                        )}
+                        {activeTab === "logo" && (
+                            <LogoSection formData={formData} handlers={handlers} />
                         )}
 
                         <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 pt-4 border-t border-gray-100">
@@ -648,6 +653,45 @@ const FeaturedTypesSection = ({ formData, handlers, iconOptions }) => {
                     />
                 </div>
             ))}
+        </div>
+    );
+};
+
+const LogoSection = ({ formData, handlers }) => {
+    return (
+        <div className="space-y-6">
+            <SectionTitle hint="Logo thương hiệu hiển thị ở header và footer. Upload ảnh logo mới để thay thế logo mặc định.">
+                Logo thương hiệu
+            </SectionTitle>
+            <div className="rounded-xl border border-gray-200 p-3 sm:p-4 space-y-3">
+                <Input
+                    label="Tên thương hiệu (alt text)"
+                    value={formData.logo.title}
+                    onChange={(e) => handlers.updateLogo("title", e.target.value)}
+                />
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Ảnh logo
+                    </label>
+                    <ImageUploader
+                        value={formData.logo.url}
+                        onChange={(url) => handlers.updateLogo("url", url)}
+                        alt={formData.logo.title || "Logo"}
+                    />
+                    {formData.logo.url && (
+                        <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-gray-50">
+                            <p className="text-xs text-gray-500 mb-2">Xem trước:</p>
+                            <div className="w-52 h-16 overflow-hidden rounded border border-gray-200">
+                                <img
+                                    src={formData.logo.url}
+                                    alt="Logo preview"
+                                    className="w-full h-full object-cover object-center"
+                                />
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
     );
 };

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { compressImage } from "../../../helpers/imageCompression";
 import { blogAPI } from "../../../api";
 import { useDialog } from "../../../components/MessageDialog";
 
@@ -111,8 +112,9 @@ export default function useBlog() {
     };
 
     const uploadBanner = async (blogId, file) => {
+        const compressed = await compressImage(file);
         const formData = new FormData();
-        formData.append("banner", file);
+        formData.append("banner", compressed);
         try {
             const res = await blogAPI.uploadBanner(blogId, formData);
             setBlogs(prev => prev.map(b => b._id === blogId ? { ...b, banner: res.data?.data?.banner } : b));
@@ -144,7 +146,8 @@ export default function useBlog() {
             fd.append("excerpt", formData.excerpt);
             if (bannerFile) {
                 for (const file of bannerFile) {
-                    fd.append("images", file);
+                    const compressed = await compressImage(file);
+                    fd.append("images", compressed);
                 }
             }
             if (editingBlog) {

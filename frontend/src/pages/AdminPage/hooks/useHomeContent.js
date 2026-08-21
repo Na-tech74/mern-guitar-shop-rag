@@ -39,7 +39,8 @@ const defaultContent = {
         secondaryButtonText: "Liên hệ ngay",
         secondaryButtonLink: "/contact",
         videoUrl: "",
-    }
+    },
+    logo: { url: "", title: "Nam Acoustic" },
 };
 
 const iconOptions = [
@@ -108,6 +109,10 @@ export function useHomeContent() {
                         secondaryButtonText: data.ctaSection?.secondaryButtonText ?? "Liên hệ ngay",
                         secondaryButtonLink: data.ctaSection?.secondaryButtonLink ?? "/contact",
                         videoUrl: data.ctaSection?.videoUrl ?? "",
+                    },
+                    logo: {
+                        url: data.logo?.url ?? "",
+                        title: data.logo?.title ?? "Nam Acoustic",
                     },
                 });
             }
@@ -182,6 +187,10 @@ export function useHomeContent() {
         setFormData((prev) => ({ ...prev, ctaSection: { ...prev.ctaSection, [field]: value } }));
     };
 
+    const updateLogo = (field, value) => {
+        setFormData((prev) => ({ ...prev, logo: { ...prev.logo, [field]: value } }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaving(true);
@@ -206,6 +215,7 @@ export function useHomeContent() {
         { id: "clip", label: "Khuyến mãi" },
         { id: "types", label: "Bộ sưu tập" },
         { id: "cta", label: "Tư vấn" },
+        { id: "logo", label: "Logo" },
     ];
 
     return {
@@ -229,6 +239,7 @@ export function useHomeContent() {
             updateClip,
             updateFeaturedTypesMeta,
             updateCta,
+            updateLogo,
         },
         handleSubmit,
         fetchContent,

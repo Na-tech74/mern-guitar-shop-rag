@@ -130,6 +130,12 @@ const homeContentSchema = new mongoose.Schema({
         }
     },
 
+    // Logo thương hiệu (có thể thay thế qua admin)
+    logo: {
+        url: { type: String, default: "" },
+        title: { type: String, default: "Nam Acoustic" },
+    },
+
     // Section CTA hỗ trợ
     ctaSection: {
         badgeText: { type: String, default: "Hỗ trợ 24/7" },

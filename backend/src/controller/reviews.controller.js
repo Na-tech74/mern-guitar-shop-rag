@@ -31,7 +31,7 @@ export const createReview = async (req, res) => {
     };
 
     if (!isValidObjectId(productId)) {
-        throw appError(" ID sản phầm không hợp lệ !", 400)
+        throw appError(" ID sản phẩm không hợp lệ !", 400)
     };
     const product = await Product.findById(productId);
     if (!product) {
@@ -68,7 +68,9 @@ export const createReview = async (req, res) => {
     // Tính toán thống kê rating từ tất cả reviews của sản phẩm:
     const stats = await Review.aggregate([
         //Lọc tất cả reviews của sản phẩm vừa được review (ObjectId)
-        { $match: { product: review.product } },
+        {
+            $match: { product: review.product }
+        },
         {
             //Gom chung 1 nhóm (vì _id: null) để tính trên toàn bộ kết quả
             $group: {
@@ -139,7 +141,7 @@ export const updateReviews = async (req, res) => {
         throw appError("Bạn không có quyền chỉnh sửa bài đánh giá này ", 403)
     }
     if (rating && (rating < 1 || rating > 5)) {
-        throw appError("Đánh giá sản phầm từ 1 đến 5 sao ", 400)
+        throw appError("Đánh giá sản phẩm từ 1 đến 5 sao ", 400)
     }
     if (rating) { review.rating = rating };
     if (title) { review.title = sanitizeText(title) };

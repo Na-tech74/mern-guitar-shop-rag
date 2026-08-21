@@ -11,6 +11,7 @@ import {
     faCartPlus,
     faCheck,
     faImage,
+    faTrademark,
 } from "@fortawesome/free-solid-svg-icons";
 import { formatCurrency } from "../../helpers/formatters";
 import { getOptimizedImage } from "../../helpers/image";
@@ -146,7 +147,14 @@ export default function WishlistPage() {
                                         </Link>
 
                                         <div className="absolute right-2 top-2 sm:right-3 sm:top-3 bg-white/95 backdrop-blur px-2 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold text-amber-600 shadow-sm">
-                                            {formatCurrency(item.price)}
+                                            {item.originalPrice > item.price ? (
+                                                <div className="flex items-center gap-1.5">
+                                                    <span className="text-gray-400 line-through font-medium text-[9px] sm:text-[10px]">{formatCurrency(item.originalPrice)}</span>
+                                                    {formatCurrency(item.price)}
+                                                </div>
+                                            ) : (
+                                                formatCurrency(item.price)
+                                            )}
                                         </div>
 
                                         <button
@@ -160,6 +168,12 @@ export default function WishlistPage() {
                                     </div>
 
                                     <div className="p-2.5 sm:p-4">
+                                        {item.brand && (
+                                            <p className="text-[10px] sm:text-[11px] text-gray-400 mb-0.5 flex items-center gap-1">
+                                                <FontAwesomeIcon icon={faTrademark} className="text-[8px] sm:text-[9px]" />
+                                                {item.brand}
+                                            </p>
+                                        )}
                                         <Link
                                             to={`/products/${item._id}`}
                                             className="block font-semibold text-gray-900 line-clamp-2 hover:text-amber-600 transition min-h-[2.25rem] sm:min-h-[2.75rem] text-xs sm:text-sm"

@@ -11,6 +11,7 @@ import {
     faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import { compressImage } from "../../helpers/imageCompression";
 import Input from "../../components/Input";
 import Textarea from "../../components/Textarea";
 import Button from "../../components/Button";
@@ -59,7 +60,8 @@ const ImageUploader = ({ value, onChange, alt = "", height = "h-32" }) => {
         setError(null);
         setUploading(true);
         try {
-            const res = await aboutContentAPI.uploadImage(file);
+            const compressed = await compressImage(file);
+            const res = await aboutContentAPI.uploadImage(compressed);
             const url = res.data?.data?.url;
             if (url) {
                 onChange(url);

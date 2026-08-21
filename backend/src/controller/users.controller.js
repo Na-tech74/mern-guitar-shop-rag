@@ -207,14 +207,16 @@ export const updateMyProfile = async (req, res) => {
         user.name = name;
     }
 
-    if (email && !isValidEmail(email)) {
-        throw appError("Email không hợp lệ!", 400);
+    if (email) {
+        if (!isValidEmail(email)) {
+            throw appError("Email không hợp lệ!", 400);
+        }
+        const existingUser = await User.findOne({ email });
+        if (existingUser && existingUser._id.toString() !== userId.toString()) {
+            throw appError("Email đã tồn tại!", 400);
+        }
+        user.email = email;
     }
-    const existingUser = await User.findOne({ email });
-    if (existingUser && existingUser._id.toString() !== userId.toString()) {
-        throw appError("Email đã tồn tại!", 400);
-    }
-    user.email = email;
 
     await user.save();
 

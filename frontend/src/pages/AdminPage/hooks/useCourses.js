@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { compressImage } from "../../../helpers/imageCompression";
 import { courseAPI, categoryAPI } from "../../../api";
 import { useDialog } from "../../../components/MessageDialog";
 
@@ -108,7 +109,10 @@ export default function useCourses() {
             fd.append("category", formData.category);
             fd.append("isPublished", formData.isPublished);
             fd.append("lessons", JSON.stringify(formData.lessons));
-            if (thumbnailFile) fd.append("thumbnail", thumbnailFile);
+            if (thumbnailFile) {
+                const compressed = await compressImage(thumbnailFile);
+                fd.append("thumbnail", compressed);
+            }
 
             if (editingCourse) {
                 await courseAPI.update(editingCourse._id, fd);

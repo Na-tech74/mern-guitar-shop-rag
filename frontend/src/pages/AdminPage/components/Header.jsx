@@ -10,6 +10,7 @@ import {
     faGear,
     faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
+import { compressImage } from "../../../helpers/imageCompression";
 import AdminNotificationBell from "../../../components/AdminNotificationBell.jsx";
 import { useUserInfo } from "../../../hooks/useUserInfo.js";
 import { logoutAPI, userAPI } from "../../../api";
@@ -100,8 +101,9 @@ export default function AdminHeader({ toggleMobileSidebar }) {
         setError("");
         setUploading(true);
         try {
+            const compressed = await compressImage(file);
             const formData = new FormData();
-            formData.append("avatar", file);
+            formData.append("avatar", compressed);
             const { data } = await userAPI.uploadAvatar(formData);
 
             const current = JSON.parse(sessionStorage.getItem("userInfo") || "{}");

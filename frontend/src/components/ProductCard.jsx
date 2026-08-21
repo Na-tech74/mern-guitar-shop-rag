@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faImage, faShoppingCart, faCheck, faFire, faEye } from "@fortawesome/free-solid-svg-icons";
+import { faImage, faShoppingCart, faCheck, faFire, faEye, faTrademark } from "@fortawesome/free-solid-svg-icons";
 import { formatCurrency } from "../helpers/formatters";
 import { getOptimizedImage } from "../helpers/image";
 
@@ -57,13 +57,22 @@ export default function ProductCard({ product, viewMode = "grid", onAddToCart, i
                         {product.name}
                     </h3>
                 </Link> 
+                {product.brand?.name && (
+                    <p className="text-[10px] sm:text-[11px] text-gray-400 mb-1 sm:mb-2 flex items-center gap-1">
+                        <FontAwesomeIcon icon={faTrademark} className="text-[8px] sm:text-[9px]" />
+                        {product.brand.name}
+                    </p>
+                )}
                 {viewMode === "list" && product.description && (
                     <p className="text-xs sm:text-sm text-gray-500 mb-2 sm:mb-3 line-clamp-2 leading-relaxed">
                         {product.description}
                     </p>
                 )}
                 <div className="mt-auto">
-                    <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                    <div className="flex items-center gap-2 mb-2 sm:mb-3 flex-wrap">
+                        {product.originalPrice > product.price && (
+                            <span className="text-xs sm:text-sm text-gray-400 line-through">{formatCurrency(product.originalPrice)}</span>
+                        )}
                         <span className="text-base sm:text-lg lg:text-xl font-bold text-amber-600">{formatCurrency(product.price)}</span>
                     </div>
                     <div className="flex gap-1.5 sm:gap-2">

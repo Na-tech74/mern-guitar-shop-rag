@@ -205,7 +205,7 @@ export const forgotPassword = async (req, res) => {
         throw appError("Email không hợp lệ!", 400);
     }
 
-    const existingUser = await User.findOne({ emai:sanitizedEmail })
+    const existingUser = await User.findOne({ email: sanitizedEmail })
         .select("+resetOtp +resetOtpExpire");
 
     if (!existingUser) {
@@ -267,7 +267,7 @@ export const resetPassword = async (req, res) => {
         );
     }
 
-    const existingUser = await User.findOne({ email })
+    const existingUser = await User.findOne({ email: sanitizedEmail })
         .select("+password +refreshToken +resetOtp +resetOtpExpire");
 
     if (!existingUser) {

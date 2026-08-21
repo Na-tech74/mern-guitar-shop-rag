@@ -113,6 +113,11 @@ export const updateHomeContent = async (req, res) => {
         }
     }
 
+    if (body.logo) {
+        if (typeof body.logo.url === "string") content.logo.url = body.logo.url;
+        if (typeof body.logo.title === "string") content.logo.title = body.logo.title;
+    }
+
     if (body.ctaSection) {
         const c = body.ctaSection;
         if (typeof c.badgeText === "string") content.ctaSection.badgeText = c.badgeText;

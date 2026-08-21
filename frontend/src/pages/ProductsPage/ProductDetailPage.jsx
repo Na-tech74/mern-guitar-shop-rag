@@ -2,10 +2,11 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { Link, useParams } from "react-router-dom";
 import Breadcrumb from "../../components/Breadcrumb";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart, faMinus, faPlus, faShoppingCart, faTruck, faShieldAlt, faUndo, faImage, faCheck, faXmark, faChevronLeft, faChevronRight, faStar, faUser, faTrash, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { faHeart, faMinus, faPlus, faShoppingCart, faTruck, faShieldAlt, faUndo, faImage, faCheck, faXmark, faChevronLeft, faChevronRight, faStar, faUser, faTrash, faPenToSquare, faTrademark, faGlobe, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import { productAPI, reviewAPI } from "../../api";
 import { formatCurrency, formatDateTime } from "../../helpers/formatters";
 import { getOptimizedImage } from "../../helpers/image";
+import { nl2br } from "../../helpers/nl2br";
 import Skeleton from "../../components/Skeleton";
 import StarRating from "../../components/StarRating";
 import useCart from "./hooks/useCart";
@@ -41,7 +42,9 @@ export default function ProductDetailPage() {
                 _id: product._id,
                 name: product.name,
                 price: product.price,
+                originalPrice: product.originalPrice,
                 images: product.images,
+                brand: product.brand?.name || "",
             });
             localStorage.setItem("wishlist", JSON.stringify(wishlist));
             setInWishlist(true);
@@ -244,21 +247,77 @@ export default function ProductDetailPage() {
                             ))}
                         </div>
                     )}
+
+                    {product.brand?.name && (
+                        <div className="mt-4 rounded-xl sm:rounded-2xl border border-gray-100 bg-white p-4 sm:p-6 shadow-soft">
+                            <div className="flex items-center gap-4">
+                                <div className="size-16 sm:size-20 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 shrink-0">
+                                    {product.brand.logo ? (
+                                        <img src={product.brand.logo} alt={product.brand.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-gray-200">
+                                            <FontAwesomeIcon icon={faTrademark} className="text-xl sm:text-2xl" />
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <p className="text-[11px] font-semibold tracking-wider uppercase text-amber-500">Thương hiệu</p>
+                                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 truncate">{product.brand.name}</h3>
+                                    {product.brand.country && (
+                                        <span className="inline-flex items-center gap-1 text-xs text-gray-500 mt-0.5">
+                                            <FontAwesomeIcon icon={faMapMarkerAlt} className="text-[10px] text-gray-400" />
+                                            {product.brand.country}
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+                            {product.brand.description && (
+                                <div className="mt-3 pt-3 border-t border-gray-100">
+                                    <h4 className="text-xs font-semibold text-gray-800 uppercase tracking-wider mb-1">Giới thiệu thương hiệu</h4>
+                                    <p className="text-xs sm:text-sm text-gray-500 leading-relaxed whitespace-pre-line">{product.brand.description}</p>
+                                </div>
+                            )}
+                            {product.brand.website && (
+                                <a
+                                    href={product.brand.website.startsWith("http") ? product.brand.website : `https://${product.brand.website}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="mt-3 inline-flex items-center gap-1.5 text-xs sm:text-sm text-amber-500 hover:text-amber-600 font-medium"
+                                >
+                                    <FontAwesomeIcon icon={faGlobe} />
+                                    {product.brand.website}
+                                </a>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 <div className="space-y-4 sm:space-y-6">
                     <div>
-                        {product.category?.name && (
-                            <p className="text-[11px] sm:text-xs font-semibold tracking-wider uppercase text-amber-500 mb-1 sm:mb-2">
-                                {product.category.name}
-                            </p>
-                        )}
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-1 sm:mb-2">
+                            {product.category?.name && (
+                                <p className="text-[11px] sm:text-xs font-semibold tracking-wider uppercase text-amber-500">
+                                    {product.category.name}
+                                </p>
+                            )}
+                            {product.brand?.name && (
+                                <p className="text-[11px] sm:text-xs font-medium text-gray-400 flex items-center gap-1">
+                                    <FontAwesomeIcon icon={faTrademark} className="text-[10px]" />
+                                    {product.brand.name}
+                                </p>
+                            )}
+                        </div>
                         <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold text-gray-900 leading-tight">{product.name}</h1>
                     </div>
 
                     <div className="flex items-center justify-between sm:block">
                         <div>
-                            <span className="text-2xl sm:text-3xl lg:text-4xl font-bold text-amber-600">{formatCurrency(product.price * quantity)}</span>
+                            <div className="flex items-baseline gap-2 flex-wrap">
+                                {product.originalPrice > product.price && (
+                                    <span className="text-base sm:text-lg text-gray-400 line-through">{formatCurrency(product.originalPrice * quantity)}</span>
+                                )}
+                                <span className="text-2xl sm:text-3xl lg:text-4xl font-bold text-amber-600">{formatCurrency(product.price * quantity)}</span>
+                            </div>
                             {quantity > 1 && (
                                 <span className="text-xs sm:text-sm text-amber-400 ml-2">
                                     ({formatCurrency(product.price)} × {quantity})
@@ -283,7 +342,7 @@ export default function ProductDetailPage() {
                     <div>
                         <h3 className="font-semibold text-gray-800 mb-1 sm:mb-2 text-sm sm:text-base">Mô tả sản phẩm</h3>
                         <div className="w-10 h-0.5 bg-amber-400 rounded-full mb-2 sm:mb-3" />
-                        <p className="text-sm sm:text-base text-gray-500 leading-relaxed">{product.description}</p>
+                        <p className="text-sm sm:text-base text-gray-500 leading-relaxed">{nl2br(product.description)}</p>
                     </div>
 
                     <div className="flex items-center gap-2 sm:gap-3">
