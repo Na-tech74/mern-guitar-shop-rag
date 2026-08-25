@@ -4,7 +4,7 @@ import {
     faImage, faChevronRight, faChevronDown,
     faPhone, faCreditCard, faMoneyBillWave,
     faCalendarDays, faBoxOpen, faTruck, faCircleCheck, faBan, faClock,
-    faArrowRight, faRotate, faLocationDot,
+    faArrowRight, faRotate, faLocationDot, faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { formatCurrency, formatDateTime } from "../../helpers/formatters";
 import { getStatusLabel } from "../../helpers/status";
@@ -62,10 +62,11 @@ function OrderItems({ items }) {
     );
 }
 
-export default function OrderCard({ order, expanded, onToggle, onViewDetail, formatShortDate }) {
+export default function OrderCard({ order, expanded, onToggle, onViewDetail, formatShortDate, onCancel }) {
     const meta = STATUS_META[order.status] || STATUS_META.pending;
     const itemCount = order.items?.reduce((s, i) => s + i.quantity, 0) || 0;
     const isCancelled = order.status === "cancelled";
+    const canCancel = order.status === "pending";
 
     return (
         <div className="bg-white rounded-xl shadow-soft border border-gray-100 overflow-hidden hover:shadow-lift transition">
@@ -176,6 +177,16 @@ export default function OrderCard({ order, expanded, onToggle, onViewDetail, for
                                 Xem chi tiết
                                 <FontAwesomeIcon icon={faArrowRight} className="text-[10px]" />
                             </Button>
+                            {canCancel && onCancel && (
+                                <button
+                                    type="button"
+                                    onClick={(e) => { e.stopPropagation(); onCancel(); }}
+                                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium text-red-700 bg-red-50 border border-red-200 hover:bg-red-100 transition"
+                                >
+                                    <FontAwesomeIcon icon={faXmark} className="text-[10px]" />
+                                    Hủy đơn
+                                </button>
+                            )}
                             {order.status === "delivered" && (
                                 <button
                                     type="button"

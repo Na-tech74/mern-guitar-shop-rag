@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faImage, faTruck, faCircleCheck, faBan, faBoxOpen, faClock,
     faLocationDot, faPhone, faUser, faCreditCard, faMoneyBillWave,
-    faCalendarDays, faHashtag, faXmark,
+    faCalendarDays, faHashtag, faXmark, faRotate,
 } from "@fortawesome/free-solid-svg-icons";
 import { formatCurrency, formatDateTime } from "../../helpers/formatters";
 import { getOptimizedImage } from "../../helpers/image";
@@ -108,7 +108,7 @@ function SummaryRow({ label, value, highlight }) {
     );
 }
 
-export default function OrderDetailModal({ order, onClose }) {
+export default function OrderDetailModal({ order, onClose, onCancel }) {
     useEffect(() => {
         document.body.style.overflow = "hidden";
         return () => { document.body.style.overflow = ""; };
@@ -117,6 +117,7 @@ export default function OrderDetailModal({ order, onClose }) {
     const meta = STATUS_META[order.status] || STATUS_META.pending;
     const subtotal = order.items?.reduce((s, i) => s + i.price * i.quantity, 0) || 0;
     const shipping = order.total - subtotal;
+    const canCancel = order.status === "pending";
 
     return (
         <div
@@ -235,12 +236,22 @@ export default function OrderDetailModal({ order, onClose }) {
                 <div className="border-t border-gray-100 p-4 flex gap-2">
                     <Link
                         to="/contact"
-                        className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 text-sm font-medium transition"
+                        className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 text-sm font-medium transition"
                         onClick={onClose}
                     >
                         <FontAwesomeIcon icon={faPhone} className="text-xs" />
                         Hỗ trợ
                     </Link>
+                    {canCancel && onCancel && (
+                        <button
+                            type="button"
+                            onClick={() => { onCancel(); onClose(); }}
+                            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-red-200 text-red-700 bg-red-50 hover:bg-red-100 text-sm font-medium transition"
+                        >
+                            <FontAwesomeIcon icon={faXmark} className="text-xs" />
+                            Hủy đơn
+                        </button>
+                    )}
                     <Button variant="primary" size="md" className="flex-1" onClick={onClose}>
                         Đóng
                     </Button>

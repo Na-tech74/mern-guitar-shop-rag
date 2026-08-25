@@ -41,6 +41,9 @@ const ContactContent = lazy(() => import("./pages/AdminPage/ContactContent"));
 const Coupons = lazy(() => import("./pages/AdminPage/Coupons"));
 const Brands = lazy(() => import("./pages/AdminPage/Brands"));
 const TermsContent = lazy(() => import("./pages/AdminPage/TermsContent"));
+const Documents = lazy(() => import("./pages/AdminPage/Documents"));
+const Reviews = lazy(() => import("./pages/AdminPage/Reviews"));
+const ChatTest = lazy(() => import("./pages/AdminPage/ChatTest"));
 const TermsPage = lazy(() => import("./pages/TermsPage/TermsPage"));
 
 function LoadingFallback() {
@@ -113,7 +116,10 @@ function AppRoutes() {
             <Route path="blog" element={<Blog />} />
             <Route path="coupons" element={<Coupons />} />
             <Route path="brands" element={<Brands />} />
+            <Route path="reviews" element={<Reviews />} />
             <Route path="terms-content" element={<TermsContent />} />
+            <Route path="documents" element={<Documents />} />
+            <Route path="chat-test" element={<ChatTest />} />
         </Route>
 
         <Route path="/staff" element={
@@ -123,7 +129,7 @@ function AppRoutes() {
         }>
             <Route index element={<Dashboard />} />
             <Route path="orders" element={<AdminOrders />} />
-            <Route path="users" element={<Users />} />
+            <Route path="products" element={<AdminProducts />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

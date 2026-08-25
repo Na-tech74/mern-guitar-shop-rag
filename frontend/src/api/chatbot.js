@@ -1,10 +1,10 @@
-import axios from "axios";
-
-const botClient = axios.create({
-    baseURL: import.meta.env.VITE_BOT_URL || "http://localhost:8000",
-    timeout: 30000,
-});
+import { API } from "./client";
 
 export const chatbotAPI = {
-    send: (message) => botClient.post("/api/chat", { message }),
+    send: (message) => API.post("/chatbot/chat", { message }),
+    reindex: () => API.post("/chatbot/reindex"),
+    getStats: () => API.get("/chatbot/stats"),
+    getRecent: (limit = 10) => API.get(`/chatbot/recent?limit=${limit}`),
+    getPolicyFiles: () => API.get("/chatbot/policy-files"),
+    getPolicyFile: (filename) => API.get(`/chatbot/policy-files/${filename}`),
 };

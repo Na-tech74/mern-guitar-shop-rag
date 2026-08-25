@@ -74,9 +74,31 @@ export default function useCheckoutPage() {
         return Object.keys(newErrors).length === 0;
     };
 
+    const MOMO_MIN_AMOUNT = 50000;
+    const MOMO_MAX_AMOUNT = 1000000000;
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validate()) return;
+
+        if (paymentMethod === "momo") {
+            if (total < MOMO_MIN_AMOUNT) {
+                await alert({
+                    title: "Lỗi",
+                    message: `Số tiền tối thiểu để thanh toán qua MoMo là ${MOMO_MIN_AMOUNT.toLocaleString()}đ. Vui lòng thêm sản phẩm khác hoặc chọn phương thức thanh toán COD.`,
+                    variant: "error"
+                });
+                return;
+            }
+            if (total > MOMO_MAX_AMOUNT) {
+                await alert({
+                    title: "Lỗi",
+                    message: `Số tiền tối đa để thanh toán qua MoMo là ${MOMO_MAX_AMOUNT.toLocaleString()}đ. Vui lòng chọn phương thức thanh toán COD hoặc chuyển khoản.`,
+                    variant: "error"
+                });
+                return;
+            }
+        }
 
         setSubmitting(true);
         try {

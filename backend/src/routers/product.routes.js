@@ -12,10 +12,11 @@ import {
     updateProducts,
     deleteProducts,
     searchProductsTop,
+    getTopSellingProducts,
     uploadProductImages
 } from "../controller/products.controller.js";
 import { asyncHandler } from "../middleware/asyncHandler.js";
-import { protect, adminOnly } from "../middleware/auth.middleware.js";
+import { protect, staffOrAdmin } from "../middleware/auth.middleware.js";
 import { upload } from "../middleware/upload.middleware.js";
 
 const router = express.Router();
@@ -48,6 +49,15 @@ router.get("/", asyncHandler(getAllProducts));
 router.get("/top", asyncHandler(searchProductsTop));
 
 /**
+ * @route   GET /api/products/top-selling
+ * @desc    Lấy danh sách sản phẩm bán chạy nhất (cho admin dashboard)
+ * @access  Private (Staff & Admin)
+ * @query   {number} limit - Số sản phẩm (default: 5)
+ * @return  {200} Danh sách sản phẩm bán chạy
+ */
+router.get("/top-selling", protect, staffOrAdmin, asyncHandler(getTopSellingProducts));
+
+/**
  * @route   GET /api/products/:id
  * @desc    Lấy chi tiết sản phẩm theo ID
  * @access  Public
@@ -71,7 +81,7 @@ router.get("/:id", asyncHandler(getProductById));
 router.post(
     "/",
     protect,
-    adminOnly,
+    staffOrAdmin,
     upload.array("images", 5),
     asyncHandler(createProduct)
 );
@@ -91,7 +101,7 @@ router.post(
 router.put(
     "/:id",
     protect,
-    adminOnly,
+    staffOrAdmin,
     upload.array("images", 5),
     asyncHandler(updateProducts)
 );
@@ -114,11 +124,11 @@ router.put(
 router.post(
     "/upload-images/:id",
     protect,
-    adminOnly,
+    staffOrAdmin,
     upload.array("images", 5),
     asyncHandler(uploadProductImages)
 );
 
-router.delete("/:id", protect, adminOnly, asyncHandler(deleteProducts));
+router.delete("/:id", protect, staffOrAdmin, asyncHandler(deleteProducts));
 
 export default router;

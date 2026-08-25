@@ -4,7 +4,5 @@ pymongo
 python-dotenv
 sentence-transformers
 faiss-cpu
-openai
 numpy
 google-genai
-python-dotenv

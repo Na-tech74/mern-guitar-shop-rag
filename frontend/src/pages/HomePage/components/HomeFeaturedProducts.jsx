@@ -1,35 +1,84 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar, faMusic, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { faStar, faMusic, faChevronRight, faTrademark } from "@fortawesome/free-solid-svg-icons";
 import { getOptimizedImage } from "../../../helpers/image";
 import Skeleton from "../../../components/Skeleton";
 import Pagination from "../../../components/Pagination";
 
 const ITEMS_PER_PAGE = 4;
+const MAX_PAGES = 5;
+
+const CATEGORY_ORDER = ["guitar", "acoustic", "classic", "electric", "piano", "ukulele", "kèn", "trống", "phụ kiện"];
+
+function sortByCategoryOrder(categories) {
+    return [...categories].sort((a, b) => {
+        const aName = a.name.toLowerCase();
+        const bName = b.name.toLowerCase();
+        const aIdx = CATEGORY_ORDER.findIndex((k) => aName.includes(k));
+        const bIdx = CATEGORY_ORDER.findIndex((k) => bName.includes(k));
+        return (aIdx === -1 ? 99 : aIdx) - (bIdx === -1 ? 99 : bIdx);
+    });
+}
+
+function distributeEvenly(items, perPage, maxPages) {
+    const sorted = [...items].sort((a, b) => b.price - a.price);
+    const half = Math.ceil((perPage * maxPages) / 2);
+    const high = sorted.slice(0, half);
+    const low = sorted.slice(-half).reverse();
+
+    const pages = [];
+    for (let i = 0; i < maxPages; i++) {
+        const page = [];
+        if (high[i]) page.push(high[i]);
+        if (low[i]) page.push(low[i]);
+        if (high[i + maxPages]) page.push(high[i + maxPages]);
+        if (low[i + maxPages]) page.push(low[i + maxPages]);
+        if (page.length > 0) {
+            pages.push(page.sort((a, b) => b.price - a.price));
+        }
+    }
+    return pages.flat();
+}
 
 export default function FeaturedProducts({ products, categories, title, subtitle }) {
     const [pages, setPages] = useState({});
 
     const grouped = useMemo(() => {
-        const map = {};
-        (products || []).forEach((p) => {
-            const catId = p.category?._id || p.category;
-            if (!map[catId]) map[catId] = [];
-            map[catId].push(p);
+        const parents = sortByCategoryOrder(
+            (categories || []).filter((c) => !c.parent)
+        );
+
+        const childMap = {};
+        (categories || []).forEach((c) => {
+            if (c.parent?._id) {
+                const pid = c.parent._id;
+                if (!childMap[pid]) childMap[pid] = [];
+                childMap[pid].push(c._id);
+            }
         });
-        return categories
-            .map((c) => ({
-                ...c,
-                items: (map[c._id] || []).sort((a, b) => b.price - a.price),
-            }))
+
+        return parents
+            .map((parent) => {
+                const childIds = childMap[parent._id] || [];
+                const allIds = [parent._id, ...childIds];
+                const items = distributeEvenly(
+                    (products || []).filter((p) => {
+                        const catId = p.category?._id || p.category;
+                        return allIds.includes(catId);
+                    }),
+                    ITEMS_PER_PAGE,
+                    MAX_PAGES
+                );
+                return { ...parent, items };
+            })
             .filter((c) => c.items.length > 0);
     }, [products, categories]);
 
     const totalPages = useMemo(() => {
         const t = {};
         grouped.forEach((c) => {
-            t[c._id] = Math.max(1, Math.ceil(c.items.length / ITEMS_PER_PAGE));
+            t[c._id] = Math.min(MAX_PAGES, Math.max(1, Math.ceil(c.items.length / ITEMS_PER_PAGE)));
         });
         return t;
     }, [grouped]);
@@ -177,13 +226,26 @@ const ProductCard = ({ product, categoryName }) => {
                 <h3 className="text-sm sm:text-base font-semibold text-gray-800 mb-1 line-clamp-1">
                     {product.name}
                 </h3>
+                {product.brand?.name && (
+                    <p className="text-[10px] sm:text-xs text-gray-400 mb-1 flex items-center gap-1">
+                        <FontAwesomeIcon icon={faTrademark} className="text-[8px] sm:text-[10px]" />
+                        {product.brand.name}
+                    </p>
+                )}
                 <p className="text-xs sm:text-sm text-gray-500 mb-2 line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem]">
                     {product.description}
                 </p>
                 <div className="flex items-center justify-between gap-1">
-                    <span className="text-sm sm:text-base lg:text-lg font-bold text-amber-600 truncate">
-                        {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}
-                    </span>
+                    <div className="flex items-baseline gap-1.5 min-w-0">
+                        {product.originalPrice > product.price && (
+                            <span className="text-[10px] sm:text-xs text-gray-400 line-through shrink-0">
+                                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.originalPrice)}
+                            </span>
+                        )}
+                        <span className="text-sm sm:text-base lg:text-lg font-bold text-amber-600 truncate">
+                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}
+                        </span>
+                    </div>
                     <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
                         <FontAwesomeIcon icon={faStar} className="text-[10px] sm:text-xs text-amber-400" />
                         <span className="text-xs sm:text-sm text-gray-400">4.5</span>

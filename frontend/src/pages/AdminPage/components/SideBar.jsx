@@ -21,6 +21,9 @@ import {
     faTicket,
     faFileContract,
     faTrademark,
+    faBrain,
+    faComments,
+    faMessage,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 
@@ -131,14 +134,11 @@ export default function AdminSidebar({ isMobileOpen, setIsMobileOpen }) {
                             </NavSection>
                         )}
 
-                        {/*admin*/}
-                        {role === "admin" && (
-                            <li>
-                                <NavItem to={"/admin/products"} icon={faBox} name="Sản phẩm" />
-                            </li>
-                        )}
-
                         {/* staff và admin đều dùng được */}
+
+                        <li>
+                            <NavItem to={`${base}/products`} icon={faBox} name="Sản phẩm" />
+                        </li>
 
                         <li>
                             <NavItem to={`${base}/orders`} icon={faCartShopping} name="Đơn hàng" />
@@ -164,6 +164,21 @@ export default function AdminSidebar({ isMobileOpen, setIsMobileOpen }) {
                         {role === "admin" && (
                             <li>
                                 <NavItem to={"/admin/coupons"} icon={faTicket} name="Mã giảm giá" />
+                            </li>
+                        )}
+                        {role === "admin" && (
+                            <li>
+                                <NavItem to={"/admin/reviews"} icon={faMessage} name="Đánh giá" />
+                            </li>
+                        )}
+                        {role === "admin" && (
+                            <li>
+                                <NavItem to={"/admin/documents"} icon={faBrain} name="Kiến thức Bot" />
+                            </li>
+                        )}
+                        {role === "admin" && (
+                            <li>
+                                <NavItem to={"/admin/chat-test"} icon={faComments} name="Test Chat" />
                             </li>
                         )}
                     </ul>

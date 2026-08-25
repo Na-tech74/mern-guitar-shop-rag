@@ -1,16 +1,44 @@
+import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-    faUsers, faBox, faCartShopping, faDollarSign, faArrowRight
+    faUsers, faBox, faCartShopping, faDollarSign, faArrowRight,
+    faComments, faCalendarDay, faCalendarWeek, faCalendarAlt, faFire
 } from "@fortawesome/free-solid-svg-icons";
 import { formatCurrency, formatDateTime } from "../../helpers/formatters";
 import { getStatusColor, getStatusLabel } from "../../helpers/status";
 import { useDashboard } from "./hooks/useDashboard";
+import { chatbotAPI } from "../../api";
 import Button from "../../components/Button";
 import { Link } from "react-router-dom";
+import RevenueChart from "./components/RevenueChart";
+import TopSellingProducts from "./components/TopSellingProducts";
+import TopSellingCategories from "./components/TopSellingCategories";
+
+const topicColorMap = {
+    "giá cả": "bg-green-100 text-green-700",
+    "guitar": "bg-blue-100 text-blue-700",
+    "giao hàng": "bg-yellow-100 text-yellow-700",
+    "bảo hành": "bg-red-100 text-red-700",
+    "đổi trả": "bg-orange-100 text-orange-700",
+    "thanh toán": "bg-purple-100 text-purple-700",
+    "hướng dẫn": "bg-indigo-100 text-indigo-700",
+    "so sánh sản phẩm": "bg-pink-100 text-pink-700",
+    "phụ kiện": "bg-teal-100 text-teal-700",
+    "khác": "bg-gray-100 text-gray-600",
+};
 
 export default function Dashboard() {
     const { loading, error, statCards, recentOrders, totalRevenue } = useDashboard();
+    const [chatStats, setChatStats] = useState(null);
+    const [chatLoading, setChatLoading] = useState(true);
     const iconMap = { box: faBox, users: faUsers, cart: faCartShopping, dollar: faDollarSign };
+
+    useEffect(() => {
+        chatbotAPI.getStats()
+            .then(res => setChatStats(res.data?.data))
+            .catch(() => {})
+            .finally(() => setChatLoading(false));
+    }, []);
 
     if (loading) {
         return (
@@ -51,6 +79,15 @@ export default function Dashboard() {
                         </div>
                     </div>
                 ))}
+            </div>
+
+            {/* Revenue Chart */}
+            <RevenueChart />
+
+            {/* Top Selling */}
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <TopSellingProducts />
+                <TopSellingCategories />
             </div>
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -120,41 +157,65 @@ export default function Dashboard() {
                 </div>
 
                 <div className="rounded-xl bg-white p-4 sm:p-6 shadow-sm">
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-4">Tổng quan doanh thu</h3>
-                    <div className="flex items-end justify-around gap-1 sm:gap-2 h-48 sm:h-64">
-                        {recentOrders.length > 0 ? (
-                            (() => {
-                                const days = {};
-                                recentOrders.forEach(o => {
-                                    const d = new Date(o.createdAt).toLocaleDateString("vi-VN", { weekday: "narrow" });
-                                    days[d] = (days[d] || 0) + o.total;
-                                });
-                                const dayNames = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
-                                const values = dayNames.map(d => days[d] || 0);
-                                const max = Math.max(...values, 1);
-                                return dayNames.map((day, i) => (
-                                    <div key={i} className="flex flex-col items-center flex-1">
-                                        <p className="hidden sm:block text-[10px] sm:text-xs text-gray-400 mb-1">
-                                            {values[i] > 0 ? formatCurrency(values[i]).replace("₫", "").trim() : ""}
-                                        </p>
-                                        <div
-                                            className="w-full max-w-[20px] sm:max-w-[32px] rounded-t-md bg-amber-500 hover:bg-amber-600 transition-colors"
-                                            style={{ height: `${(values[i] / max) * 100}%`, minHeight: values[i] > 0 ? "4px" : "0" }}
-                                        ></div>
-                                        <span className="mt-1 sm:mt-2 text-[10px] sm:text-xs text-gray-500">{day}</span>
-                                    </div>
-                                ));
-                            })()
-                        ) : (
-                            <div className="w-full flex items-center justify-center text-gray-400 text-sm">
-                                Chưa có dữ liệu doanh thu
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-800">Thống kê Chatbot</h3>
+                        <Link to="/admin/chat-test" className="text-xs sm:text-sm text-gray-700 hover:text-amber-500 flex items-center gap-1">
+                            Test Chat <FontAwesomeIcon icon={faArrowRight} />
+                        </Link>
+                    </div>
+                    {chatLoading ? (
+                        <div className="flex items-center justify-center py-8">
+                            <div className="animate-spin rounded-full size-8 border-b-2 border-amber-500"></div>
+                        </div>
+                    ) : chatStats ? (
+                        <div className="space-y-4">
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="rounded-lg bg-blue-50 p-3 text-center">
+                                    <FontAwesomeIcon icon={faComments} className="text-blue-500 text-lg mb-1" />
+                                    <p className="text-xl sm:text-2xl font-bold text-gray-800">{chatStats.total}</p>
+                                    <p className="text-[10px] sm:text-xs text-gray-500">Tổng câu hỏi</p>
+                                </div>
+                                <div className="rounded-lg bg-green-50 p-3 text-center">
+                                    <FontAwesomeIcon icon={faCalendarDay} className="text-green-500 text-lg mb-1" />
+                                    <p className="text-xl sm:text-2xl font-bold text-gray-800">{chatStats.todayCount}</p>
+                                    <p className="text-[10px] sm:text-xs text-gray-500">Hôm nay</p>
+                                </div>
+                                <div className="rounded-lg bg-yellow-50 p-3 text-center">
+                                    <FontAwesomeIcon icon={faCalendarWeek} className="text-yellow-500 text-lg mb-1" />
+                                    <p className="text-xl sm:text-2xl font-bold text-gray-800">{chatStats.weekCount}</p>
+                                    <p className="text-[10px] sm:text-xs text-gray-500">7 ngày qua</p>
+                                </div>
+                                <div className="rounded-lg bg-purple-50 p-3 text-center">
+                                    <FontAwesomeIcon icon={faCalendarAlt} className="text-purple-500 text-lg mb-1" />
+                                    <p className="text-xl sm:text-2xl font-bold text-gray-800">{chatStats.monthCount}</p>
+                                    <p className="text-[10px] sm:text-xs text-gray-500">Tháng này</p>
+                                </div>
                             </div>
-                        )}
-                    </div>
-                    <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
-                        <span className="text-[10px] sm:text-sm text-gray-500">Tổng doanh thu (đã giao)</span>
-                        <span className="text-base sm:text-xl font-bold text-gray-700">{formatCurrency(totalRevenue)}</span>
-                    </div>
+
+                            {chatStats.topicStats.length > 0 && (
+                                <div>
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <FontAwesomeIcon icon={faFire} className="text-orange-500 text-sm" />
+                                        <span className="text-xs sm:text-sm font-medium text-gray-700">Chủ đề tư vấn phổ biến</span>
+                                    </div>
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {chatStats.topicStats.map((t, i) => (
+                                            <span
+                                                key={i}
+                                                className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] sm:text-xs font-medium ${topicColorMap[t.topic] || topicColorMap["khác"]}`}
+                                            >
+                                                {t.topic} ({t.count})
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="text-center py-8 text-gray-400 text-sm">
+                            Chưa có dữ liệu chatbot
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

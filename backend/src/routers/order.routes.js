@@ -12,8 +12,10 @@ import {
     getMyOrders,
     getAllOrders,
     getDashboardStats,
+    getRevenueChart,
     getOrderById,
     updateOrderStatus,
+    cancelMyOrder,
     deleteOrder,
     requestMomoPayment,
     momoCallback,
@@ -42,6 +44,13 @@ router.get("/me", protect, asyncHandler(getMyOrders));
  * Admin only
  */
 router.get("/stats", protect, adminOnly, asyncHandler(getDashboardStats));
+
+/**
+ * GET /api/orders/revenue-chart
+ * Dữ liệu doanh thu cho biểu đồ (7 ngày gần nhất)
+ * Staff & Admin
+ */
+router.get("/revenue-chart", protect, staffOrAdmin, asyncHandler(getRevenueChart));
 
 /**
  * GET /api/orders
@@ -82,6 +91,13 @@ router.get("/:id", protect, asyncHandler(getOrderById));
  * Staff & Admin
  */
 router.put("/:id/status", protect, staffOrAdmin, asyncHandler(updateOrderStatus));
+
+/**
+ * PUT /api/orders/:id/cancel
+ * Hủy đơn hàng (client)
+ * User (cần đăng nhập)
+ */
+router.put("/:id/cancel", protect, asyncHandler(cancelMyOrder));
 
 /**
  * DELETE /api/orders/:id

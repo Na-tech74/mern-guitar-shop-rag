@@ -17,3 +17,5 @@ export { notificationAPI } from "./notifications";
 export { reviewAPI } from "./reviews";
 export { brandAPI } from "./brands";
 export { chatbotAPI } from "./chatbot";
+export { documentAPI } from "./documents";
+export { knowledgeChunkAPI } from "./knowledgeChunks";

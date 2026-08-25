@@ -32,6 +32,8 @@ const PAGE_TITLES = {
     blog: "Blog",
     settings: "Cài đặt",
     coupons: "Mã giảm giá",
+    documents: "Kiến thức Chatbot",
+    "chat-test": "Test Chatbot",
 };
 
 function useBreadcrumbs() {

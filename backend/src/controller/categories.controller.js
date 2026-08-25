@@ -4,6 +4,7 @@
  */
 
 import Category from "../models/categories.model.js";
+import Product from "../models/product.model.js";
 import { appError, appSuccess } from "../utils/appResponse.js";
 import { formatDateTime, sanitizeText } from "../utils/format.js";
 import { uploadImages } from "../services/uploadImages.js";
@@ -122,6 +123,33 @@ export const getCategoryById = async (req, res) => {
         statusCode: 200,
         message: "Lấy danh mục thành công!",
         data: { category }
+    });
+};
+
+/**
+ * Lấy danh mục bán chạy nhất (cho admin dashboard)
+ * Aggregate sản phẩm theo danh mục, tính tổng số lượng đã bán
+ * @query {number} limit - Số danh mục trả về (default: 5)
+ * @returns {200} Danh sách danh mục bán chạy kèm tổng sản phẩm và tổng đã bán
+ */
+export const getTopSellingCategories = async (req, res) => {
+    const { limit = 5 } = req.query;
+
+    const topCategories = await Product.aggregate([
+        { $group: { _id: "$category", totalSold: { $sum: "$sold" }, productCount: { $sum: 1 } } },
+        { $sort: { totalSold: -1 } },
+        { $limit: parseInt(limit) },
+        { $lookup: { from: "categories", localField: "_id", foreignField: "_id", as: "category" } },
+        { $unwind: "$category" },
+        { $project: { _id: 1, totalSold: 1, productCount: 1, name: "$category.name", image: "$category.image" } }
+    ]);
+
+    const totalSold = topCategories.reduce((sum, c) => sum + c.totalSold, 0);
+
+    return appSuccess(res, {
+        statusCode: 200,
+        message: "Lấy danh mục bán chạy thành công!",
+        data: { categories: topCategories, totalSold }
     });
 };
 

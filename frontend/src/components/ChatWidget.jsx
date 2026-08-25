@@ -7,56 +7,65 @@ import {
 import { chatbotAPI } from "../api";
 
 const quickQuestions = [
-    "Cửa hàng có bán guitar không?",
-    "Giá guitar khoảng bao nhiêu?",
+    "Guitar đắt nhất cửa hàng là gì?",
+    "Giá guitar acoustic khoảng bao nhiêu?",
     "Chính sách bảo hành thế nào?",
+    "Miễn phí giao hàng không?",
+    "Cửa hàng có khóa học guitar không?",
 ];
 
-const getMockReply = (input) => {
-    const text = input.toLowerCase();
+function SourceBadges({ sources }) {
+    if (!sources) return null;
 
-    if (/(xin ch|chào|hello|hi\b|hi$)/.test(text)) {
-        return "Chào bạn! Mình là trợ lý ảo của Nam Acoustic Guitar Shop. Bạn cần tư vấn về sản phẩm, giá cả hay chính sách gì, cứ hỏi mình nhé!";
-    }
-    if (/gi[áà]|b[áà]o nhi[êe]u|r[ẻe]|đắt|ti[êe]n/.test(text)) {
-        return "Cửa hàng có nhiều dòng guitar với mức giá đa dạng, từ vài triệu cho người mới đến dòng cao cấp hàng chục triệu. Bạn có thể vào mục Sản phẩm để lọc theo giá nhé!";
-    }
-    if (/s[ảa]n ph[ẩa]m|guitar|đàn|b[áà]n/.test(text)) {
-        return "Cửa hàng đang bán các dòng Guitar Acoustic, Guitar Classic, Guitar Electric, phụ kiện và khóa học guitar. Bạn ghé trang Sản phẩm hoặc Khóa học để xem chi tiết từng loại nhé!";
-    }
-    if (/khuy[ếe]n m[ãa]i|gi[ảa]m gi[áà]|coupon|mã gi[ảa]m/.test(text)) {
-        return "Hiện tại cửa hàng có nhiều mã giảm giá hấp dẫn. Bạn bấm vào chuông mã giảm giá ở góc phải trên để xem và sao chép mã nhé!";
-    }
-    if (/giao hàng|ship|v[ậa]n chuy[ểe]n|phí ship/.test(text)) {
-        return "Cửa hàng miễn phí giao hàng cho đơn từ 500.000đ. Các đơn dưới mức đó sẽ tính phí theo khu vực giao hàng. Ngoài ra còn hỗ trợ đổi trả trong 7 ngày.";
-    }
-    if (/b[ảa]o h[àa]nh|đổi tr[ảa]|b[ảa]o v[ệe]/.test(text)) {
-        return "Tất cả sản phẩm đều được bảo hành 12 tháng, chính hãng 100%. Bạn có thể đổi trả trong vòng 7 ngày nếu sản phẩm lỗi từ nhà sản xuất.";
-    }
-    if (/đơn hàng|theo dõi|tr[ạa]ng th[áa]i đơn/.test(text)) {
-        return "Bạn vào mục Tài khoản > Đơn hàng của mình để theo dõi trạng thái đơn hàng. Nếu cần hỗ trợ thêm, bạn có thể liên hệ hotline của cửa hàng nhé!";
-    }
-    if (/li[êe]n h[ệe]|hotline|sdt|điện thoại|zalo|facebook/.test(text)) {
-        return "Bạn có thể liên hệ cửa hàng qua trang Liên hệ để gửi tin nhắn, hoặc gọi hotline hiển thị trên trang. Cửa hàng rất vui được hỗ trợ bạn!";
-    }
-    if (/khóa h[ọo]c|h[ọo]c đàn|h[ọo]c guitar/.test(text)) {
-        return "Cửa hàng có các khóa học guitar từ cơ bản đến nâng cao. Bạn vào mục Khóa học để xem lộ trình và đăng ký học nhé!";
-    }
-    if (/thanh toán|chuyển khoản|ti[ềe]n m[ặa]t|cod/.test(text)) {
-        return "Cửa hàng hỗ trợ thanh toán khi nhận hàng (COD) và chuyển khoản ngân hàng. Tại bước thanh toán bạn chọn phương thức phù hợp nhé!";
-    }
-    if (/cảm ơn|thank|cám ơn/.test(text)) {
-        return "Rất vui được hỗ trợ bạn! Nếu còn thắc mắc nào cứ hỏi mình tiếp nhé. Chúc bạn một ngày tốt lành!";
-    }
-    return "Mình chưa hiểu rõ câu hỏi của bạn. Bạn có thể thử hỏi về sản phẩm, giá cả, bảo hành, giao hàng, khuyến mãi hoặc khóa học nhé!";
-};
+    const products = sources.products || [];
+    const documents = sources.documents || [];
+
+    if (products.length === 0 && documents.length === 0) return null;
+
+    return (
+        <div className="mt-2 pt-2 border-t border-gray-100 space-y-1.5">
+            {products.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                    <span className="text-[10px] text-gray-400 font-medium uppercase">Sản phẩm:</span>
+                    {products.map((p, i) => (
+                        <a
+                            key={i}
+                            href={`/products/${p.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[10px] text-amber-600 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-full px-2 py-0.5 inline-flex items-center gap-1 transition-colors"
+                        >
+                            {p.name}
+                            <span className="text-[8px]">↗</span>
+                        </a>
+                    ))}
+                </div>
+            )}
+            {documents.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                    <span className="text-[10px] text-gray-400 font-medium uppercase">Nguồn:</span>
+                    {documents.map((d, i) => (
+                        <span
+                            key={i}
+                            className="text-[10px] text-blue-600 bg-blue-50 border border-blue-200 rounded-full px-2 py-0.5 inline-flex items-center gap-1"
+                        >
+                            {d.title}
+                            <span className="text-[9px] text-blue-400">({d.type})</span>
+                        </span>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+}
 
 export default function ChatWidget() {
     const [open, setOpen] = useState(false);
     const [messages, setMessages] = useState([
         {
             role: "bot",
-            text: "Xin chào! Mình là trợ lý của Nam Acoustic Guitar Shop. Bạn cần tư vấn gì về sản phẩm, giá cả hay chính sách của cửa hàng?",
+            text: "Xin chào! Mình là trợ lý của Nam Acoustic Guitar Shop. Bạn có thể hỏi mình về:\n\n- Giá cả & so sánh sản phẩm\n- Chính sách bảo hành, đổi trả\n- Giao hàng & thanh toán\n- Hướng dẫn chọn mua guitar\n- Khóa học guitar\n\nHãy thử nhấn vào gợi ý bên dưới hoặc nhập câu hỏi!",
+            sources: null,
         },
     ]);
     const [input, setInput] = useState("");
@@ -77,20 +86,23 @@ export default function ChatWidget() {
         const text = (raw ?? input).trim();
         if (!text || typing) return;
 
-        const userMsg = { role: "user", text };
-        setMessages((prev) => [...prev, userMsg]);
+        setMessages((prev) => [...prev, { role: "user", text, sources: null }]);
         setInput("");
         setTyping(true);
 
-        let reply;
         try {
             const { data } = await chatbotAPI.send(text);
-            reply = data?.reply || getMockReply(text);
+            const botData = data?.data || data;
+            const reply = botData?.reply || "Mình chưa có câu trả lời. Bạn thử hỏi lại nhé!";
+            const sources = botData?.sources || null;
+            setMessages((prev) => [...prev, { role: "bot", text: reply, sources }]);
         } catch {
-            reply = getMockReply(text);
+            setMessages((prev) => [
+                ...prev,
+                { role: "bot", text: "Bot đang khởi động hoặc chưa kết nối được. Vui lòng thử lại sau!", sources: null },
+            ]);
         }
 
-        setMessages((prev) => [...prev, { role: "bot", text: reply }]);
         setTyping(false);
     };
 
@@ -98,7 +110,8 @@ export default function ChatWidget() {
         setMessages([
             {
                 role: "bot",
-                text: "Mình đã xóa hội thoại. Bạn cần tư vấn gì tiếp theo không?",
+                text: "Đã xóa hội thoại. Bạn cần tư vấn gì tiếp?",
+                sources: null,
             },
         ]);
     };
@@ -147,6 +160,7 @@ export default function ChatWidget() {
                                     }`}
                                 >
                                     {msg.text}
+                                    {msg.role === "bot" && <SourceBadges sources={msg.sources} />}
                                 </div>
                                 {msg.role === "user" && (
                                     <div className="size-7 rounded-full bg-gray-200 flex items-center justify-center shrink-0">

@@ -5,15 +5,21 @@
  */
 
 import express from "express";
-import { adminOnly, protect } from "../middleware/auth.middleware.js";
+import { adminOnly, protect, staffOrAdmin } from "../middleware/auth.middleware.js";
 import { asyncHandler } from "../middleware/asyncHandler.js";
 import { upload } from "../middleware/upload.middleware.js";
 import {
     createCategory, getAllCategory, getCategoryById,
-    updateCategory, deleteCategory
+    updateCategory, deleteCategory, getTopSellingCategories
 } from "../controller/categories.controller.js";
 
 const router = express.Router();
+
+/**
+ * GET /api/categories/top-selling - Danh mục bán chạy nhất (admin dashboard)
+ * @requires Authorization (Staff & Admin)
+ */
+router.get("/top-selling", protect, staffOrAdmin, asyncHandler(getTopSellingCategories));
 
 /**
  * GET /api/v1/categories - Lấy danh sách danh mục

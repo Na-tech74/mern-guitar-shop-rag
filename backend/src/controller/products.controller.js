@@ -20,7 +20,7 @@ import { isValidObjectId } from "../utils/valid.js";
  */
 export const createProduct = async (req, res) => {
     // Lấy dữ liệu từ form-data
-    const { name, description, price, category, stock } = req.body;
+    const { name, description, price, originalPrice, category, brand, stock } = req.body;
     const imageFiles = req.files;
 
     // Validate thông tin bắt buộc
@@ -50,14 +50,16 @@ export const createProduct = async (req, res) => {
         name: sanitizeText(name),
         description: sanitizeText(description),
         price: Number(price),
+        originalPrice: Number(originalPrice) || 0,
         category,
+        brand: brand || undefined,
         stock: parseInt(stock),
         images: imageUrls
     });
 
-    // Lấy thông tin category để trả về
+    // Lấy thông tin category và brand để trả về
     // Hàm populate dùng để lấy dữ liệu từ collection khác
-    await newProduct.populate('category', 'name');
+    await newProduct.populate([{ path: 'category', select: 'name' }, { path: 'brand', select: 'name logo country website description' }]);
 
     // Trả về thông tin sản phẩm đã tạo
     return appSuccess(res, {
@@ -68,6 +70,7 @@ export const createProduct = async (req, res) => {
             name: newProduct.name,
             description: newProduct.description,
             category: newProduct.category,
+            brand: newProduct.brand,
             stock: newProduct.stock,
             images: newProduct.images,
             price: newProduct.price,
@@ -108,7 +111,7 @@ export const getAllProducts = async (req, res) => {
 
     const total = await Product.countDocuments(query);
     const products = await Product.find(query)
-        .populate('category', 'name')
+        .populate([{ path: 'category', select: 'name' }, { path: 'brand', select: 'name logo country website description' }])
         .sort(sortOption)
         .skip((page - 1) * limit)
         .limit(parseInt(limit));
@@ -142,7 +145,7 @@ export const getProductById = async (req, res) => {
         throw appError("ID sản phẩm không hợp lệ!", 400);
     }
 
-    const product = await Product.findById(id).populate('category', 'name');
+    const product = await Product.findById(id).populate([{ path: 'category', select: 'name' }, { path: 'brand', select: 'name logo country website description' }]);
     if (!product) {
         throw appError("Sản phẩm không tồn tại!", 404);
     }
@@ -170,7 +173,7 @@ export const getProductById = async (req, res) => {
  */
 export const updateProducts = async (req, res) => {
     const { id } = req.params;
-    const { name, description, price, category, stock, images } = req.body;
+    const { name, description, price, originalPrice, category, brand, stock, images } = req.body;
     const imageFiles = req.files;
 
     if (!name || !description || !price || !category || !stock) {
@@ -193,7 +196,9 @@ export const updateProducts = async (req, res) => {
     product.name = sanitizeText(name);
     product.description = sanitizeText(description);
     product.price = Number(price);
+    product.originalPrice = Number(originalPrice) || 0;
     product.category = category;
+    product.brand = brand || undefined;
     product.stock = parseInt(stock);
 
     let existingImageUrls = [];
@@ -214,7 +219,7 @@ export const updateProducts = async (req, res) => {
 
     await product.save();
 
-    await product.populate('category', 'name');
+    await product.populate([{ path: 'category', select: 'name' }, { path: 'brand', select: 'name logo country website description' }]);
 
     return appSuccess(res, {
         statusCode: 200,
@@ -288,6 +293,28 @@ export const searchProductsTop = async (req, res) => {
         statusCode: 200,
         message: "Lấy sản phẩm nổi bật thành công!",
         data: { products }
+    });
+};
+
+/**
+ * Lấy danh sách sản phẩm bán chạy nhất (cho admin dashboard)
+ * @query {number} limit - Số sản phẩm trả về (default: 5)
+ * @returns {200} Danh sách sản phẩm bán chạy kèm số lượng đã bán
+ */
+export const getTopSellingProducts = async (req, res) => {
+    const { limit = 5 } = req.query;
+
+    const products = await Product.find({ sold: { $gt: 0 } })
+        .populate("category", "name")
+        .sort({ sold: -1 })
+        .limit(parseInt(limit));
+
+    const totalSold = products.reduce((sum, p) => sum + p.sold, 0);
+
+    return appSuccess(res, {
+        statusCode: 200,
+        message: "Lấy sản phẩm bán chạy thành công!",
+        data: { products, totalSold }
     });
 };
 

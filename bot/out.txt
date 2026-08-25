@@ -1,0 +1,7 @@
+[bot] Starting RAG Chatbot Service...
+[vector_store] Loaded index: 56 vectors
+[bot] Index loaded: 56 vectors
+INFO:     127.0.0.1:65485 - "GET / HTTP/1.1" 200 OK
+[embedder] Loading model intfloat/multilingual-e5-small...
+[embedder] Model loaded.
+INFO:     127.0.0.1:65485 - "POST /api/chat HTTP/1.1" 200 OK

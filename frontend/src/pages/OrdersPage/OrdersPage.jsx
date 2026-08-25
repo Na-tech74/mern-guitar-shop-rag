@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -70,6 +70,17 @@ export default function OrdersPage() {
         if (activeFilter === "all") return orders;
         return orders.filter((o) => o.status === activeFilter);
     }, [orders, activeFilter]);
+
+    const handleCancelOrder = useCallback(async (orderId) => {
+        if (!window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này?")) return;
+        try {
+            await orderAPI.cancelMyOrder(orderId);
+            setOrders((prev) => prev.map((o) => o._id === orderId ? { ...o, status: "cancelled" } : o));
+            setDetailOrder((prev) => prev && prev._id === orderId ? { ...prev, status: "cancelled" } : prev);
+        } catch (err) {
+            alert(err.response?.data?.message || "Hủy đơn hàng thất bại!");
+        }
+    }, []);
 
     const formatShortDate = (d) => formatDateTime(d);
 
@@ -168,6 +179,7 @@ export default function OrdersPage() {
                                 onToggle={() => setExpandedId(expandedId === order._id ? null : order._id)}
                                 onViewDetail={() => setDetailOrder(order)}
                                 formatShortDate={formatShortDate}
+                                onCancel={() => handleCancelOrder(order._id)}
                             />
                         ))}
                     </div>
@@ -176,7 +188,11 @@ export default function OrdersPage() {
 
             {/* Detail Modal */}
             {detailOrder && (
-                <OrderDetailModal order={detailOrder} onClose={() => setDetailOrder(null)} />
+                <OrderDetailModal
+                    order={detailOrder}
+                    onClose={() => setDetailOrder(null)}
+                    onCancel={() => handleCancelOrder(detailOrder._id)}
+                />
             )}
         </div>
     );

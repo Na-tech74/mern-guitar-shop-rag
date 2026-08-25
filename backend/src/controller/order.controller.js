@@ -334,11 +334,22 @@ export const requestMomoPayment = async (req, res) => {
         throw appError("Bạn không có quyền thanh toán đơn hàng này!", 403);
     }
 
+    const amount = Math.round(order.total);
+    const MOMO_MIN_AMOUNT = 50000;
+    const MOMO_MAX_AMOUNT = 1000000000;
+
+    if (amount < MOMO_MIN_AMOUNT) {
+        throw appError(`Số tiền tối thiểu để thanh toán qua MoMo là ${MOMO_MIN_AMOUNT.toLocaleString()}đ!`, 400);
+    }
+    if (amount > MOMO_MAX_AMOUNT) {
+        throw appError(`Số tiền tối đa để thanh toán qua MoMo là ${MOMO_MAX_AMOUNT.toLocaleString()}đ!`, 400);
+    }
+
     const redirectUrl = `${req.protocol}://${req.get("host")}/api/orders/momo-return`;
     const ipnUrl = `${req.protocol}://${req.get("host")}/api/orders/momo-callback`;
 
     const result = await createMomoPayment({
-        amount: Math.round(order.total).toString(),
+        amount: amount.toString(),
         orderId: order._id.toString(),
         orderInfo: `Thanh toan don hang #${order._id.toString().slice(-8).toUpperCase()}`,
         redirectUrl,
@@ -401,6 +412,124 @@ export const momoReturn = async (req, res) => {
     }
 
     res.redirect(`${process.env.CORS_ORIGIN?.split(",")[0] || "http://localhost:5173"}/checkout?payment=failed`);
+};
+
+/**
+ * Hủy đơn hàng (client).
+ * Chỉ hủy được đơn ở trạng thái "pending", hoàn stock.
+ * @param {Object} req - Request object chứa id trong params
+ * @param {Object} res - Response object
+ * @throws {400} ID không hợp lệ
+ * @throws {404} Đơn hàng không tồn tại
+ * @throws {403} Không có quyền hủy
+ * @throws {400} Đơn không ở trạng thái chờ xử lý
+ * @returns {200} Đơn hàng đã hủy
+ */
+export const cancelMyOrder = async (req, res) => {
+    const { id } = req.params;
+
+    if (!isValidObjectId(id)) {
+        throw appError("ID đơn hàng không hợp lệ!", 400);
+    }
+
+    const order = await Order.findById(id);
+    if (!order) {
+        throw appError("Đơn hàng không tồn tại!", 404);
+    }
+
+    if (order.user.toString() !== req.user._id.toString()) {
+        throw appError("Bạn không có quyền hủy đơn hàng này!", 403);
+    }
+
+    if (order.status === "cancelled") {
+        throw appError("Đơn hàng đã bị hủy trước đó!", 400);
+    }
+
+    if (order.status === "delivered") {
+        throw appError("Đơn hàng đã giao, không thể hủy!", 400);
+    }
+
+    if (order.status !== "pending") {
+        throw appError("Chỉ có thể hủy đơn hàng ở trạng thái chờ xử lý!", 400);
+    }
+
+    // Hoàn stock
+    for (const item of order.items) {
+        if (item.productId) {
+            await Product.findByIdAndUpdate(item.productId, {
+                $inc: { stock: item.quantity, sold: -item.quantity },
+            });
+        }
+    }
+
+    order.status = "cancelled";
+    await order.save();
+
+    return appSuccess(res, {
+        statusCode: 200,
+        message: "Hủy đơn hàng thành công!",
+        data: { order },
+    });
+};
+
+/**
+ * Lấy dữ liệu doanh thu cho biểu đồ.
+ * Trả về doanh thu theo ngày trong 7 ngày gần nhất.
+ * @param {Object} req - Request object
+ * @param {Object} res - Response object
+ * @returns {200} Dữ liệu doanh thu theo ngày
+ */
+export const getRevenueChart = async (req, res) => {
+    const { days = 7 } = req.query;
+    const numDays = parseInt(days) || 7;
+
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - numDays);
+    startDate.setHours(0, 0, 0, 0);
+
+    const revenueByDay = await Order.aggregate([
+        {
+            $match: {
+                status: "delivered",
+                createdAt: { $gte: startDate }
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
+                },
+                revenue: { $sum: "$total" },
+                orderCount: { $sum: 1 }
+            }
+        },
+        { $sort: { _id: 1 } }
+    ]);
+
+    // Fill missing days with 0
+    const chartData = [];
+    for (let i = numDays - 1; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split("T")[0];
+        const found = revenueByDay.find(r => r._id === dateStr);
+        chartData.push({
+            date: dateStr,
+            label: date.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" }),
+            revenue: found ? found.revenue : 0,
+            orderCount: found ? found.orderCount : 0
+        });
+    }
+
+    const totalRevenue = chartData.reduce((sum, d) => sum + d.revenue, 0);
+    const totalOrders = chartData.reduce((sum, d) => sum + d.orderCount, 0);
+    const maxRevenue = Math.max(...chartData.map(d => d.revenue), 1);
+
+    return appSuccess(res, {
+        statusCode: 200,
+        message: "Lấy dữ liệu doanh thu thành công!",
+        data: { chartData, totalRevenue, totalOrders, maxRevenue }
+    });
 };
 
 /**

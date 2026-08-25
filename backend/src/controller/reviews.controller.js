@@ -115,7 +115,10 @@ export const getAllReviews = async (req, res) => {
     if (product && isValidObjectId(product)) {
         filter.product = product;
     }
-    const reviews = await Review.find(filter).populate('user', 'name avatar').sort({ createdAt: -1 });
+    const reviews = await Review.find(filter)
+        .populate('user', 'name avatar')
+        .populate('product', 'name images')
+        .sort({ createdAt: -1 });
     return appSuccess(res, {
         statusCode: 200,
         message: "Lấy danh sách đánh giá thành công !",
